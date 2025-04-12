@@ -1,0 +1,1 @@
+1. Check the latest version of solc and see if it's possible to get 0.8.20 for openzeppelin

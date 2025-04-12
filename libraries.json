@@ -1,0 +1,7 @@
+{
+    "purpose": "This file keeps manual track of installed libraries. It avoids time wasted with submodules",
+    "libs": [
+        "git@github.com:foundry-rs/forge-stf.git",
+        "git@github.com:OpenZeppelin/openzeppelin-contracts.git"
+    ]
+}

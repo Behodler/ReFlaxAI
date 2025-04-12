@@ -4,6 +4,7 @@ import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import "./AYieldSource.sol";
 import "../priceTilting/IPriceTilter.sol";
 import {Flax} from "../Flax.sol";
+import "../external/UniswapV2.sol";
 
 interface ICurvePool {
     function coins(uint256) external view returns (address);
@@ -16,28 +17,9 @@ interface IConvexStaking {
     function withdraw(uint256 _amount) external;
     function getReward() external;
 }
-interface IUniswapV2Router02 {
-    function swapExactTokensForTokens(
-        uint256 amountIn,
-        uint256 amountOutMin,
-        address[] calldata path,
-        address to,
-        uint256 deadline
-    ) external returns (uint256[] memory amounts);
-    function swapExactTokensForETH(
-        uint256 amountIn,
-        uint256 amountOutMin,
-        address[] calldata path,
-        address to,
-        uint256 deadline
-    ) external returns (uint256[] memory amounts);
-}
 interface IWETH is IERC20 {
     function deposit() external payable;
     function withdraw(uint256 wad) external;
-}
-interface IUniswapV2Factory {
-    function getPair(address tokenA, address tokenB) external view returns (address pair);
 }
 contract ConvexCurveYieldSource is AYieldSource {
     address public curvePool;

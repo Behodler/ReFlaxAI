@@ -3,21 +3,7 @@ pragma solidity ^0.8.20;
 import "@oz_reflax/contracts/access/Ownable.sol";
 import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import {TWAPOracle, IUniswapV2Pair} from "./TWAPOracle.sol";
-interface IUniswapV2Factory {
-    function getPair(address tokenA, address tokenB) external view returns (address pair);
-}
-interface IUniswapV2Router02 {
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        address to,
-        uint256 deadline
-    ) external returns (uint256 amountA, uint256 amountB, uint256 liquidity);
-}
+import "../external/UniswapV2.sol";
 
 contract PriceTilter is Ownable {
     IUniswapV2Factory public factory;

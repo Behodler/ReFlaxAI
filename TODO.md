@@ -1,1 +1,4 @@
-1. Check the latest version of solc and see if it's possible to get 0.8.20 for openzeppelin
+1. AMM integration
+ - Uniswap Done
+2. SFlax integration
+3. External Protocols

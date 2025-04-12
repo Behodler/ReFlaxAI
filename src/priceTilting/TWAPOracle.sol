@@ -2,13 +2,8 @@
 pragma solidity ^0.8.20;
 import "@oz_reflax/contracts/access/Ownable.sol";
 import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-interface IUniswapV2Pair {
-    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
-    function price0CumulativeLast() external view returns (uint256);
-    function price1CumulativeLast() external view returns (uint256);
-    function token0() external view returns (address);
-    function token1() external view returns (address);
-}
+import "../external/UniswapV2.sol";
+
 contract TWAPOracle is Ownable {
     uint256 public sampleInterval;
 

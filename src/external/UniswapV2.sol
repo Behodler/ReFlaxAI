@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
+
 interface IUniswapV2Factory {
     function getPair(address tokenA, address tokenB) external view returns (address pair);
 }
@@ -40,4 +42,9 @@ interface IUniswapV2Pair {
     function price1CumulativeLast() external view returns (uint256);
     function token0() external view returns (address);
     function token1() external view returns (address);
+}
+
+interface IWETH is IERC20 {
+    function deposit() external payable;
+    function withdraw(uint256 wad) external;
 }

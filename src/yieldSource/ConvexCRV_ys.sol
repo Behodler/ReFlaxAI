@@ -5,22 +5,10 @@ import "./AYieldSource.sol";
 import "../priceTilting/IPriceTilter.sol";
 import {Flax} from "../Flax.sol";
 import "../external/UniswapV2.sol";
+import {IWETH} from "../external/UniswapV2.sol";
+import {ICurvePool} from "../external/Curve.sol";
+import {IConvexStaking} from "../external/Convex.sol";
 
-interface ICurvePool {
-    function coins(uint256) external view returns (address);
-    function balances(uint256) external view returns (uint256);
-    function add_liquidity(uint256[2] memory amounts, uint256 min_mint_amount) external returns (uint256);
-    function remove_liquidity(uint256 _amount, uint256[2] memory min_amounts) external;
-}
-interface IConvexStaking {
-    function stake(uint256 _amount) external;
-    function withdraw(uint256 _amount) external;
-    function getReward() external;
-}
-interface IWETH is IERC20 {
-    function deposit() external payable;
-    function withdraw(uint256 wad) external;
-}
 contract ConvexCurveYieldSource is AYieldSource {
     address public curvePool;
     address public convexStakingContract;

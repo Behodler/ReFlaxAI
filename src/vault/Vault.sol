@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import "@oz_reflax/contracts/access/Ownable.sol";
-import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import "../yieldSource/AYieldSource.sol";
-import "../priceTilting/IPriceTilter.sol";
+
+import {Ownable} from "@oz_reflax/contracts/access/Ownable.sol";
+import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
+import {AYieldSource} from "../yieldSource/AYieldSource.sol";
+import {IPriceTilter} from "../priceTilting/IPriceTilter.sol";
 
 contract Vault is Ownable {
     IERC20 public flaxToken;
@@ -27,19 +28,21 @@ contract Vault is Ownable {
     event YieldSourceMigrated(address newYieldSource);
 
     constructor(
-        IERC20 _flaxToken,
-        IERC20 _sFlaxToken,
-        IERC20 _inputToken,
-        AYieldSource _yieldSource,
-        IPriceTilter _priceTilter
+        address _flaxToken,
+        address _sFlaxToken,
+        address _inputToken,
+        address _yieldSource,
+        address _priceTilter
     ) Ownable(msg.sender) {
-        flaxToken = _flaxToken;
-        sFlaxToken = _sFlaxToken;
-        inputToken = _inputToken;
-        yieldSource = _yieldSource;
-        priceTilter = _priceTilter;
+        flaxToken = IERC20(_flaxToken);
+        sFlaxToken = IERC20(_sFlaxToken);
+        inputToken = IERC20(_inputToken);
+        yieldSource = AYieldSource(_yieldSource);
+        priceTilter = IPriceTilter(_priceTilter);
         tiltRatio = 5000;
-        flaxPerSFlax = 0; // Default to 0, set by owner
+        flaxPerSFlax = 0;
+        require(address(yieldSource).code.length > 0, "Invalid yieldSource");
+        require(yieldSource.deposit(0) == 0, "YieldSource not compliant"); // Test call
     }
 
     function setTiltRatio(uint256 ratio) external onlyOwner {
@@ -69,10 +72,7 @@ contract Vault is Ownable {
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
             uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
             sFlaxToken.transferFrom(msg.sender, address(this), sFlaxAmount);
-            // Assume sFlax has a burn function; adjust if needed
-            (bool success,) = address(sFlaxToken).call(
-                abi.encodeWithSignature("burn(uint256)", sFlaxAmount)
-            );
+            (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
             require(success, "sFlax burn failed");
             totalFlax += flaxBoost;
             emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
@@ -98,10 +98,7 @@ contract Vault is Ownable {
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
             uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
             sFlaxToken.transferFrom(msg.sender, address(this), sFlaxAmount);
-            // Assume sFlax has a burn function; adjust if needed
-            (bool success,) = address(sFlaxToken).call(
-                abi.encodeWithSignature("burn(uint256)", sFlaxAmount)
-            );
+            (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
             require(success, "sFlax burn failed");
             totalFlax += flaxBoost;
             emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);

@@ -7,38 +7,50 @@ import "../priceTilting/IPriceTilter.sol";
 
 contract Vault is Ownable {
     IERC20 public flaxToken;
+    IERC20 public sFlaxToken;
     IERC20 public inputToken;
     AYieldSource public yieldSource;
     IPriceTilter public priceTilter;
 
     uint256 public tiltRatio;
+    uint256 public flaxPerSFlax;
     mapping(address => uint256) public originalDeposits;
     uint256 public surplusInputToken;
 
     event TiltRatioUpdated(uint256 newRatio);
+    event FlaxPerSFlaxUpdated(uint256 newRatio);
     event Deposited(address indexed user, uint256 amount);
     event RewardsClaimed(address indexed user, uint256 flaxAmount);
     event Withdrawn(address indexed user, uint256 amount);
-    event SurplusTilted(uint256 inputTokenAmount, uint256 flaxMinted);
+    event SFlaxBurned(address indexed user, uint256 sFlaxAmount, uint256 flaxRewarded);
+    event SurplusTilted(uint256 inputTokenAmount, uint256 flaxTransferred);
     event YieldSourceMigrated(address newYieldSource);
 
     constructor(
         IERC20 _flaxToken,
+        IERC20 _sFlaxToken,
         IERC20 _inputToken,
         AYieldSource _yieldSource,
         IPriceTilter _priceTilter
     ) Ownable(msg.sender) {
         flaxToken = _flaxToken;
+        sFlaxToken = _sFlaxToken;
         inputToken = _inputToken;
         yieldSource = _yieldSource;
         priceTilter = _priceTilter;
         tiltRatio = 5000;
+        flaxPerSFlax = 0; // Default to 0, set by owner
     }
 
     function setTiltRatio(uint256 ratio) external onlyOwner {
         require(ratio <= 10000, "Ratio must be <= 10000 bps");
         tiltRatio = ratio;
         emit TiltRatioUpdated(ratio);
+    }
+
+    function setFlaxPerSFlax(uint256 ratio) external onlyOwner {
+        flaxPerSFlax = ratio;
+        emit FlaxPerSFlaxUpdated(ratio);
     }
 
     function deposit(uint256 amount) external {
@@ -50,27 +62,54 @@ contract Vault is Ownable {
         emit Deposited(msg.sender, amount);
     }
 
-    function claimRewards() external {
+    function claimRewards(uint256 sFlaxAmount) external {
         uint256 flaxValue = yieldSource.claimRewards();
-        if (flaxValue > 0) {
-            flaxToken.transfer(msg.sender, flaxValue);
-            emit RewardsClaimed(msg.sender, flaxValue);
+        uint256 totalFlax = flaxValue;
+
+        if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
+            uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
+            sFlaxToken.transferFrom(msg.sender, address(this), sFlaxAmount);
+            // Assume sFlax has a burn function; adjust if needed
+            (bool success,) = address(sFlaxToken).call(
+                abi.encodeWithSignature("burn(uint256)", sFlaxAmount)
+            );
+            require(success, "sFlax burn failed");
+            totalFlax += flaxBoost;
+            emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
+        }
+
+        if (totalFlax > 0) {
+            flaxToken.transfer(msg.sender, totalFlax);
+            emit RewardsClaimed(msg.sender, totalFlax);
         }
     }
 
-    function withdraw(uint256 amount, bool protectLoss) external {
+    function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external {
         require(canWithdraw(), "Withdrawal not allowed");
         require(originalDeposits[msg.sender] >= amount, "Insufficient deposit");
 
         uint256 balanceBefore = inputToken.balanceOf(address(this));
         (uint256 received, uint256 flaxValue) = yieldSource.withdraw(amount);
         uint256 balanceAfter = inputToken.balanceOf(address(this));
-        // Use `received` from YieldSource directly
         require(balanceAfter >= balanceBefore + received, "Balance mismatch");
 
-        if (flaxValue > 0) {
-            flaxToken.transfer(msg.sender, flaxValue);
-            emit RewardsClaimed(msg.sender, flaxValue);
+        uint256 totalFlax = flaxValue;
+
+        if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
+            uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
+            sFlaxToken.transferFrom(msg.sender, address(this), sFlaxAmount);
+            // Assume sFlax has a burn function; adjust if needed
+            (bool success,) = address(sFlaxToken).call(
+                abi.encodeWithSignature("burn(uint256)", sFlaxAmount)
+            );
+            require(success, "sFlax burn failed");
+            totalFlax += flaxBoost;
+            emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
+        }
+
+        if (totalFlax > 0) {
+            flaxToken.transfer(msg.sender, totalFlax);
+            emit RewardsClaimed(msg.sender, totalFlax);
         }
 
         originalDeposits[msg.sender] -= amount;
@@ -103,13 +142,13 @@ contract Vault is Ownable {
         uint256 inputTokenAmount = surplusInputToken / 2;
         require(inputTokenAmount > 0, "No surplus to tilt");
 
-        uint256 flaxToMint = (inputTokenAmount * tiltRatio) / 10000;
-        flaxToken.transfer(address(this), flaxToMint);
+        uint256 flaxToTransfer = (inputTokenAmount * tiltRatio) / 10000;
+        flaxToken.transfer(address(this), flaxToTransfer);
         surplusInputToken -= inputTokenAmount;
 
         priceTilter.tiltPrice(address(inputToken), inputTokenAmount);
 
-        emit SurplusTilted(inputTokenAmount, flaxToMint);
+        emit SurplusTilted(inputTokenAmount, flaxToTransfer);
     }
 
     function migrateYieldSource(address newYieldSource) external onlyOwner {

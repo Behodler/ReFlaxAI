@@ -8,14 +8,12 @@ abstract contract AYieldSource is Ownable {
     IERC20 public inputToken;
     IPriceTilter public priceTilter;
 
-constructor(IERC20 _inputToken, IPriceTilter _priceTilter) {
-    inputToken = _inputToken;
-    priceTilter = _priceTilter;
+    constructor(IERC20 _inputToken, IPriceTilter _priceTilter, address _owner) Ownable(_owner) {
+        inputToken = _inputToken;
+        priceTilter = _priceTilter;
+    }
+
+    function deposit(uint256 amount) external virtual returns (uint256);
+    function claimRewards() external virtual returns (uint256);
+    function withdraw(uint256 amount) external virtual returns (uint256 inputTokenAmount, uint256 flaxValue);
 }
-
-function deposit(uint256 amount) external virtual returns (uint256);
-function claimRewards() external virtual returns (uint256);
-function withdraw(uint256 amount) external virtual returns (uint256);
-
-}
-

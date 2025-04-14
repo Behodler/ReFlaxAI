@@ -17,26 +17,31 @@ contract ConvexCurveYieldSource is AYieldSource {
     address public weth;
     uint256 public tiltRatio;
 
-    constructor(
-        IERC20 _inputToken,
-        IPriceTilter _priceTilter,
-        address _curvePool,
-        address _convexStakingContract,
-        address _uniswapRouter,
-        address _crvToken,
-        address _cvxToken,
-        address _weth,
-        uint256 _tiltRatio
-    ) AYieldSource(_inputToken, _priceTilter, msg.sender) {
-        curvePool = _curvePool;
-        convexStakingContract = _convexStakingContract;
-        uniswapRouter = _uniswapRouter;
-        crvToken = _crvToken;
-        cvxToken = _cvxToken;
-        weth = _weth;
-        tiltRatio = _tiltRatio;
-    }
-
+constructor(
+    address _inputToken,
+    address _priceTilter,
+    address _curvePool,
+    address _convexStakingContract,
+    address _uniswapRouter,
+    address _crvToken,
+    address _cvxToken,
+    address _weth,
+    uint256 _tiltRatio
+) AYieldSource(_inputToken, _priceTilter, msg.sender) {
+    require(_curvePool.code.length > 0, "Invalid curvePool");
+    require(_convexStakingContract.code.length > 0, "Invalid convexStakingContract");
+    require(_uniswapRouter.code.length > 0, "Invalid uniswapRouter");
+    require(_crvToken.code.length > 0, "Invalid crvToken");
+    require(_cvxToken.code.length > 0, "Invalid cvxToken");
+    require(_weth.code.length > 0, "Invalid weth");
+    curvePool = _curvePool;
+    convexStakingContract = _convexStakingContract;
+    uniswapRouter = _uniswapRouter;
+    crvToken = _crvToken;
+    cvxToken = _cvxToken;
+    weth = _weth;
+    tiltRatio = _tiltRatio;
+}
     modifier claimsRewards() {
         _claimAndProcessRewards();
         _;

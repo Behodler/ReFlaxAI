@@ -26,10 +26,20 @@ contract MockERC20 {
     function mint(address to, uint256 amount) external {
         balanceOf[to] += amount;
     }
+
+    // For sFlax burning
+    function burn(uint256 amount) external {
+        balanceOf[msg.sender] -= amount;
+    }
 }
 
 contract MockYieldSource {
     uint256 public totalDeposited;
+    uint256 public flaxValueToReturn;
+
+    function setFlaxValue(uint256 _flaxValue) external {
+        flaxValueToReturn = _flaxValue;
+    }
 
     function deposit(uint256 amount) external returns (uint256) {
         totalDeposited += amount;
@@ -37,10 +47,10 @@ contract MockYieldSource {
     }
 
     function claimRewards() external returns (uint256) {
-        return 0;
+        return flaxValueToReturn;
     }
 
     function withdraw(uint256 amount) external returns (uint256 inputTokenAmount, uint256 flaxValue) {
-        return (amount, 0);
+        return (amount, flaxValueToReturn);
     }
 }

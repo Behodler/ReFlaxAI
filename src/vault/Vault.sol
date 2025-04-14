@@ -2,12 +2,11 @@
 pragma solidity ^0.8.20;
 import "@oz_reflax/contracts/access/Ownable.sol";
 import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import "../Flax.sol";
 import "../yieldSource/AYieldSource.sol";
 import "../priceTilting/IPriceTilter.sol";
 
 contract Vault is Ownable {
-    Flax public flaxToken;
+    IERC20 public flaxToken;
     IERC20 public inputToken;
     AYieldSource public yieldSource;
     IPriceTilter public priceTilter;
@@ -24,7 +23,7 @@ contract Vault is Ownable {
     event YieldSourceMigrated(address newYieldSource);
 
     constructor(
-        Flax _flaxToken,
+        IERC20 _flaxToken,
         IERC20 _inputToken,
         AYieldSource _yieldSource,
         IPriceTilter _priceTilter
@@ -54,7 +53,7 @@ contract Vault is Ownable {
     function claimRewards() external {
         uint256 flaxValue = yieldSource.claimRewards();
         if (flaxValue > 0) {
-            flaxToken.mint(msg.sender, flaxValue);
+            flaxToken.transfer(msg.sender, flaxValue);
             emit RewardsClaimed(msg.sender, flaxValue);
         }
     }
@@ -70,7 +69,7 @@ contract Vault is Ownable {
         require(balanceAfter >= balanceBefore + received, "Balance mismatch");
 
         if (flaxValue > 0) {
-            flaxToken.mint(msg.sender, flaxValue);
+            flaxToken.transfer(msg.sender, flaxValue);
             emit RewardsClaimed(msg.sender, flaxValue);
         }
 
@@ -105,7 +104,7 @@ contract Vault is Ownable {
         require(inputTokenAmount > 0, "No surplus to tilt");
 
         uint256 flaxToMint = (inputTokenAmount * tiltRatio) / 10000;
-        flaxToken.mint(address(this), flaxToMint);
+        flaxToken.transfer(address(this), flaxToMint);
         surplusInputToken -= inputTokenAmount;
 
         priceTilter.tiltPrice(address(inputToken), inputTokenAmount);

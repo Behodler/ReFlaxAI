@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import "./AYieldSource.sol";
 import "../priceTilting/IPriceTilter.sol";
-import {Flax} from "../Flax.sol";
 import "../external/UniswapV2.sol";
 import {IWETH} from "../external/UniswapV2.sol";
 import {ICurvePool} from "../external/Curve.sol";
@@ -124,7 +123,7 @@ contract ConvexCurveYieldSource is AYieldSource {
             uint256 twapPrice = priceTilter.getPrice(flax, weth);
             uint256 flax_per_weth = (10**36) / twapPrice;
             uint256 flaxForLiquidity = (ethBalance * tiltRatio / 10000 * flax_per_weth) / 10**18;
-            Flax(flax).mint(address(this), flaxForLiquidity);
+            IERC20(flax).transfer(address(this), flaxForLiquidity);
             IWETH(weth).deposit{value: ethBalance}();
             IERC20(flax).approve(address(priceTilter), flaxForLiquidity);
             IERC20(weth).approve(address(priceTilter), ethBalance);

@@ -54,3 +54,11 @@ contract MockYieldSource {
         return (amount, flaxValueToReturn);
     }
 }
+
+contract MockPriceTilter {
+    function tiltPrice(address token, uint256 amount) external {}
+    // Placeholder for other functions if needed later
+    function flaxToken() external view returns (address) { return address(0); }
+    function getPrice(address tokenA, address tokenB) external returns (uint256) { return 0; }
+    function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external {}
+}

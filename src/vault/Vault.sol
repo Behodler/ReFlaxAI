@@ -15,6 +15,7 @@ contract Vault is Ownable {
 
     uint256 public tiltRatio;
     uint256 public flaxPerSFlax;
+    uint256 public totalDeposits;
     mapping(address => uint256) public originalDeposits;
     uint256 public surplusInputToken;
 
@@ -34,6 +35,40 @@ contract Vault is Ownable {
         address _yieldSource,
         address _priceTilter
     ) Ownable(msg.sender) {
+        require(_flaxToken.code.length > 0, "Invalid flaxToken");
+        (bool success,) = _flaxToken.call(abi.encodeWithSignature("transfer(address,uint256)", address(0), 0));
+        require(success, "flaxToken transfer not supported");
+
+        require(_sFlaxToken.code.length > 0, "Invalid sFlaxToken");
+        (success,) = _sFlaxToken.call(
+            abi.encodeWithSignature("transferFrom(address,address,uint256)", address(0), address(0), 0)
+        );
+        require(success, "sFlaxToken transferFrom not supported");
+        (success,) = _sFlaxToken.call(abi.encodeWithSignature("burn(uint256)", 0));
+        require(success, "sFlaxToken burn not supported");
+
+        require(_inputToken.code.length > 0, "Invalid inputToken");
+        (success,) = _inputToken.call(
+            abi.encodeWithSignature("transferFrom(address,address,uint256)", address(0), address(0), 0)
+        );
+        require(success, "inputToken transferFrom not supported");
+        (success,) = _inputToken.call(abi.encodeWithSignature("approve(address,uint256)", address(0), 0));
+        require(success, "inputToken approve not supported");
+        (success,) = _inputToken.call(abi.encodeWithSignature("balanceOf(address)", address(0)));
+        require(success, "inputToken balanceOf not supported");
+
+        require(_yieldSource.code.length > 0, "Invalid yieldSource");
+        (success,) = _yieldSource.call(abi.encodeWithSignature("deposit(uint256)", 0));
+        require(success, "yieldSource deposit not supported");
+        (success,) = _yieldSource.call(abi.encodeWithSignature("claimRewards()"));
+        require(success, "yieldSource claimRewards not supported");
+        (success,) = _yieldSource.call(abi.encodeWithSignature("withdraw(uint256)", 0));
+        require(success, "yieldSource withdraw not supported");
+
+        require(_priceTilter.code.length > 0, "Invalid priceTilter");
+        (success,) = _priceTilter.call(abi.encodeWithSignature("tiltPrice(address,uint256)", address(0), 0));
+        require(success, "priceTilter tiltPrice not supported");
+
         flaxToken = IERC20(_flaxToken);
         sFlaxToken = IERC20(_sFlaxToken);
         inputToken = IERC20(_inputToken);
@@ -41,8 +76,6 @@ contract Vault is Ownable {
         priceTilter = IPriceTilter(_priceTilter);
         tiltRatio = 5000;
         flaxPerSFlax = 0;
-        require(address(yieldSource).code.length > 0, "Invalid yieldSource");
-        require(yieldSource.deposit(0) == 0, "YieldSource not compliant"); // Test call
     }
 
     function setTiltRatio(uint256 ratio) external onlyOwner {
@@ -62,6 +95,7 @@ contract Vault is Ownable {
         inputToken.approve(address(yieldSource), amount);
         yieldSource.deposit(amount);
         originalDeposits[msg.sender] += amount;
+        totalDeposits += amount;
         emit Deposited(msg.sender, amount);
     }
 
@@ -110,6 +144,7 @@ contract Vault is Ownable {
         }
 
         originalDeposits[msg.sender] -= amount;
+        totalDeposits -= amount;
 
         if (received > amount) {
             surplusInputToken += received - amount;
@@ -149,6 +184,23 @@ contract Vault is Ownable {
     }
 
     function migrateYieldSource(address newYieldSource) external onlyOwner {
+        require(newYieldSource.code.length > 0, "Invalid newYieldSource");
+        (bool success,) = newYieldSource.call(abi.encodeWithSignature("deposit(uint256)", 0));
+        require(success, "newYieldSource deposit not supported");
+
+        if (totalDeposits > 0) {
+            (uint256 received, uint256 flaxValue) = yieldSource.withdraw(totalDeposits);
+            require(received >= totalDeposits, "Withdrawal incomplete");
+
+            inputToken.approve(newYieldSource, received);
+            uint256 deposited = AYieldSource(newYieldSource).deposit(received);
+            require(deposited == received, "Deposit incomplete");
+
+            if (flaxValue > 0) {
+                flaxToken.transfer(msg.sender, flaxValue);
+            }
+        }
+
         yieldSource = AYieldSource(newYieldSource);
         emit YieldSourceMigrated(newYieldSource);
     }

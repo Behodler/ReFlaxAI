@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import {Vault} from "../src/vault/Vault.sol";
-import {MockERC20, MockYieldSource} from "./mocks/Mocks.sol";
+import {MockERC20, MockYieldSource, MockPriceTilter} from "./mocks/Mocks.sol";
 import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import {IPriceTilter} from "../src/priceTilting/IPriceTilter.sol";
 
@@ -26,27 +26,21 @@ contract VaultTest is Test {
         flaxToken = new MockERC20();
         sFlaxToken = new MockERC20();
         yieldSource = new MockYieldSource();
-        priceTilter = address(0x5678);
+        priceTilter = address(new MockPriceTilter());
 
-        vault = new Vault(
-            address(flaxToken),
-            address(sFlaxToken),
-            address(inputToken),
-            address(yieldSource),
-            priceTilter
-        );
+        vault =
+            new Vault(address(flaxToken), address(sFlaxToken), address(inputToken), address(yieldSource), priceTilter);
 
         inputToken.mint(user, 1000 * 1e18);
         vm.prank(user);
         inputToken.approve(address(vault), type(uint256).max);
 
-        // Setup for claimRewards
         sFlaxToken.mint(user, 1000 * 1e18);
         vm.prank(user);
         sFlaxToken.approve(address(vault), type(uint256).max);
-        flaxToken.mint(address(vault), 1000 * 1e18); // Pre-fund vault
+        flaxToken.mint(address(vault), 1000 * 1e18);
         vm.prank(address(vault.owner()));
-        vault.setFlaxPerSFlax(1e17); // 0.1 Flax per sFlax
+        vault.setFlaxPerSFlax(1e17);
     }
 
     function testDeposit() public {
@@ -63,6 +57,7 @@ contract VaultTest is Test {
         assertEq(inputToken.balanceOf(address(vault)), depositAmount, "Vault balance incorrect");
         assertEq(yieldSource.totalDeposited(), depositAmount, "YieldSource deposit incorrect");
         assertEq(vault.originalDeposits(user), depositAmount, "originalDeposits incorrect");
+        assertEq(vault.totalDeposits(), depositAmount, "totalDeposits incorrect");
 
         vm.stopPrank();
     }

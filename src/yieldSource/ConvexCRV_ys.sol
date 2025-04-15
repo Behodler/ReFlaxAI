@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
+
 import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import "./AYieldSource.sol";
 import "../priceTilting/IPriceTilter.sol";
@@ -17,31 +18,105 @@ contract ConvexCurveYieldSource is AYieldSource {
     address public weth;
     uint256 public tiltRatio;
 
-constructor(
-    address _inputToken,
-    address _priceTilter,
-    address _curvePool,
-    address _convexStakingContract,
-    address _uniswapRouter,
-    address _crvToken,
-    address _cvxToken,
-    address _weth,
-    uint256 _tiltRatio
-) AYieldSource(_inputToken, _priceTilter, msg.sender) {
-    require(_curvePool.code.length > 0, "Invalid curvePool");
-    require(_convexStakingContract.code.length > 0, "Invalid convexStakingContract");
-    require(_uniswapRouter.code.length > 0, "Invalid uniswapRouter");
-    require(_crvToken.code.length > 0, "Invalid crvToken");
-    require(_cvxToken.code.length > 0, "Invalid cvxToken");
-    require(_weth.code.length > 0, "Invalid weth");
-    curvePool = _curvePool;
-    convexStakingContract = _convexStakingContract;
-    uniswapRouter = _uniswapRouter;
-    crvToken = _crvToken;
-    cvxToken = _cvxToken;
-    weth = _weth;
-    tiltRatio = _tiltRatio;
-}
+    constructor(
+        address _inputToken,
+        address _priceTilter,
+        address _curvePool,
+        address _convexStakingContract,
+        address _uniswapRouter,
+        address _crvToken,
+        address _cvxToken,
+        address _weth,
+        uint256 _tiltRatio
+    ) AYieldSource(_inputToken, _priceTilter, msg.sender) {
+        require(_inputToken.code.length > 0, "Invalid inputToken");
+        (bool success,) = _inputToken.call(
+            abi.encodeWithSignature("transferFrom(address,address,uint256)", address(0), address(0), 0)
+        );
+        require(success, "inputToken transferFrom not supported");
+        (success,) = _inputToken.call(abi.encodeWithSignature("balanceOf(address)", address(0)));
+        require(success, "inputToken balanceOf not supported");
+
+        require(_priceTilter.code.length > 0, "Invalid priceTilter");
+        (success,) = _priceTilter.call(abi.encodeWithSignature("flaxToken()"));
+        require(success, "priceTilter flaxToken not supported");
+        (success,) = _priceTilter.call(abi.encodeWithSignature("getPrice(address,address)", address(0), address(0)));
+        require(success, "priceTilter getPrice not supported");
+        (success,) = _priceTilter.call(
+            abi.encodeWithSignature("addLiquidity(address,address,uint256,uint256)", address(0), address(0), 0, 0)
+        );
+        require(success, "priceTilter addLiquidity not supported");
+
+        require(_curvePool.code.length > 0, "Invalid curvePool");
+        (success,) = _curvePool.call(abi.encodeWithSignature("coins(uint256)", 0));
+        require(success, "curvePool coins not supported");
+        (success,) = _curvePool.call(abi.encodeWithSignature("balances(uint256)", 0));
+        require(success, "curvePool balances not supported");
+        (success,) = _curvePool.call(abi.encodeWithSignature("add_liquidity(uint256[2],uint256)", [uint256(0), 0], 0));
+        require(success, "curvePool add_liquidity not supported");
+        (success,) =
+            _curvePool.call(abi.encodeWithSignature("remove_liquidity(uint256,uint256[2])", 0, [uint256(0), 0]));
+        require(success, "curvePool remove_liquidity not supported");
+
+        require(_convexStakingContract.code.length > 0, "Invalid convexStakingContract");
+        (success,) = _convexStakingContract.call(abi.encodeWithSignature("stake(uint256)", 0));
+        require(success, "convexStakingContract stake not supported");
+        (success,) = _convexStakingContract.call(abi.encodeWithSignature("withdraw(uint256)", 0));
+        require(success, "convexStakingContract withdraw not supported");
+        (success,) = _convexStakingContract.call(abi.encodeWithSignature("getReward()"));
+        require(success, "convexStakingContract getReward not supported");
+
+        require(_uniswapRouter.code.length > 0, "Invalid uniswapRouter");
+        (success,) = _uniswapRouter.call(
+            abi.encodeWithSignature(
+                "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)",
+                0,
+                0,
+                new address[](0),
+                address(0),
+                0
+            )
+        );
+        require(success, "uniswapRouter swapExactTokensForTokens not supported");
+        (success,) = _uniswapRouter.call(
+            abi.encodeWithSignature(
+                "swapExactTokensForETH(uint256,uint256,address[],address,uint256)",
+                0,
+                0,
+                new address[](0),
+                address(0),
+                0
+            )
+        );
+        require(success, "uniswapRouter swapExactTokensForETH not supported");
+
+        require(_crvToken.code.length > 0, "Invalid crvToken");
+        (success,) = _crvToken.call(abi.encodeWithSignature("balanceOf(address)", address(0)));
+        require(success, "crvToken balanceOf not supported");
+        (success,) = _crvToken.call(abi.encodeWithSignature("approve(address,uint256)", address(0), 0));
+        require(success, "crvToken approve not supported");
+
+        require(_cvxToken.code.length > 0, "Invalid cvxToken");
+        (success,) = _cvxToken.call(abi.encodeWithSignature("balanceOf(address)", address(0)));
+        require(success, "cvxToken balanceOf not supported");
+        (success,) = _cvxToken.call(abi.encodeWithSignature("approve(address,uint256)", address(0), 0));
+        require(success, "cvxToken approve not supported");
+
+        require(_weth.code.length > 0, "Invalid weth");
+        (success,) = _weth.call(abi.encodeWithSignature("deposit()"));
+        require(success, "weth deposit not supported");
+        (success,) = _weth.call(abi.encodeWithSignature("approve(address,uint256)", address(0), 0));
+        require(success, "weth approve not supported");
+
+        curvePool = _curvePool;
+        convexStakingContract = _convexStakingContract;
+        uniswapRouter = _uniswapRouter;
+        crvToken = _crvToken;
+        cvxToken = _cvxToken;
+        weth = _weth;
+        tiltRatio = _tiltRatio;
+    }
+
     modifier claimsRewards() {
         _claimAndProcessRewards();
         _;
@@ -93,7 +168,12 @@ constructor(
         return _getFlaxValue();
     }
 
-    function withdraw(uint256 lpAmount) external override claimsRewards returns (uint256 inputTokenAmount, uint256 flaxValue) {
+    function withdraw(uint256 lpAmount)
+        external
+        override
+        claimsRewards
+        returns (uint256 inputTokenAmount, uint256 flaxValue)
+    {
         IConvexStaking(convexStakingContract).withdraw(lpAmount);
         ICurvePool(curvePool).remove_liquidity(lpAmount, [uint256(0), 0]);
         address coin0 = ICurvePool(curvePool).coins(0);
@@ -126,8 +206,8 @@ constructor(
         if (ethBalance > 0) {
             address flax = priceTilter.flaxToken();
             uint256 twapPrice = priceTilter.getPrice(flax, weth);
-            uint256 flax_per_weth = (10**36) / twapPrice;
-            uint256 flaxForLiquidity = (ethBalance * tiltRatio / 10000 * flax_per_weth) / 10**18;
+            uint256 flax_per_weth = (10 ** 36) / twapPrice;
+            uint256 flaxForLiquidity = (ethBalance * tiltRatio / 10000 * flax_per_weth) / 10 ** 18;
             IERC20(flax).transfer(address(this), flaxForLiquidity);
             IWETH(weth).deposit{value: ethBalance}();
             IERC20(flax).approve(address(priceTilter), flaxForLiquidity);
@@ -136,13 +216,13 @@ constructor(
         }
     }
 
-    function _getFlaxValue() private  returns (uint256) {
+    function _getFlaxValue() private returns (uint256) {
         uint256 ethBalance = address(this).balance;
         if (ethBalance == 0) return 0;
         address flax = priceTilter.flaxToken();
         uint256 twapPrice = priceTilter.getPrice(flax, weth);
-        uint256 flax_per_weth = (10**36) / twapPrice;
-        return (ethBalance * flax_per_weth) / 10**18;
+        uint256 flax_per_weth = (10 ** 36) / twapPrice;
+        return (ethBalance * flax_per_weth) / 10 ** 18;
     }
 
     function swapTokenToToken(address fromToken, address toToken, uint256 amountIn, uint256 minAmountOut) internal {
@@ -151,11 +231,7 @@ constructor(
         path[0] = fromToken;
         path[1] = toToken;
         IUniswapV2Router02(uniswapRouter).swapExactTokensForTokens(
-            amountIn,
-            minAmountOut,
-            path,
-            address(this),
-            block.timestamp + 300
+            amountIn, minAmountOut, path, address(this), block.timestamp + 300
         );
     }
 
@@ -164,13 +240,7 @@ constructor(
         address[] memory path = new address[](2);
         path[0] = token;
         path[1] = weth;
-        IUniswapV2Router02(uniswapRouter).swapExactTokensForETH(
-            amountIn,
-            0,
-            path,
-            address(this),
-            block.timestamp + 300
-        );
+        IUniswapV2Router02(uniswapRouter).swapExactTokensForETH(amountIn, 0, path, address(this), block.timestamp + 300);
     }
 
     receive() external payable {}

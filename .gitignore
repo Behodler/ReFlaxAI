@@ -8,10 +8,12 @@ out/
 /broadcast/**/dry-run/
 
 # Docs
-docs/
+docs/s
 
 # Dotenv file
 .env
 lib/
+
+metascripts/
 
 TODO.md

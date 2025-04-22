@@ -189,28 +189,6 @@ contract Vault is Ownable {
             inputToken.transfer(msg.sender, amount);
         }
         emit Withdrawn(msg.sender, amount);
-
-        /*
-        if (received > amount) {
-    surplusInputToken += received - amount;
-    inputToken.transfer(msg.sender, amount);
-        } else if (received < amount) {
-    uint256 shortfall = amount - received;
-    if (surplusInputToken >= shortfall) {
-        surplusInputToken -= shortfall;
-        inputToken.transfer(msg.sender, amount);
-    } else if (protectLoss) {
-        revert("Shortfall exceeds surplus");
-    } else {
-        inputToken.transfer(msg.sender, received);
-        emit Withdrawn(msg.sender, received); // Suggested change
-        return; // Avoid emitting below
-    }
-        } else {
-    inputToken.transfer(msg.sender, amount);
-        }
-        emit Withdrawn(msg.sender, amount);
-        */
     }
 
     /**

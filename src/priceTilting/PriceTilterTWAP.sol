@@ -1,31 +1,39 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
+
 import "@oz_reflax/contracts/access/Ownable.sol";
-import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import {TWAPOracle, IUniswapV2Pair} from "./TWAPOracle.sol";
-import "../external/UniswapV2.sol";
+import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
+import "../priceTilting/IOracle.sol";
+
+import {IUniswapV2Router02} from "@uniswap_reflax/periphery/interfaces/IUniswapV2Router02.sol";
+import {IUniswapV2Factory} from "@uniswap_reflax/core/interfaces/IUniswapV2Factory.sol";
+import {IUniswapV2Pair} from "@uniswap_reflax/core/interfaces/IUniswapV2Pair.sol";
 
 contract PriceTilter is Ownable {
     IUniswapV2Factory public factory;
     IUniswapV2Router02 public router;
     IERC20 public flaxToken;
-    TWAPOracle public twapOracle;
+    IOracle public oracle;
 
     mapping(address => bool) public isPairRegistered;
 
     event PairRegistered(address indexed tokenA, address indexed tokenB, address pair);
 
-    constructor(address _factory, address _router, address _flaxToken, address _twapOracle) Ownable(msg.sender) {
+    constructor(
+        address _factory,
+        address _router,
+        address _flaxToken,
+        address _oracle
+    ) Ownable(msg.sender) {
         require(_factory != address(0), "Invalid factory address");
         require(_router != address(0), "Invalid router address");
         require(_flaxToken != address(0), "Invalid Flax token address");
-        require(_twapOracle != address(0), "Invalid TWAP oracle address");
+        require(_oracle != address(0), "Invalid oracle address");
         factory = IUniswapV2Factory(_factory);
         router = IUniswapV2Router02(_router);
         flaxToken = IERC20(_flaxToken);
-        twapOracle = TWAPOracle(_twapOracle);
+        oracle = IOracle(_oracle);
     }
-
 
     /**
      * @notice Registers a Uniswap V2 pair for TWAP calculations.
@@ -41,14 +49,14 @@ contract PriceTilter is Ownable {
         require(!isPairRegistered[pair], "Pair already registered");
 
         isPairRegistered[pair] = true;
-        twapOracle.initializePair(pair);
+        oracle.update(tokenA, tokenB); // Initialize pair in TWAPOracle
 
         emit PairRegistered(tokenA, tokenB, pair);
     }
 
     /**
      * @notice Retrieves the TWAP-based price of tokenA in terms of tokenB.
-     * @dev May update TWAP oracle state.
+     * @dev Updates TWAP oracle state and returns price for 1e18 tokenA.
      * @param tokenA The first token in the pair.
      * @param tokenB The second token in the pair.
      * @return The TWAP price as a uint256.
@@ -57,13 +65,13 @@ contract PriceTilter is Ownable {
         address pair = factory.getPair(tokenA, tokenB);
         require(isPairRegistered[pair], "Pair not registered");
 
-        twapOracle.updateTWAP(pair);
+        oracle.update(tokenA, tokenB);
 
         address token0 = IUniswapV2Pair(pair).token0();
         if (token0 == tokenA) {
-            return twapOracle.getPrice0(pair);
+            return oracle.consult(tokenA, tokenB, 1e18);
         } else {
-            return twapOracle.getPrice1(pair);
+            return oracle.consult(tokenA, tokenB, 1e18);
         }
     }
 
@@ -101,4 +109,28 @@ contract PriceTilter is Ownable {
         );
     }
 
-   }
+    /**
+     * @notice Tilts the price by returning Flax value for ETH amount.
+     * @param token The token to tilt (expected to be flaxToken).
+     * @param ethAmount The amount of ETH received.
+     * @return The Flax value based on TWAP price.
+     */
+    function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {
+        require(token == address(flaxToken), "Invalid token");
+        require(msg.value == ethAmount, "ETH amount mismatch");
+
+        address pair = factory.getPair(address(flaxToken), router.WETH());
+        require(isPairRegistered[pair], "Flax-WETH pair not registered");
+
+        oracle.update(address(flaxToken), router.WETH());
+
+        // Get TWAP price of Flax in ETH (amount of ETH for 1e18 Flax)
+        uint256 ethPerFlax = oracle.consult(address(flaxToken), router.WETH(), 1e18);
+        require(ethPerFlax > 0, "Invalid TWAP price");
+
+        // Calculate Flax value: ethAmount / ethPerFlax * 1e18
+        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;
+
+        return flaxValue;
+    }
+}

@@ -1,32 +1,38 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Ownable} from "@oz_reflax/contracts/access/Ownable.sol";
 import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import {AYieldSource} from "../yieldSource/AYieldSource.sol";
+import {SafeERC20} from "@oz_reflax/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Ownable} from "@oz_reflax/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "@oz_reflax/contracts/utils/ReentrancyGuard.sol";
 import {IPriceTilter} from "../priceTilting/IPriceTilter.sol";
 
-contract Vault is Ownable {
-    IERC20 public flaxToken;
-    IERC20 public sFlaxToken;
-    IERC20 public inputToken;
-    AYieldSource public yieldSource;
-    IPriceTilter public priceTilter;
+interface IYieldsSource {
+    function deposit(uint256 amount) external returns (uint256);
+    function withdraw(uint256 amount) external returns (uint256 inputTokenAmount, uint256 flaxValue);
+    function claimRewards() external returns (uint256);
+    function claimAndSellForInputToken() external returns (uint256 inputTokenAmount);
+}
 
-    uint256 public tiltRatio;
+contract Vault is Ownable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
+    IERC20 public immutable inputToken;
+    IERC20 public immutable flaxToken;
+    IERC20 public immutable sFlaxToken;
+    address public yieldSource;
+    address public immutable priceTilter;
     uint256 public flaxPerSFlax;
     uint256 public totalDeposits;
-    mapping(address => uint256) public originalDeposits;
     uint256 public surplusInputToken;
+    mapping(address => uint256) public originalDeposits;
 
-    event TiltRatioUpdated(uint256 newRatio);
-    event FlaxPerSFlaxUpdated(uint256 newRatio);
     event Deposited(address indexed user, uint256 amount);
     event RewardsClaimed(address indexed user, uint256 flaxAmount);
-    event Withdrawn(address indexed user, uint256 amount);
     event SFlaxBurned(address indexed user, uint256 sFlaxAmount, uint256 flaxRewarded);
-    event SurplusTilted(uint256 inputTokenAmount, uint256 flaxTransferred);
-    event YieldSourceMigrated(address newYieldSource);
+    event Withdrawn(address indexed user, uint256 amount);
+    event FlaxPerSFlaxUpdated(uint256 newRatio);
+    event YieldSourceMigrated(address indexed oldYieldSource, address indexed newYieldSource);
 
     constructor(
         address _flaxToken,
@@ -35,119 +41,28 @@ contract Vault is Ownable {
         address _yieldSource,
         address _priceTilter
     ) Ownable(msg.sender) {
-        require(_flaxToken.code.length > 0, "Invalid flaxToken");
-        (bool success,) = _flaxToken.call(abi.encodeWithSignature("transfer(address,uint256)", address(0), 0));
-        require(success, "flaxToken transfer not supported");
-
-        require(_sFlaxToken.code.length > 0, "Invalid sFlaxToken");
-        (success,) = _sFlaxToken.call(
-            abi.encodeWithSignature("transferFrom(address,address,uint256)", address(0), address(0), 0)
-        );
-        require(success, "sFlaxToken transferFrom not supported");
-        (success,) = _sFlaxToken.call(abi.encodeWithSignature("burn(uint256)", 0));
-        require(success, "sFlaxToken burn not supported");
-
-        require(_inputToken.code.length > 0, "Invalid inputToken");
-        (success,) = _inputToken.call(
-            abi.encodeWithSignature("transferFrom(address,address,uint256)", address(0), address(0), 0)
-        );
-        require(success, "inputToken transferFrom not supported");
-        (success,) = _inputToken.call(abi.encodeWithSignature("approve(address,uint256)", address(0), 0));
-        require(success, "inputToken approve not supported");
-        (success,) = _inputToken.call(abi.encodeWithSignature("balanceOf(address)", address(0)));
-        require(success, "inputToken balanceOf not supported");
-
-        require(_yieldSource.code.length > 0, "Invalid yieldSource");
-        (success,) = _yieldSource.call(abi.encodeWithSignature("deposit(uint256)", 0));
-        require(success, "yieldSource deposit not supported");
-        (success,) = _yieldSource.call(abi.encodeWithSignature("claimRewards()"));
-        require(success, "yieldSource claimRewards not supported");
-        (success,) = _yieldSource.call(abi.encodeWithSignature("withdraw(uint256)", 0));
-        require(success, "yieldSource withdraw not supported");
-
-        require(_priceTilter.code.length > 0, "Invalid priceTilter");
-        (success,) = _priceTilter.call(abi.encodeWithSignature("tiltPrice(address,uint256)", address(0), 0));
-        require(success, "priceTilter tiltPrice not supported");
-
         flaxToken = IERC20(_flaxToken);
         sFlaxToken = IERC20(_sFlaxToken);
         inputToken = IERC20(_inputToken);
-        yieldSource = AYieldSource(_yieldSource);
-        priceTilter = IPriceTilter(_priceTilter);
-        tiltRatio = 5000;
-        flaxPerSFlax = 0;
+        yieldSource = _yieldSource;
+        priceTilter = _priceTilter;
     }
 
-    /**
-     * @notice Sets the tilt ratio for price tilting.
-     * @dev Only callable by the owner.
-     * @param ratio The new tilt ratio in basis points (0-10000).
-     */
-    function setTiltRatio(uint256 ratio) external onlyOwner {
-        require(ratio <= 10000, "Ratio must be <= 10000 bps");
-        tiltRatio = ratio;
-        emit TiltRatioUpdated(ratio);
-    }
-
-    /**
-     * @notice Sets the Flax reward rate per sFlax.
-     * @dev Only callable by the owner.
-     * @param ratio The new Flax per sFlax ratio.
-     */
-    function setFlaxPerSFlax(uint256 ratio) external onlyOwner {
-        flaxPerSFlax = ratio;
-        emit FlaxPerSFlaxUpdated(ratio);
-    }
-
-    /**
-     * @notice Deposits inputToken into the vault and stakes it in the yield source.
-     * @param amount The amount of inputToken to deposit.
-     */
-    function deposit(uint256 amount) external {
-        require(amount > 0, "Amount must be > 0");
-        inputToken.transferFrom(msg.sender, address(this), amount);
-        inputToken.approve(address(yieldSource), amount);
-        yieldSource.deposit(amount);
+    function deposit(uint256 amount) external nonReentrant {
+        inputToken.safeTransferFrom(msg.sender, address(this), amount);
+        inputToken.approve(yieldSource, amount);
+        uint256 received = IYieldsSource(yieldSource).deposit(amount);
         originalDeposits[msg.sender] += amount;
         totalDeposits += amount;
         emit Deposited(msg.sender, amount);
     }
 
-    /**
-     * @notice Claims rewards from the yield source and optionally boosts with sFlax.
-     * @param sFlaxAmount The amount of sFlax to use for boosting rewards.
-     */
-    function claimRewards(uint256 sFlaxAmount) external {
-        uint256 flaxValue = yieldSource.claimRewards();
-        uint256 totalFlax = flaxValue;
-
-        if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
-            uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
-            sFlaxToken.transferFrom(msg.sender, address(this), sFlaxAmount);
-            (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
-            require(success, "sFlax burn failed");
-            totalFlax += flaxBoost;
-            emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
-        }
-
-        if (totalFlax > 0) {
-            flaxToken.transfer(msg.sender, totalFlax);
-            emit RewardsClaimed(msg.sender, totalFlax);
-        }
-    }
-
-    /**
-     * @notice Withdraws inputToken from the vault, optionally using sFlax for boosted rewards.
-     * @param amount The amount of inputToken to withdraw.
-     * @param protectLoss If true, reverts if there's a shortfall not covered by surplus.
-     * @param sFlaxAmount The amount of sFlax to use for boosting rewards.
-     */
-    function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external {
+    function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external nonReentrant {
         require(canWithdraw(), "Withdrawal not allowed");
         require(originalDeposits[msg.sender] >= amount, "Insufficient deposit");
 
         uint256 balanceBefore = inputToken.balanceOf(address(this));
-        (uint256 received, uint256 flaxValue) = yieldSource.withdraw(amount);
+        (uint256 received, uint256 flaxValue) = IYieldsSource(yieldSource).withdraw(amount);
         uint256 balanceAfter = inputToken.balanceOf(address(this));
         require(balanceAfter >= balanceBefore + received, "Balance mismatch");
 
@@ -155,7 +70,7 @@ contract Vault is Ownable {
 
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
             uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
-            sFlaxToken.transferFrom(msg.sender, address(this), sFlaxAmount);
+            sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount);
             (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
             require(success, "sFlax burn failed");
             totalFlax += flaxBoost;
@@ -163,7 +78,7 @@ contract Vault is Ownable {
         }
 
         if (totalFlax > 0) {
-            flaxToken.transfer(msg.sender, totalFlax);
+            flaxToken.safeTransfer(msg.sender, totalFlax);
             emit RewardsClaimed(msg.sender, totalFlax);
         }
 
@@ -172,74 +87,80 @@ contract Vault is Ownable {
 
         if (received > amount) {
             surplusInputToken += received - amount;
-            inputToken.transfer(msg.sender, amount);
+            inputToken.safeTransfer(msg.sender, amount);
         } else if (received < amount) {
             uint256 shortfall = amount - received;
             if (surplusInputToken >= shortfall) {
                 surplusInputToken -= shortfall;
-                inputToken.transfer(msg.sender, amount);
+                inputToken.safeTransfer(msg.sender, amount);
             } else if (protectLoss) {
                 revert("Shortfall exceeds surplus");
             } else {
-                inputToken.transfer(msg.sender, received);
-                emit Withdrawn(msg.sender, received); // Suggested change
-                return; // Avoid emitting below
+                inputToken.safeTransfer(msg.sender, received);
+                emit Withdrawn(msg.sender, received);
+                return;
             }
         } else {
-            inputToken.transfer(msg.sender, amount);
+            inputToken.safeTransfer(msg.sender, amount);
         }
+
         emit Withdrawn(msg.sender, amount);
     }
 
-    /**
-     * @notice Checks if withdrawals are allowed.
-     * @return True if withdrawals are allowed, false otherwise.
-     */
-    function canWithdraw() public view virtual returns (bool) {
-        return true;
-    }
+    function claimRewards(uint256 sFlaxAmount) external nonReentrant {
+        uint256 flaxValue = IYieldsSource(yieldSource).claimRewards();
+        uint256 totalFlax = flaxValue;
 
-    /**
-     * @notice Uses surplus inputToken to tilt the price via PriceTilter.
-     * @dev Only callable by the owner.
-     */
-    function tiltSurplus() external onlyOwner {
-        uint256 inputTokenAmount = surplusInputToken / 2;
-        require(inputTokenAmount > 0, "No surplus to tilt");
-
-        uint256 flaxToTransfer = (inputTokenAmount * tiltRatio) / 10000;
-        flaxToken.transfer(address(this), flaxToTransfer);
-        surplusInputToken -= inputTokenAmount;
-
-        priceTilter.tiltPrice(address(inputToken), inputTokenAmount);
-
-        emit SurplusTilted(inputTokenAmount, flaxToTransfer);
-    }
-
-    /**
-     * @notice Migrates to a new yield source, transferring all deposits.
-     * @dev Only callable by the owner.
-     * @param newYieldSource The address of the new yield source.
-     */
-    function migrateYieldSource(address newYieldSource) external onlyOwner {
-        require(newYieldSource.code.length > 0, "Invalid newYieldSource");
-        (bool success,) = newYieldSource.call(abi.encodeWithSignature("deposit(uint256)", 0));
-        require(success, "newYieldSource deposit not supported");
-
-        if (totalDeposits > 0) {
-            (uint256 received, uint256 flaxValue) = yieldSource.withdraw(totalDeposits);
-            require(received >= totalDeposits, "Withdrawal incomplete");
-
-            inputToken.approve(newYieldSource, received);
-            uint256 deposited = AYieldSource(newYieldSource).deposit(received);
-            require(deposited == received, "Deposit incomplete");
-
-            if (flaxValue > 0) {
-                flaxToken.transfer(msg.sender, flaxValue);
-            }
+        if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
+            uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
+            sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount);
+            (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
+            require(success, "sFlax burn failed");
+            totalFlax += flaxBoost;
+            emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
         }
 
-        yieldSource = AYieldSource(newYieldSource);
-        emit YieldSourceMigrated(newYieldSource);
+        if (totalFlax > 0) {
+            flaxToken.safeTransfer(msg.sender, totalFlax);
+            emit RewardsClaimed(msg.sender, totalFlax);
+        }
+    }
+
+    function setFlaxPerSFlax(uint256 _flaxPerSFlax) external onlyOwner {
+        flaxPerSFlax = _flaxPerSFlax;
+        emit FlaxPerSFlaxUpdated(_flaxPerSFlax);
+    }
+
+    function migrateYieldSource(address newYieldSource) external onlyOwner nonReentrant {
+        address oldYieldSource = yieldSource;
+
+        // Claim and sell rewards for inputToken
+        uint256 inputTokenAmount = IYieldsSource(oldYieldSource).claimAndSellForInputToken();
+        if (inputTokenAmount > 0) {
+            surplusInputToken += inputTokenAmount;
+        }
+
+        // Withdraw all funds
+        uint256 amount = totalDeposits;
+        if (amount > 0) {
+            (uint256 received, ) = IYieldsSource(oldYieldSource).withdraw(amount);
+            totalDeposits = 0;
+            surplusInputToken += received;
+        }
+
+        // Deposit into new yieldSource
+        if (surplusInputToken > 0) {
+            inputToken.approve(newYieldSource, surplusInputToken);
+            uint256 received = IYieldsSource(newYieldSource).deposit(surplusInputToken);
+            totalDeposits = received;
+            surplusInputToken = 0;
+        }
+
+        yieldSource = newYieldSource;
+        emit YieldSourceMigrated(oldYieldSource, newYieldSource);
+    }
+
+    function canWithdraw() public view returns (bool) {
+        return true; // Placeholder
     }
 }

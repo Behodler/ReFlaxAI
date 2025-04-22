@@ -3,94 +3,88 @@ pragma solidity ^0.8.20;
 
 import "@oz_reflax/contracts/access/Ownable.sol";
 import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import "../external/UniswapV2.sol";
+import "@uniswap_reflax/core/interfaces/IUniswapV2Pair.sol";
+import "@uniswap_reflax/core/interfaces/IUniswapV2Factory.sol";
+import "@uniswap_reflax/periphery/lib/FixedPoint.sol";
+import "../priceTilting/IOracle.sol";
 
-contract TWAPOracle is Ownable {
-    uint256 public sampleInterval;
+contract TWAPOracle is IOracle, Ownable {
+    using FixedPoint for FixedPoint.uq112x112;
+    using FixedPoint for FixedPoint.uq144x112;
 
-    struct TWAPData {
-        uint256 price0CumulativeLast;
-        uint256 price1CumulativeLast;
-        uint32 lastBlockTimestamp;
-        uint256 price0Average;
-        uint256 price1Average;
+    address public immutable factory;
+    address public immutable WETH;
+    uint256 public constant PERIOD = 1 hours; // TWAP period
+
+    struct PairMeasurement {
+        FixedPoint.uq112x112 price0Average;
+        FixedPoint.uq112x112 price1Average;
         uint256 lastUpdateTimestamp;
     }
 
-    mapping(address => TWAPData) public twapData;
+    mapping(address => PairMeasurement) public pairMeasurements;
 
-    event SampleIntervalUpdated(uint256 newInterval);
-    event PairInitialized(address indexed pair);
-    event TWAPUpdated(address indexed pair, uint256 price0Average, uint256 price1Average);
+    event PairUpdated(address indexed pair, uint256 price0Average, uint256 price1Average);
 
-    constructor(uint256 _sampleInterval) Ownable(msg.sender) {
-        require(_sampleInterval > 0, "Invalid sample interval");
-        sampleInterval = _sampleInterval;
+    constructor(address _factory, address _WETH) Ownable(msg.sender) {
+        factory = _factory;
+        WETH = _WETH;
     }
 
-    function setSampleInterval(uint256 _sampleInterval) external onlyOwner {
-        require(_sampleInterval > 0, "Invalid sample interval");
-        sampleInterval = _sampleInterval;
-        emit SampleIntervalUpdated(_sampleInterval);
+    modifier validPair(address tokenIn, address tokenOut) {
+        address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);
+        require(pair != address(0), "Invalid pair");
+        require(pairMeasurements[pair].lastUpdateTimestamp != 0, "Pair not initialized");
+        _;
     }
 
-    function initializePair(address pair) external onlyOwner {
-        require(pair != address(0), "Invalid pair address");
-        require(twapData[pair].lastUpdateTimestamp == 0, "Pair already initialized");
+    function update(address tokenA, address tokenB) external onlyOwner {
+        address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+        require(pair != address(0), "Invalid pair");
 
-        IUniswapV2Pair uniswapPair = IUniswapV2Pair(pair);
-        (,, uint32 blockTimestampLast) = uniswapPair.getReserves();
+        PairMeasurement storage measurement = pairMeasurements[pair];
+        IUniswapV2Pair pairContract = IUniswapV2Pair(pair);
 
-        twapData[pair] = TWAPData({
-            price0CumulativeLast: uniswapPair.price0CumulativeLast(),
-            price1CumulativeLast: uniswapPair.price1CumulativeLast(),
-            lastBlockTimestamp: blockTimestampLast,
-            price0Average: 0,
-            price1Average: 0,
-            lastUpdateTimestamp: block.timestamp
-        });
+        (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast) = pairContract.getReserves();
+        uint256 price0Cumulative = pairContract.price0CumulativeLast();
+        uint256 price1Cumulative = pairContract.price1CumulativeLast();
 
-        emit PairInitialized(pair);
-    }
+        if (measurement.lastUpdateTimestamp == 0) {
+            measurement.lastUpdateTimestamp = blockTimestampLast;
+            return;
+        }
 
-    function updateTWAP(address pair) external {
-        TWAPData storage data = twapData[pair];
-        require(data.lastUpdateTimestamp != 0, "Pair not initialized");
-
-        uint256 timeElapsed = block.timestamp - data.lastUpdateTimestamp;
-        if (timeElapsed >= sampleInterval * 60) {
-            IUniswapV2Pair uniswapPair = IUniswapV2Pair(pair);
-            (,, uint32 blockTimestampLast) = uniswapPair.getReserves();
-
-            uint256 price0Cumulative = uniswapPair.price0CumulativeLast();
-            uint256 price1Cumulative = uniswapPair.price1CumulativeLast();
-
-            uint32 timeElapsedSinceLast = blockTimestampLast - data.lastBlockTimestamp;
-            if (timeElapsedSinceLast > 0) {
-                uint256 price0Average = (price0Cumulative - data.price0CumulativeLast) / timeElapsedSinceLast;
-                uint256 price1Average = (price1Cumulative - data.price1CumulativeLast) / timeElapsedSinceLast;
-
-                data.price0Average = price0Average;
-                data.price1Average = price1Average;
-                data.price0CumulativeLast = price0Cumulative;
-                data.price1CumulativeLast = price1Cumulative;
-                data.lastBlockTimestamp = blockTimestampLast;
-                data.lastUpdateTimestamp = block.timestamp;
-
-                emit TWAPUpdated(pair, price0Average, price1Average);
-            }
+        uint32 timeElapsed = blockTimestampLast - uint32(measurement.lastUpdateTimestamp);
+        if (timeElapsed >= PERIOD) {
+            measurement.price0Average = FixedPoint.uq112x112(
+                uint224((price0Cumulative - measurement.lastUpdateTimestamp) / timeElapsed)
+            );
+            measurement.price1Average = FixedPoint.uq112x112(
+                uint224((price1Cumulative - measurement.lastUpdateTimestamp) / timeElapsed)
+            );
+            measurement.lastUpdateTimestamp = blockTimestampLast;
+            emit PairUpdated(pair, measurement.price0Average._x, measurement.price1Average._x);
         }
     }
 
-    function getPrice0(address pair) external view returns (uint256) {
-        TWAPData storage data = twapData[pair];
-        require(data.lastUpdateTimestamp != 0, "Pair not initialized");
-        return data.price0Average;
-    }
+    function consult(address tokenIn, address tokenOut, uint256 amountIn)
+        external
+        view
+        validPair(tokenIn, tokenOut)
+        returns (uint256 amountOut)
+    {
+        tokenOut = tokenOut == address(0) ? WETH : tokenOut;
+        address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);
+        PairMeasurement memory measurement = pairMeasurements[pair];
+        IUniswapV2Pair pairContract = IUniswapV2Pair(pair);
 
-    function getPrice1(address pair) external view returns (uint256) {
-        TWAPData storage data = twapData[pair];
-        require(data.lastUpdateTimestamp != 0, "Pair not initialized");
-        return data.price1Average;
+        if (tokenIn == pairContract.token0()) {
+            amountOut = (measurement.price0Average.mul(amountIn)).decode144();
+        } else {
+            require(tokenIn == pairContract.token1(), "Invalid token");
+            amountOut = (measurement.price1Average.mul(amountIn)).decode144();
+        }
+
+        require(amountOut > 0, "Zero output");
     }
 }

@@ -78,31 +78,31 @@ contract Vault is Ownable {
         flaxPerSFlax = 0;
     }
 
-/**
- * @notice Sets the tilt ratio for price tilting.
- * @dev Only callable by the owner.
- * @param ratio The new tilt ratio in basis points (0-10000).
- */
+    /**
+     * @notice Sets the tilt ratio for price tilting.
+     * @dev Only callable by the owner.
+     * @param ratio The new tilt ratio in basis points (0-10000).
+     */
     function setTiltRatio(uint256 ratio) external onlyOwner {
         require(ratio <= 10000, "Ratio must be <= 10000 bps");
         tiltRatio = ratio;
         emit TiltRatioUpdated(ratio);
     }
 
-/**
- * @notice Sets the Flax reward rate per sFlax.
- * @dev Only callable by the owner.
- * @param ratio The new Flax per sFlax ratio.
- */
+    /**
+     * @notice Sets the Flax reward rate per sFlax.
+     * @dev Only callable by the owner.
+     * @param ratio The new Flax per sFlax ratio.
+     */
     function setFlaxPerSFlax(uint256 ratio) external onlyOwner {
         flaxPerSFlax = ratio;
         emit FlaxPerSFlaxUpdated(ratio);
     }
 
-/**
- * @notice Deposits inputToken into the vault and stakes it in the yield source.
- * @param amount The amount of inputToken to deposit.
- */
+    /**
+     * @notice Deposits inputToken into the vault and stakes it in the yield source.
+     * @param amount The amount of inputToken to deposit.
+     */
     function deposit(uint256 amount) external {
         require(amount > 0, "Amount must be > 0");
         inputToken.transferFrom(msg.sender, address(this), amount);
@@ -113,10 +113,10 @@ contract Vault is Ownable {
         emit Deposited(msg.sender, amount);
     }
 
-/**
- * @notice Claims rewards from the yield source and optionally boosts with sFlax.
- * @param sFlaxAmount The amount of sFlax to use for boosting rewards.
- */
+    /**
+     * @notice Claims rewards from the yield source and optionally boosts with sFlax.
+     * @param sFlaxAmount The amount of sFlax to use for boosting rewards.
+     */
     function claimRewards(uint256 sFlaxAmount) external {
         uint256 flaxValue = yieldSource.claimRewards();
         uint256 totalFlax = flaxValue;
@@ -136,12 +136,12 @@ contract Vault is Ownable {
         }
     }
 
-/**
- * @notice Withdraws inputToken from the vault, optionally using sFlax for boosted rewards.
- * @param amount The amount of inputToken to withdraw.
- * @param protectLoss If true, reverts if there's a shortfall not covered by surplus.
- * @param sFlaxAmount The amount of sFlax to use for boosting rewards.
- */
+    /**
+     * @notice Withdraws inputToken from the vault, optionally using sFlax for boosted rewards.
+     * @param amount The amount of inputToken to withdraw.
+     * @param protectLoss If true, reverts if there's a shortfall not covered by surplus.
+     * @param sFlaxAmount The amount of sFlax to use for boosting rewards.
+     */
     function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external {
         require(canWithdraw(), "Withdrawal not allowed");
         require(originalDeposits[msg.sender] >= amount, "Insufficient deposit");
@@ -182,26 +182,49 @@ contract Vault is Ownable {
                 revert("Shortfall exceeds surplus");
             } else {
                 inputToken.transfer(msg.sender, received);
+                emit Withdrawn(msg.sender, received); // Suggested change
+                return; // Avoid emitting below
             }
         } else {
             inputToken.transfer(msg.sender, amount);
         }
-
         emit Withdrawn(msg.sender, amount);
+
+        /*
+        if (received > amount) {
+    surplusInputToken += received - amount;
+    inputToken.transfer(msg.sender, amount);
+        } else if (received < amount) {
+    uint256 shortfall = amount - received;
+    if (surplusInputToken >= shortfall) {
+        surplusInputToken -= shortfall;
+        inputToken.transfer(msg.sender, amount);
+    } else if (protectLoss) {
+        revert("Shortfall exceeds surplus");
+    } else {
+        inputToken.transfer(msg.sender, received);
+        emit Withdrawn(msg.sender, received); // Suggested change
+        return; // Avoid emitting below
+    }
+        } else {
+    inputToken.transfer(msg.sender, amount);
+        }
+        emit Withdrawn(msg.sender, amount);
+        */
     }
 
-/**
- * @notice Checks if withdrawals are allowed.
- * @return True if withdrawals are allowed, false otherwise.
- */
+    /**
+     * @notice Checks if withdrawals are allowed.
+     * @return True if withdrawals are allowed, false otherwise.
+     */
     function canWithdraw() public view virtual returns (bool) {
         return true;
     }
 
-/**
- * @notice Uses surplus inputToken to tilt the price via PriceTilter.
- * @dev Only callable by the owner.
- */
+    /**
+     * @notice Uses surplus inputToken to tilt the price via PriceTilter.
+     * @dev Only callable by the owner.
+     */
     function tiltSurplus() external onlyOwner {
         uint256 inputTokenAmount = surplusInputToken / 2;
         require(inputTokenAmount > 0, "No surplus to tilt");
@@ -215,11 +238,11 @@ contract Vault is Ownable {
         emit SurplusTilted(inputTokenAmount, flaxToTransfer);
     }
 
-/**
- * @notice Migrates to a new yield source, transferring all deposits.
- * @dev Only callable by the owner.
- * @param newYieldSource The address of the new yield source.
- */
+    /**
+     * @notice Migrates to a new yield source, transferring all deposits.
+     * @dev Only callable by the owner.
+     * @param newYieldSource The address of the new yield source.
+     */
     function migrateYieldSource(address newYieldSource) external onlyOwner {
         require(newYieldSource.code.length > 0, "Invalid newYieldSource");
         (bool success,) = newYieldSource.call(abi.encodeWithSignature("deposit(uint256)", 0));

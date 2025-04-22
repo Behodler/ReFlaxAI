@@ -36,8 +36,15 @@ contract MockERC20 {
 contract MockYieldSource {
     uint256 public totalDeposited;
     uint256 public flaxValueToReturn;
+    uint256 public inputTokenToReturn;
+    MockERC20 public inputToken; // Added to enable transfer
 
-    function setFlaxValue(uint256 _flaxValue) external {
+    constructor(address _inputToken) {
+        inputToken = MockERC20(_inputToken);
+    }
+
+    function setReturnValues(uint256 _inputTokenAmount, uint256 _flaxValue) external {
+        inputTokenToReturn = _inputTokenAmount;
         flaxValueToReturn = _flaxValue;
     }
 
@@ -51,13 +58,13 @@ contract MockYieldSource {
     }
 
     function withdraw(uint256 amount) external returns (uint256 inputTokenAmount, uint256 flaxValue) {
-        return (amount, flaxValueToReturn);
+        inputToken.transfer(msg.sender, inputTokenToReturn); // Transfer inputToken
+        return (inputTokenToReturn, flaxValueToReturn);
     }
 }
 
 contract MockPriceTilter {
     function tiltPrice(address token, uint256 amount) external {}
-    // Placeholder for other functions if needed later
     function flaxToken() external view returns (address) { return address(0); }
     function getPrice(address tokenA, address tokenB) external returns (uint256) { return 0; }
     function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external {}

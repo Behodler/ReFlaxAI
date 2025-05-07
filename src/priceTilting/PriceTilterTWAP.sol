@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import "@oz_reflax/contracts/access/Ownable.sol";
 import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import "../priceTilting/IOracle.sol";
-
 import {IUniswapV2Router02} from "@uniswap_reflax/periphery/interfaces/IUniswapV2Router02.sol";
 import {IUniswapV2Factory} from "@uniswap_reflax/core/interfaces/IUniswapV2Factory.sol";
 import {IUniswapV2Pair} from "@uniswap_reflax/core/interfaces/IUniswapV2Pair.sol";
@@ -14,10 +13,13 @@ contract PriceTilter is Ownable {
     IUniswapV2Router02 public router;
     IERC20 public flaxToken;
     IOracle public oracle;
+    uint256 public priceTiltRatio; // In basis points (e.g., 8000 = 80%)
 
     mapping(address => bool) public isPairRegistered;
 
     event PairRegistered(address indexed tokenA, address indexed tokenB, address pair);
+    event PriceTiltRatioUpdated(uint256 newRatio);
+    event LiquidityAdded(address indexed pair, uint256 amountFlax, uint256 amountETH);
 
     constructor(
         address _factory,
@@ -33,14 +35,15 @@ contract PriceTilter is Ownable {
         router = IUniswapV2Router02(_router);
         flaxToken = IERC20(_flaxToken);
         oracle = IOracle(_oracle);
+        priceTiltRatio = 8000; // Default: 80%
     }
 
-    /**
-     * @notice Registers a Uniswap V2 pair for TWAP calculations.
-     * @dev Only callable by the owner.
-     * @param tokenA The first token in the pair.
-     * @param tokenB The second token in the pair.
-     */
+    function setPriceTiltRatio(uint256 newRatio) external onlyOwner {
+        require(newRatio <= 10000, "Ratio exceeds 100%");
+        priceTiltRatio = newRatio;
+        emit PriceTiltRatioUpdated(newRatio);
+    }
+
     function registerPair(address tokenA, address tokenB) external onlyOwner {
         require(tokenA != address(0) && tokenB != address(0), "Invalid token address");
         require(tokenA != tokenB, "Tokens must be different");
@@ -49,18 +52,11 @@ contract PriceTilter is Ownable {
         require(!isPairRegistered[pair], "Pair already registered");
 
         isPairRegistered[pair] = true;
-        oracle.update(tokenA, tokenB); // Initialize pair in TWAPOracle
+        oracle.update(tokenA, tokenB);
 
         emit PairRegistered(tokenA, tokenB, pair);
     }
 
-    /**
-     * @notice Retrieves the TWAP-based price of tokenA in terms of tokenB.
-     * @dev Updates TWAP oracle state and returns price for 1e18 tokenA.
-     * @param tokenA The first token in the pair.
-     * @param tokenB The second token in the pair.
-     * @return The TWAP price as a uint256.
-     */
     function getPrice(address tokenA, address tokenB) external returns (uint256) {
         address pair = factory.getPair(tokenA, tokenB);
         require(isPairRegistered[pair], "Pair not registered");
@@ -75,62 +71,48 @@ contract PriceTilter is Ownable {
         }
     }
 
-    /**
-     * @notice Adds liquidity to a Uniswap V2 pair to influence price tilting.
-     * @param tokenA The first token in the pair.
-     * @param tokenB The second token in the pair.
-     * @param amountA The amount of tokenA to add.
-     * @param amountB The amount of tokenB to add.
-     */
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint256 amountA,
-        uint256 amountB
-    ) external {
-        address pair = factory.getPair(tokenA, tokenB);
-        require(isPairRegistered[pair], "Pair not registered");
-
-        IERC20(tokenA).transferFrom(msg.sender, address(this), amountA);
-        IERC20(tokenB).transferFrom(msg.sender, address(this), amountB);
-
-        IERC20(tokenA).approve(address(router), amountA);
-        IERC20(tokenB).approve(address(router), amountB);
-
-        router.addLiquidity(
-            tokenA,
-            tokenB,
-            amountA,
-            amountB,
-            0,
-            0,
-            address(this),
-            block.timestamp + 300
-        );
-    }
-
-    /**
-     * @notice Tilts the price by returning Flax value for ETH amount.
-     * @param token The token to tilt (expected to be flaxToken).
-     * @param ethAmount The amount of ETH received.
-     * @return The Flax value based on TWAP price.
-     */
     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {
         require(token == address(flaxToken), "Invalid token");
         require(msg.value == ethAmount, "ETH amount mismatch");
+        require(ethAmount > 0, "Zero ETH amount");
 
-        address pair = factory.getPair(address(flaxToken), router.WETH());
+        address weth = router.WETH();
+        address pair = factory.getPair(address(flaxToken), weth);
         require(isPairRegistered[pair], "Flax-WETH pair not registered");
 
-        oracle.update(address(flaxToken), router.WETH());
+        oracle.update(address(flaxToken), weth);
 
-        // Get TWAP price of Flax in ETH (amount of ETH for 1e18 Flax)
-        uint256 ethPerFlax = oracle.consult(address(flaxToken), router.WETH(), 1e18);
+        // Get TWAP price: ETH per 1e18 Flax
+        uint256 ethPerFlax = oracle.consult(address(flaxToken), weth, 1e18);
         require(ethPerFlax > 0, "Invalid TWAP price");
 
         // Calculate Flax value: ethAmount / ethPerFlax * 1e18
         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;
 
+        // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)
+        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;
+        require(flaxAmount > 0, "Zero Flax amount");
+
+        // Ensure contract has enough Flax tokens
+        require(flaxToken.balanceOf(address(this)) >= flaxAmount, "Insufficient Flax balance");
+
+        // Approve Flax tokens for router
+        flaxToken.approve(address(router), flaxAmount);
+
+        // Add liquidity using addLiquidityETH
+        router.addLiquidityETH{value: ethAmount}(
+            address(flaxToken), // Always Flax as the ERC20 token
+            flaxAmount,
+            0, // No minimum for simplicity
+            0,
+            address(this),
+            block.timestamp + 300
+        );
+
+        emit LiquidityAdded(pair, flaxAmount, ethAmount);
+
         return flaxValue;
     }
+
+    receive() external payable {}
 }

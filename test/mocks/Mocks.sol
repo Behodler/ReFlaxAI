@@ -103,12 +103,36 @@ contract MockUniswapV3Router {
         uint160 sqrtPriceLimitX96;
     }
 
-    function exactInputSingle(ExactInputSingleParams calldata params) external returns (uint256) {
+    function exactInputSingle(ExactInputSingleParams calldata params) external payable returns (uint256) {
         require(params.amountIn >= params.amountOutMinimum, "Insufficient output");
+        
+        // Handle ETH input
+        if (params.tokenIn == address(0)) {
+            require(msg.value >= params.amountIn, "Insufficient ETH sent");
+            
+            if (params.tokenOut != address(0)) {
+                // ETH to token
+                IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+            }
+            return params.amountIn;
+        }
+        
+        // Handle token input
         IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
-        IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+        
+        if (params.tokenOut == address(0)) {
+            // Token to ETH
+            payable(params.recipient).transfer(params.amountIn);
+        } else {
+            // Token to token
+            IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+        }
+        
         return params.amountIn;
     }
+    
+    // Allow receiving ETH
+    receive() external payable {}
 }
 
 // Mock Curve Pool
@@ -193,6 +217,11 @@ contract MockUniswapV2Pair {
         price0CumulativeLast += uint256(_reserve1) * 1e18 / _reserve0;
         price1CumulativeLast += uint256(_reserve0) * 1e18 / _reserve1;
     }
+    
+    function setPriceCumulativeLast(uint256 _price0CumulativeLast, uint256 _price1CumulativeLast) external {
+        price0CumulativeLast = _price0CumulativeLast;
+        price1CumulativeLast = _price1CumulativeLast;
+    }
 }
 
 // Mock Uniswap V2 Factory
@@ -207,7 +236,11 @@ contract MockUniswapV2Factory {
 
 // Mock PriceTilter
 contract MockPriceTilter {
-    function tiltPrice(address, uint256 amount) external pure returns (uint256) {
-        return amount * 2000; // Mocked value from YieldSource.t.sol
+    function tiltPrice(address, uint256 amount) external payable returns (uint256) {
+        require(msg.value >= amount, "Insufficient ETH sent");
+        return amount * 2; // Mocked value from YieldSource.t.sol
     }
+    
+    // Allow receiving ETH
+    receive() external payable {}
 }

@@ -77,6 +77,10 @@ ReFlax allows users to deposit a single input token (e.g., USDC) into yield opti
   - New tests should follow this approach, creating or extending test files (e.g., `PriceTilterTWAP.t.sol`) with mocks tailored to the contract's test requirements, added to `Mocks.sol` if shared across test files.
   - **Mock Requirements**:
     - `MockERC20` must implement a `burn(uint256)` function for tokens used as `sFlaxToken`.
+  - **Recent Test Fixes**:
+    - Fixed `testWithdraw` in `YieldSource.t.sol` by adding proper LP token approval for the Curve pool.
+    - Implemented a simple `MockOracle` for tests that don't need the full TWAP oracle functionality.
+    - Ensured proper setup of price cumulative values in the `MockUniswapV2Pair` for TWAP oracle tests.
 
 ## Specific Request
 
@@ -89,3 +93,5 @@ ReFlax allows users to deposit a single input token (e.g., USDC) into yield opti
 - ETH sent to `PriceTilter` should be used immediately for liquidity addition (no retention).
 - For new tests, prioritize isolated testing of the target contract, using minimal mocks to simulate external dependencies. Add new mocks to `Mocks.sol` if they are reusable (e.g., `MockUniswapV2Router` for `PriceTilterTWAP.t.sol`) or keep them in the test file if specific to one contract.
 - Ensure test files are named after the contract they test (e.g., `TWAPOracle.t.sol` for `TWAPOracle.sol`) and follow the structure of `Vault.t.sol` and `YieldSource.t.sol` for consistency.
+- When working with mocks that interact with Uniswap V2 pairs, ensure proper initialization of price cumulatives and reserves for TWAP calculations.
+- For Curve pool interactions, remember to properly approve LP tokens before attempting to remove liquidity.

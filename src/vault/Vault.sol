@@ -14,6 +14,10 @@ interface IYieldsSource {
     function claimAndSellForInputToken() external returns (uint256 inputTokenAmount);
 }
 
+interface IBurnableERC20 is IERC20 {
+    function burn(uint256 amount) external;
+}
+
 contract Vault is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -71,8 +75,7 @@ contract Vault is Ownable, ReentrancyGuard {
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
             uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
             sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount);
-            (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
-            require(success, "sFlax burn failed");
+            IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount);
             totalFlax += flaxBoost;
             emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
         }
@@ -114,8 +117,7 @@ contract Vault is Ownable, ReentrancyGuard {
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
             uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
             sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount);
-            (bool success,) = address(sFlaxToken).call(abi.encodeWithSignature("burn(uint256)", sFlaxAmount));
-            require(success, "sFlax burn failed");
+            IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount);
             totalFlax += flaxBoost;
             emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
         }

@@ -70,7 +70,7 @@ contract VaultTest is Test {
         vault.deposit(DEPOSIT_AMOUNT);
 
         assertEq(inputToken.balanceOf(user), 900 * 1e18, "User balance incorrect");
-        assertEq(inputToken.balanceOf(address(vault)), DEPOSIT_AMOUNT, "Vault balance incorrect");
+        assertEq(inputToken.balanceOf(address(yieldSource)), INITIAL_DEPOSIT + DEPOSIT_AMOUNT, "YieldSource balance incorrect");
         assertEq(yieldSource.totalDeposited(), DEPOSIT_AMOUNT, "YieldSource deposit incorrect");
         assertEq(vault.originalDeposits(user), DEPOSIT_AMOUNT, "originalDeposits incorrect");
         assertEq(vault.totalDeposits(), DEPOSIT_AMOUNT, "totalDeposits incorrect");

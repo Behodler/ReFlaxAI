@@ -1,10 +1,9 @@
 # ReFlax Project Assistance Prompt
 
-I’m working on an Ethereum project called ReFlax, written in Solidity and using Foundry for testing, compilation, and deployment. Below, I’ve attached the current source code and a high-level explanation of the project. My goal is to [state specific goal, e.g., add unit tests for a specific contract, debug a test, optimize gas, add a feature]. Please review the code and explanation, then [specific request, e.g., write new test cases, create mocks, suggest improvements]. If anything is unclear, ask targeted questions to clarify before proceeding.
+I’m working on an Ethereum project called ReFlax, written in Solidity and using Foundry for testing, compilation, and deployment. Below, I’ve attached the current source code and a high-level explanation of the project.
 
 ## Source Code
-
-[Attached files: `Vault.sol`, `AYieldSource.sol`, `CVX_CRV_YieldSource.sol`, `PriceTilterTWAP.sol`, `TWAPOracle.sol`, `Vault.t.sol`, `YieldSource.t.sol`, `Mocks.sol`, and relevant interfaces (`external_Curve.sol`, `external_Convex.sol`, `priceTilting_IOracle.sol`, `priceTilting_IPriceTilter.sol`)]
+All files in src
 
 ## High-Level Explanation
 

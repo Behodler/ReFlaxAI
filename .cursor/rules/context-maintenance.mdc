@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+In the directory called promptEngineering, there's a markdown file called ReFlaxPromptTemplate.markdown
+
+For brevity, let's refer to this file as ContextFile. ContextFile provides an overview of the project. Whenever I make a query or request a feature, I'd like the following workflow to be observed (numbered below). Please note that I used the word task to cover any request I make:
+
+1. Read ContextFile and try to understand it.
+2. If there are areas that require clarification on ContextFile, ask me before proceeding with task.
+3. Once clarification has been reached, update ContextFile and ask me to review.
+4. Once I am happy with changed, proceed with task
+5. Once task is complete, there will likely be changes to source files. If so, update ContextFile if necessary.
+
+
+I will review all changes in source control. If I'm happy, I can commit. This enables me to preserve context for new chats so that I don't have to worry about long running chats exhausting a workflow.

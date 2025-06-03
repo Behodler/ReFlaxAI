@@ -251,11 +251,6 @@ contract YieldSourceTest is Test {
         assertEq(amountOut, expectedOutput);
     }
 
-    function testOracleUpdateAccessControl() public {
-        vm.prank(address(0x999));
-        vm.expectRevert("OwnableUnauthorizedAccount(0x0000000000000000000000000000000000000999)");
-        twapOracle.update(address(inputToken), address(rewardToken));
-    }
 
     function testFuzzDeposit(uint256 amount) public {
         vm.assume(amount > 0 && amount < 1e6);

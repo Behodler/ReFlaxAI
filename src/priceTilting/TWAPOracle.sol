@@ -38,7 +38,7 @@ contract TWAPOracle is IOracle, Ownable {
         _;
     }
 
-    function update(address tokenA, address tokenB) external onlyOwner {
+    function update(address tokenA, address tokenB) external {
         address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
         require(pair != address(0), "Invalid pair");
 

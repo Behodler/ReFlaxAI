@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@oz_reflax/contracts/token/ERC20/utils/SafeERC20.sol";
+import "interfaces/IUniswapV3Router.sol";
 
 // Mock ERC20 token for testing
 contract MockERC20 is IERC20 {
@@ -92,46 +93,60 @@ contract MockYieldSource {
 }
 
 // Mock Uniswap V3 Router
-contract MockUniswapV3Router {
-    struct ExactInputSingleParams {
-        address tokenIn;
-        address tokenOut;
-        uint24 fee;
-        address recipient;
-        uint256 amountIn;
-        uint256 amountOutMinimum;
-        uint160 sqrtPriceLimitX96;
+contract MockUniswapV3Router is IUniswapV3Router {
+    uint256 private _returnedAmount;
+    bool private _shouldSetReturnedAmount;
+    bool private _shouldRevert;
+    string private _revertReason;
+
+    event MockExactInputSingleCalled(IUniswapV3Router.ExactInputSingleParams params, uint256 msgValue);
+
+    function setReturnedAmount(uint256 amount) external {
+        _returnedAmount = amount;
+        _shouldSetReturnedAmount = true;
+        _shouldRevert = false;
     }
 
-    function exactInputSingle(ExactInputSingleParams calldata params) external payable returns (uint256) {
-        require(params.amountIn >= params.amountOutMinimum, "Insufficient output");
-        
-        // Handle ETH input
-        if (params.tokenIn == address(0)) {
-            require(msg.value >= params.amountIn, "Insufficient ETH sent");
-            
-            if (params.tokenOut != address(0)) {
-                // ETH to token
-                IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
-            }
-            return params.amountIn;
-        }
-        
-        // Handle token input
-        IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
-        
-        if (params.tokenOut == address(0)) {
-            // Token to ETH
-            payable(params.recipient).transfer(params.amountIn);
-        } else {
-            // Token to token
-            IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
-        }
-        
-        return params.amountIn;
+    function setRevert(bool shouldRevertValue, string memory reason) external {
+        _shouldRevert = shouldRevertValue;
+        _revertReason = reason;
+        _shouldSetReturnedAmount = false; 
     }
-    
-    // Allow receiving ETH
+
+    function exactInputSingle(ExactInputSingleParams calldata params) external payable override returns (uint256 amountOut) {
+        emit MockExactInputSingleCalled(params, msg.value);
+
+        if (params.tokenIn == address(0) && msg.value < params.amountIn) {
+            revert("MockUniswapV3Router: Insufficient ETH sent");
+        }
+
+        if (_shouldRevert) {
+            revert(_revertReason);
+        }
+
+        if (_shouldSetReturnedAmount) {
+            // If actual output would be less than minimum, a real router would revert.
+            // We can simulate this if needed, or let tests configure _returnedAmount appropriately.
+            // For now, just ensure returnedAmount respects amountOutMinimum if it's going to be less.
+            // However, for precise testing, tests should set _returnedAmount to what they expect post-slippage.
+            // A real router handles the "can't meet minimum" revert.
+            // This mock will simply return the configured amount or default.
+            // The check params.amountOutMinimum is more for the caller (YieldSource) to set correctly.
+             if (_returnedAmount < params.amountOutMinimum && params.amountOutMinimum > 0) {
+                 // This behavior is to ensure YieldSource's logic based on minOut is tested.
+                 // If we are configured to return less than min, and min is specified,
+                 // it implies the YieldSource should handle this (e.g. by not proceeding or a prior check failed).
+                 // However, a real router would revert if it couldn't meet amountOutMinimum.
+                 // To strictly test YieldSource's exactInputSingle call, we'd want this mock to revert.
+                 // Let's make it revert for this case to be closer to reality.
+                 revert("MockUniswapV3Router: Output less than amountOutMinimum");
+             }
+            return _returnedAmount;
+        }
+        return params.amountIn; // Default: return original amountIn (no slippage)
+    }
+
+    // Fallback to allow receiving ETH
     receive() external payable {}
 }
 

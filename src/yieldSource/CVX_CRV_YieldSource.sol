@@ -1,22 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "interfaces/IUniswapV3Router.sol";
 import {AYieldSource} from "./AYieldSource.sol";
 import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@oz_reflax/contracts/token/ERC20/utils/SafeERC20.sol";
-
-interface IUniswapV3Router {
-    struct ExactInputSingleParams {
-        address tokenIn;
-        address tokenOut;
-        uint24 fee;
-        address recipient;
-        uint256 amountIn;
-        uint256 amountOutMinimum;
-        uint160 sqrtPriceLimitX96;
-    }
-    function exactInputSingle(ExactInputSingleParams calldata params) external returns (uint256);
-}
 
 interface ICurvePool {
     function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount) external returns (uint256);
@@ -104,9 +92,9 @@ contract CVX_CRV_YieldSource is AYieldSource {
         emit UnderlyingWeightsUpdated(pool, weights);
     }
 
-    function _updateOracle() internal {
+    function _updateOracle() internal override {
         // Update oracle for Flax and ETH pair
-        oracle.update(address(flaxToken), address(0));
+        oracle.update(address(flaxToken), address(0)); // address(0) is used as WETH proxy for oracle
         
         // Update oracle for input token and ETH pair if needed
         if (address(inputToken) != address(0)) {
@@ -129,8 +117,7 @@ contract CVX_CRV_YieldSource is AYieldSource {
     }
 
     function _depositToProtocol(uint256 amount) internal override returns (uint256) {
-        // Update TWAP oracle before deposit
-        _updateOracle();
+        // Update TWAP oracle before deposit - REMOVED (handled by AYieldSource.deposit)
         
         // Allocate inputToken based on weights
         uint256[] memory weights = underlyingWeights[curvePool];
@@ -170,15 +157,13 @@ contract CVX_CRV_YieldSource is AYieldSource {
         // Deposit LP tokens to Convex
         IConvexBooster(convexBooster).deposit(poolId, lpAmount, true);
         
-        // Update TWAP oracle after deposit
-        _updateOracle();
+        // Update TWAP oracle after deposit - REMOVED
         
         return lpAmount;
     }
 
     function _withdrawFromProtocol(uint256 amount) internal override returns (uint256 inputTokenAmount, uint256 flaxValue) {
-        // Update TWAP oracle before withdrawal
-        _updateOracle();
+        // Update TWAP oracle before withdrawal - REMOVED (handled by AYieldSource.withdraw)
         
         // Withdraw from Convex
         IConvexBooster(convexBooster).withdraw(poolId, amount);
@@ -189,13 +174,11 @@ contract CVX_CRV_YieldSource is AYieldSource {
         // Claim rewards during withdrawal
         flaxValue = _claimAndSellRewards();
         
-        // Update TWAP oracle after withdrawal
-        _updateOracle();
+        // Update TWAP oracle after withdrawal - REMOVED
     }
 
     function _claimRewardToken(address /* token */) internal override returns (uint256) {
-        // Update TWAP oracle before claiming rewards
-        _updateOracle();
+        // Update TWAP oracle before claiming rewards - REMOVED (handled by AYieldSource.claimRewards)
         
         // Claim rewards from Convex
         IConvexRewardPool(convexRewardPool).getReward();
@@ -251,8 +234,7 @@ contract CVX_CRV_YieldSource is AYieldSource {
     }
 
     function _claimAndSellRewards() private returns (uint256 flaxValue) {
-        // Update TWAP oracle before claiming rewards
-        _updateOracle();
+        // Update TWAP oracle before claiming rewards - REMOVED (handled by AYieldSource.withdraw or AYieldSource.claimRewards)
         
         uint256 ethAmount;
         for (uint256 i = 0; i < rewardTokens.length; i++) {
@@ -269,8 +251,7 @@ contract CVX_CRV_YieldSource is AYieldSource {
             emit FlaxValueCalculated(ethAmount, flaxValue);
         }
         
-        // Update TWAP oracle after selling rewards
-        _updateOracle();
+        // Update TWAP oracle after selling rewards - REMOVED
     }
 
     receive() external payable {}

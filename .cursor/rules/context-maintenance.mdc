@@ -12,8 +12,9 @@ For brevity, let's refer to this file as ContextFile. ContextFile provides an ov
 3. Once clarification has been reached, update ContextFile and ask me to review.
 4. Once I am happy with changed, proceed with task
 5. At the end of task, run forge test.
-6. If there are test failures, be sure that they are not expected to break, given the current code state. If they are expected to pass, fix the bug in code. If the test is buggy, fix the test itself.
-7. Once the task is complete and the tests that should pass are passing, there will likely be changes to source files. If so, update ContextFile if necessary.
+6. There may be failing tests. However, I may have only asked you to fix a specific problem. If tests are failing covering features you weren't instructed to test then ignore those failures. If the tests covering the feature you were asked to fix are passing, consider tests to be in a state called "conditional passing". If all tests pass then the state is "unconditional passing". if tests are failing which are expected to pass, given the request, then the state is "failing".
+6. If the tests are in the state "failing", fix the bugs in either the code or the tests (depending on which is incorrect) until they are in "conditional passing" state.
+7. Once the task is complete and the tests are in "conditional passing" state, there will likely be changes to source files. If so, update ContextFile if necessary.
 
 
 I will review all changes in source control. If I'm happy, I can commit. This enables me to preserve context for new chats so that I don't have to worry about long running chats exhausting a workflow.

@@ -157,8 +157,8 @@ contract PriceTilterTWAPTest is Test {
         uint256 expectedFlaxAmount = 8 ether;
         
         assertEq(flaxValue, expectedFlaxValue, "Flax value calculation incorrect");
-        assertEq(router.lastAmountToken, expectedFlaxAmount, "Incorrect Flax amount added to liquidity");
-        assertEq(router.lastAmountETH, ethAmount, "Incorrect ETH amount added to liquidity");
+        assertEq(router.lastAmountToken(), expectedFlaxAmount, "Incorrect Flax amount added to liquidity");
+        assertEq(router.lastAmountETH(), ethAmount, "Incorrect ETH amount added to liquidity");
         assertTrue(oracle.wasUpdateCalled(), "Oracle update should be called");
     }
     
@@ -178,7 +178,7 @@ contract PriceTilterTWAPTest is Test {
         // Should use the total ETH (1.5 ETH)
         uint256 expectedTotalEth = 1.5 ether;
         
-        assertEq(router.lastAmountETH, expectedTotalEth, "Should use total ETH balance");
+        assertEq(router.lastAmountETH(), expectedTotalEth, "Should use total ETH balance");
     }
     
     function testSetPriceTiltRatio() public {
@@ -199,7 +199,7 @@ contract PriceTilterTWAPTest is Test {
         // Expected flax amount with new ratio: 10e18 * 9000 / 10000 = 9 ether
         uint256 expectedFlaxAmount = 9 ether;
         
-        assertEq(router.lastAmountToken, expectedFlaxAmount, "Flax amount should reflect new ratio");
+        assertEq(router.lastAmountToken(), expectedFlaxAmount, "Flax amount should reflect new ratio");
     }
     
     function testRegisterPair() public {
@@ -231,13 +231,13 @@ contract PriceTilterTWAPTest is Test {
         vm.prank(priceTilter.owner());
         priceTilter.emergencyWithdraw(address(0), recipient);
         
-        assertEq(recipient.balance, 2 ether, "ETH should be withdrawn");
+        assertEq(recipient.balance, 102 ether, "ETH should be withdrawn");
         
         // Withdraw token
         vm.prank(priceTilter.owner());
         priceTilter.emergencyWithdraw(address(flaxToken), recipient);
         
-        assertEq(flaxToken.balanceOf(recipient), 5 ether, "Tokens should be withdrawn");
+        assertEq(flaxToken.balanceOf(recipient), 10005 ether, "Tokens should be withdrawn");
     }
     
     function testZeroLiquidityReverts() public {

@@ -4,3 +4,4 @@
 @uniswap/lib/contracts/libraries/=lib/UniswapV2PeripheryFoundryFriendly/src/lib
 @uniswap/v2-core/contracts/=lib/UniswapV2CoreFoundryFriendly/src
 forge-std/=lib/forge-std/src/
+interfaces/=src/interfaces/

@@ -63,7 +63,13 @@ abstract contract AYieldSource is Ownable {
         emit LpTokenNameUpdated(newName);
     }
 
+    function _updateOracle() internal virtual {
+        // Base implementation can be empty or update common pairs if WETH is known/passed.
+        // The concrete YieldSource will provide the full implementation.
+    }
+
     function deposit(uint256 amount) external virtual onlyWhitelistedVault returns (uint256) {
+        _updateOracle();
         inputToken.safeTransferFrom(msg.sender, address(this), amount);
         uint256 received = _depositToProtocol(amount);
         totalDeposited += received;
@@ -71,12 +77,14 @@ abstract contract AYieldSource is Ownable {
     }
 
     function withdraw(uint256 amount) external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount, uint256 flaxValue) {
+        _updateOracle();
         (inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount);
         inputToken.safeTransfer(msg.sender, inputTokenAmount);
         totalDeposited -= amount;
     }
 
     function claimRewards() external virtual onlyWhitelistedVault returns (uint256 flaxValue) {
+        _updateOracle();
         uint256 ethAmount;
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             address token = rewardTokens[i];

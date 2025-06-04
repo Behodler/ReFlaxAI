@@ -17,28 +17,35 @@ ReFlax allows users to deposit a single input token (e.g., USDC) into yield opti
     - **Note**: The `sFlaxToken` must implement a `burn(uint256)` function that the Vault can call directly.
   - Allows migration to a new `YieldSource`.
   - Placeholder `canWithdraw` for future governance rules (e.g., auctions, crowdfunds).
+  - Includes emergency withdrawal functionality with an emergency state toggle that prevents new deposits, claims, and migrations when active.
 
 - **YieldSource Contract** (abstract, with concrete implementations like `CVX_CRV_YieldSource`):
   - Converts input token to pool tokens (e.g., USDC/USDT), deposits into yield optimizers, and processes rewards.
+  - Updates TWAP oracles during deposit, withdraw, and claim reward operations to ensure accurate price data.
   - `CVX_CRV_YieldSource`:
     - Swaps input token for pool tokens via Uniswap V3, adds liquidity to Curve, and deposits LP tokens into Convex.
     - Claims rewards (e.g., CRV, CVX), sells for ETH, and calculates Flax value via `PriceTilter`.
     - Withdraws by removing liquidity from Curve and converting to input token.
   - Uses `TWAPOracle` for slippage protection and `PriceTilter` for Flax/ETH operations.
+  - Includes emergency withdrawal functionality to recover assets in case of failures or security concerns.
 
 - **PriceTilter Contract** (`PriceTilterTWAP.sol`):
   - Calculates Flax value of ETH using `TWAPOracle` for the Flax/ETH Uniswap V2 pair.
   - Tilts Flax price by adding liquidity to the Flax/ETH Uniswap V2 pair with less Flax than the oracle-derived value (controlled by `priceTiltRatio`), increasing Flax's price in ETH.
   - Supports registering the Flax/ETH pair for TWAP updates and uses `addLiquidityETH` to handle ETH deposits.
+  - Ensures all available ETH balance is used for liquidity provision, including any leftover from previous operations.
+  - Includes emergency withdrawal functionality for the owner to recover assets in case of emergency.
 
 - **TWAPOracle Contract**:
   - Provides TWAP prices for token pairs (e.g., Flax/ETH) over a 1-hour period.
   - Requires owner updates, with a bot potentially updating every 6 hours if no activity occurs.
+  - Automatically updated during YieldSource deposit, withdraw, and claim operations to maintain accurate price data.
 
 - **Deposit Flow** (single transaction):
   1. Swap input token for pool tokens (e.g., USDC/USDT) on Uniswap V3.
   2. Pool tokens into Curve LP token.
   3. Deposit LP token into Convex.
+  4. Update TWAP oracles to maintain accurate price data.
   
   **Note**: After deposit, input tokens are immediately transferred to the YieldSource and not retained in the Vault.
 
@@ -47,12 +54,19 @@ ReFlax allows users to deposit a single input token (e.g., USDC) into yield opti
   2. Sell rewards for ETH on Uniswap V3.
   3. Use `PriceTilter` to calculate Flax value and tilt Flax/ETH pool liquidity by adding less Flax than the TWAP-derived amount.
   4. Transfer Flax to user (Vault has sufficient Flax balance).
+  5. Update TWAP oracles to maintain accurate price data.
 
 - **Withdrawal Flow** (single transaction):
   1. Withdraw LP tokens from Convex.
   2. Remove liquidity from Curve, converting to input token.
   3. Return original deposit amount, using surplus tokens for shortfalls or storing excess.
   4. Revert if shortfall exceeds surplus and `protectLoss` is true.
+  5. Update TWAP oracles to maintain accurate price data.
+
+- **Emergency Functionality**:
+  - Both Vault and YieldSource contracts have emergency withdrawal functions restricted to the owner.
+  - The Vault can be put into an emergency state, preventing new deposits, claims, and migrations.
+  - Emergency withdrawals from YieldSource first attempt to recover funds from external protocols.
 
 - **sFlaxToken**:
   - ERC20 token earned from staking Flax in another project (similar to veCRV but tradable/transferable).

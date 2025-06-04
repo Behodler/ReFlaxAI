@@ -99,8 +99,14 @@ contract PriceTilter is Ownable {
         // Approve Flax tokens for router
         flaxToken.approve(address(router), flaxAmount);
 
+        // Use the entire ETH amount available in the contract
+        uint256 totalEthAmount = ethAmount;
+        if (address(this).balance > ethAmount) {
+            totalEthAmount = address(this).balance;
+        }
+
         // Add liquidity using addLiquidityETH
-        router.addLiquidityETH{value: ethAmount}(
+        (,, uint256 liquidity) = router.addLiquidityETH{value: totalEthAmount}(
             address(flaxToken), // Always Flax as the ERC20 token
             flaxAmount,
             0, // No minimum for simplicity
@@ -109,9 +115,29 @@ contract PriceTilter is Ownable {
             block.timestamp + 300
         );
 
-        emit LiquidityAdded(pair, flaxAmount, ethAmount);
+        require(liquidity > 0, "Liquidity addition failed");
+
+        emit LiquidityAdded(pair, flaxAmount, totalEthAmount);
 
         return flaxValue;
+    }
+    
+    // Emergency withdrawal function
+    function emergencyWithdraw(address token, address recipient) external onlyOwner {
+        if (token == address(0)) {
+            // Withdraw ETH
+            uint256 balance = address(this).balance;
+            if (balance > 0) {
+                payable(recipient).transfer(balance);
+            }
+        } else {
+            // Withdraw ERC20 token
+            IERC20 tokenToWithdraw = IERC20(token);
+            uint256 balance = tokenToWithdraw.balanceOf(address(this));
+            if (balance > 0) {
+                tokenToWithdraw.transfer(recipient, balance);
+            }
+        }
     }
 
     receive() external payable {}

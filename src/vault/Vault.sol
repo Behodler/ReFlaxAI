@@ -30,6 +30,7 @@ contract Vault is Ownable, ReentrancyGuard {
     uint256 public totalDeposits;
     uint256 public surplusInputToken;
     mapping(address => uint256) public originalDeposits;
+    bool public emergencyState;
 
     event Deposited(address indexed user, uint256 amount);
     event RewardsClaimed(address indexed user, uint256 flaxAmount);
@@ -37,6 +38,8 @@ contract Vault is Ownable, ReentrancyGuard {
     event Withdrawn(address indexed user, uint256 amount);
     event FlaxPerSFlaxUpdated(uint256 newRatio);
     event YieldSourceMigrated(address indexed oldYieldSource, address indexed newYieldSource);
+    event EmergencyStateChanged(bool state);
+    event EmergencyWithdrawal(address indexed token, address indexed recipient, uint256 amount);
 
     constructor(
         address _flaxToken,
@@ -50,9 +53,15 @@ contract Vault is Ownable, ReentrancyGuard {
         inputToken = IERC20(_inputToken);
         yieldSource = _yieldSource;
         priceTilter = _priceTilter;
+        emergencyState = false;
     }
 
-    function deposit(uint256 amount) external nonReentrant {
+    modifier notInEmergencyState() {
+        require(!emergencyState, "Contract is in emergency state");
+        _;
+    }
+
+    function deposit(uint256 amount) external nonReentrant notInEmergencyState {
         inputToken.safeTransferFrom(msg.sender, address(this), amount);
         inputToken.approve(yieldSource, amount);
         uint256 received = IYieldsSource(yieldSource).deposit(amount);
@@ -110,7 +119,7 @@ contract Vault is Ownable, ReentrancyGuard {
         emit Withdrawn(msg.sender, amount);
     }
 
-    function claimRewards(uint256 sFlaxAmount) external nonReentrant {
+    function claimRewards(uint256 sFlaxAmount) external nonReentrant notInEmergencyState {
         uint256 flaxValue = IYieldsSource(yieldSource).claimRewards();
         uint256 totalFlax = flaxValue;
 
@@ -133,7 +142,7 @@ contract Vault is Ownable, ReentrancyGuard {
         emit FlaxPerSFlaxUpdated(_flaxPerSFlax);
     }
 
-    function migrateYieldSource(address newYieldSource) external onlyOwner nonReentrant {
+    function migrateYieldSource(address newYieldSource) external onlyOwner nonReentrant notInEmergencyState {
         address oldYieldSource = yieldSource;
 
         // Claim and sell rewards for inputToken
@@ -165,4 +174,52 @@ contract Vault is Ownable, ReentrancyGuard {
     function canWithdraw() public view returns (bool) {
         return true; // Placeholder
     }
+    
+    function setEmergencyState(bool state) external onlyOwner {
+        emergencyState = state;
+        emit EmergencyStateChanged(state);
+    }
+    
+    function emergencyWithdraw(address token, address recipient) external onlyOwner {
+        require(token != address(0), "Invalid token address");
+        
+        IERC20 tokenContract = IERC20(token);
+        uint256 balance = tokenContract.balanceOf(address(this));
+        
+        if (balance > 0) {
+            tokenContract.safeTransfer(recipient, balance);
+            emit EmergencyWithdrawal(token, recipient, balance);
+        }
+    }
+    
+    function emergencyWithdrawETH(address payable recipient) external onlyOwner {
+        uint256 balance = address(this).balance;
+        
+        if (balance > 0) {
+            recipient.transfer(balance);
+            emit EmergencyWithdrawal(address(0), recipient, balance);
+        }
+    }
+    
+    function emergencyWithdrawFromYieldSource(address token, address recipient) external onlyOwner {
+        require(emergencyState, "Not in emergency state");
+        
+        // First withdraw all funds from yield source if it's the input token
+        if (token == address(inputToken) && totalDeposits > 0) {
+            (uint256 received, ) = IYieldsSource(yieldSource).withdraw(totalDeposits);
+            totalDeposits = 0;
+            surplusInputToken += received;
+        }
+        
+        // Now withdraw the token from this contract
+        IERC20 tokenContract = IERC20(token);
+        uint256 balance = tokenContract.balanceOf(address(this));
+        
+        if (balance > 0) {
+            tokenContract.safeTransfer(recipient, balance);
+            emit EmergencyWithdrawal(token, recipient, balance);
+        }
+    }
+    
+    receive() external payable {}
 }

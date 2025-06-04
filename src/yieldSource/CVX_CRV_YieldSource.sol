@@ -104,7 +104,34 @@ contract CVX_CRV_YieldSource is AYieldSource {
         emit UnderlyingWeightsUpdated(pool, weights);
     }
 
+    function _updateOracle() internal {
+        // Update oracle for Flax and ETH pair
+        oracle.update(address(flaxToken), address(0));
+        
+        // Update oracle for input token and ETH pair if needed
+        if (address(inputToken) != address(0)) {
+            oracle.update(address(inputToken), address(0));
+        }
+        
+        // Update oracles for pool tokens
+        for (uint256 i = 0; i < poolTokens.length; i++) {
+            if (address(poolTokens[i]) != address(inputToken) && address(poolTokens[i]) != address(0)) {
+                oracle.update(address(poolTokens[i]), address(0));
+            }
+        }
+        
+        // Update oracles for reward tokens
+        for (uint256 i = 0; i < rewardTokens.length; i++) {
+            if (rewardTokens[i] != address(0) && rewardTokens[i] != address(flaxToken)) {
+                oracle.update(rewardTokens[i], address(0));
+            }
+        }
+    }
+
     function _depositToProtocol(uint256 amount) internal override returns (uint256) {
+        // Update TWAP oracle before deposit
+        _updateOracle();
+        
         // Allocate inputToken based on weights
         uint256[] memory weights = underlyingWeights[curvePool];
         if (weights.length == 0) {
@@ -142,10 +169,17 @@ contract CVX_CRV_YieldSource is AYieldSource {
 
         // Deposit LP tokens to Convex
         IConvexBooster(convexBooster).deposit(poolId, lpAmount, true);
+        
+        // Update TWAP oracle after deposit
+        _updateOracle();
+        
         return lpAmount;
     }
 
     function _withdrawFromProtocol(uint256 amount) internal override returns (uint256 inputTokenAmount, uint256 flaxValue) {
+        // Update TWAP oracle before withdrawal
+        _updateOracle();
+        
         // Withdraw from Convex
         IConvexBooster(convexBooster).withdraw(poolId, amount);
 
@@ -154,9 +188,15 @@ contract CVX_CRV_YieldSource is AYieldSource {
 
         // Claim rewards during withdrawal
         flaxValue = _claimAndSellRewards();
+        
+        // Update TWAP oracle after withdrawal
+        _updateOracle();
     }
 
     function _claimRewardToken(address /* token */) internal override returns (uint256) {
+        // Update TWAP oracle before claiming rewards
+        _updateOracle();
+        
         // Claim rewards from Convex
         IConvexRewardPool(convexRewardPool).getReward();
         // Sum reward token balances
@@ -211,6 +251,9 @@ contract CVX_CRV_YieldSource is AYieldSource {
     }
 
     function _claimAndSellRewards() private returns (uint256 flaxValue) {
+        // Update TWAP oracle before claiming rewards
+        _updateOracle();
+        
         uint256 ethAmount;
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             address token = rewardTokens[i];
@@ -225,7 +268,28 @@ contract CVX_CRV_YieldSource is AYieldSource {
             flaxValue = _getFlaxValue(ethAmount);
             emit FlaxValueCalculated(ethAmount, flaxValue);
         }
+        
+        // Update TWAP oracle after selling rewards
+        _updateOracle();
     }
 
     receive() external payable {}
+    
+    // Emergency withdrawal function that allows the owner to withdraw ETH and tokens
+    function emergencyWithdraw(address token, address recipient) external onlyOwner {
+        if (token == address(0)) {
+            // Withdraw ETH
+            uint256 balance = address(this).balance;
+            if (balance > 0) {
+                payable(recipient).transfer(balance);
+            }
+        } else {
+            // Withdraw ERC20 token
+            IERC20 erc20 = IERC20(token);
+            uint256 balance = erc20.balanceOf(address(this));
+            if (balance > 0) {
+                erc20.safeTransfer(recipient, balance);
+            }
+        }
+    }
 }

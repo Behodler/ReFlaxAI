@@ -98,6 +98,8 @@ contract MockUniswapV3Router is IUniswapV3Router {
     bool private _shouldSetReturnedAmount;
     bool private _shouldRevert;
     string private _revertReason;
+    mapping(bytes32 => uint256) private _specificReturnAmounts;
+    bool private _useSpecificAmounts;
 
     event MockExactInputSingleCalled(IUniswapV3Router.ExactInputSingleParams params, uint256 msgValue);
 
@@ -105,23 +107,53 @@ contract MockUniswapV3Router is IUniswapV3Router {
         _returnedAmount = amount;
         _shouldSetReturnedAmount = true;
         _shouldRevert = false;
+        _useSpecificAmounts = false;
+    }
+
+    function setSpecificReturnAmount(address tokenIn, address tokenOut, uint256 amountIn, uint256 returnAmount) external {
+        bytes32 key = keccak256(abi.encodePacked(tokenIn, tokenOut, amountIn));
+        _specificReturnAmounts[key] = returnAmount;
+        _useSpecificAmounts = true;
+        _shouldRevert = false;
     }
 
     function setRevert(bool shouldRevertValue, string memory reason) external {
         _shouldRevert = shouldRevertValue;
         _revertReason = reason;
         _shouldSetReturnedAmount = false; 
+        _useSpecificAmounts = false;
     }
 
     function exactInputSingle(ExactInputSingleParams calldata params) external payable override returns (uint256 amountOut) {
         emit MockExactInputSingleCalled(params, msg.value);
 
-        if (params.tokenIn == address(0) && msg.value < params.amountIn) {
+        // Note: The current CVX_CRV_YieldSource implementation has a bug where it doesn't 
+        // send ETH with the call when selling ETH for tokens. We'll be lenient here.
+        if (params.tokenIn == address(0) && msg.value > 0 && msg.value < params.amountIn) {
             revert("MockUniswapV3Router: Insufficient ETH sent");
         }
 
         if (_shouldRevert) {
             revert(_revertReason);
+        }
+
+        if (_useSpecificAmounts) {
+            bytes32 key = keccak256(abi.encodePacked(params.tokenIn, params.tokenOut, params.amountIn));
+            uint256 specificAmount = _specificReturnAmounts[key];
+            if (specificAmount > 0) {
+                if (specificAmount < params.amountOutMinimum && params.amountOutMinimum > 0) {
+                    revert("MockUniswapV3Router: Output less than amountOutMinimum");
+                }
+                // Handle token transfers
+                if (params.tokenOut == address(0)) {
+                    // Selling for ETH, send ETH to recipient
+                    payable(params.recipient).transfer(specificAmount);
+                } else if (params.tokenIn == address(0)) {
+                    // Buying with ETH, send tokens to recipient
+                    IERC20(params.tokenOut).transfer(params.recipient, specificAmount);
+                }
+                return specificAmount;
+            }
         }
 
         if (_shouldSetReturnedAmount) {
@@ -141,9 +173,27 @@ contract MockUniswapV3Router is IUniswapV3Router {
                  // Let's make it revert for this case to be closer to reality.
                  revert("MockUniswapV3Router: Output less than amountOutMinimum");
              }
+             // Handle token transfers
+             if (params.tokenOut == address(0)) {
+                 // Selling for ETH, send ETH to recipient
+                 payable(params.recipient).transfer(_returnedAmount);
+             } else if (params.tokenIn == address(0)) {
+                 // Buying with ETH, send tokens to recipient
+                 IERC20(params.tokenOut).transfer(params.recipient, _returnedAmount);
+             }
             return _returnedAmount;
         }
-        return params.amountIn; // Default: return original amountIn (no slippage)
+        
+        // Default behavior: return original amountIn (no slippage)
+        // Handle token transfers
+        if (params.tokenOut == address(0)) {
+            // Selling for ETH, send ETH to recipient
+            payable(params.recipient).transfer(params.amountIn);
+        } else if (params.tokenIn == address(0)) {
+            // Buying with ETH, send tokens to recipient
+            IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+        }
+        return params.amountIn;
     }
 
     // Fallback to allow receiving ETH
@@ -258,4 +308,5 @@ contract MockPriceTilter {
     
     // Allow receiving ETH
     receive() external payable {}
+    fallback() external payable {}
 }

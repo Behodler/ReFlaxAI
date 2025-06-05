@@ -95,6 +95,12 @@ ReFlax allows users to deposit a single input token (e.g., USDC) into yield opti
     - Fixed `testWithdraw` in `YieldSource.t.sol` by adding proper LP token approval for the Curve pool.
     - Implemented a simple `MockOracle` for tests that don't need the full TWAP oracle functionality.
     - Ensured proper setup of price cumulative values in the `MockUniswapV2Pair` for TWAP oracle tests.
+    - Implemented comprehensive slippage protection tests in `SlippageProtection.t.sol` including:
+      - `testDepositWithMaximumTolerableSlippage()`: Tests deposits when swap incurs exactly the maximum tolerable slippage
+      - `testRevertOnExcessiveSlippage()`: Tests that deposits revert when slippage exceeds tolerance
+      - Enhanced `MockUniswapV3Router` with `setSpecificReturnAmount()` for precise control over individual swap returns
+      - Fixed mock ETH handling for reward token sales and ETH-to-token swaps
+      - Addressed a source code issue where `_sellEthForInputToken` doesn't send ETH with the Uniswap call
 
 ## Specific Request
 

@@ -137,6 +137,15 @@ contract MockUniswapV3Router is IUniswapV3Router {
             revert(_revertReason);
         }
 
+        // Pull tokens from sender if selling tokens
+        if (params.tokenIn != address(0) && params.tokenOut == address(0)) {
+            // Selling tokens for ETH
+            IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
+        } else if (params.tokenIn != address(0) && params.tokenOut != address(0)) {
+            // Swapping tokens for tokens
+            IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
+        }
+
         if (_useSpecificAmounts) {
             bytes32 key = keccak256(abi.encodePacked(params.tokenIn, params.tokenOut, params.amountIn));
             uint256 specificAmount = _specificReturnAmounts[key];
@@ -150,6 +159,9 @@ contract MockUniswapV3Router is IUniswapV3Router {
                     payable(params.recipient).transfer(specificAmount);
                 } else if (params.tokenIn == address(0)) {
                     // Buying with ETH, send tokens to recipient
+                    IERC20(params.tokenOut).transfer(params.recipient, specificAmount);
+                } else {
+                    // Token to token swap
                     IERC20(params.tokenOut).transfer(params.recipient, specificAmount);
                 }
                 return specificAmount;
@@ -180,6 +192,9 @@ contract MockUniswapV3Router is IUniswapV3Router {
              } else if (params.tokenIn == address(0)) {
                  // Buying with ETH, send tokens to recipient
                  IERC20(params.tokenOut).transfer(params.recipient, _returnedAmount);
+             } else {
+                 // Token to token swap
+                 IERC20(params.tokenOut).transfer(params.recipient, _returnedAmount);
              }
             return _returnedAmount;
         }
@@ -191,6 +206,9 @@ contract MockUniswapV3Router is IUniswapV3Router {
             payable(params.recipient).transfer(params.amountIn);
         } else if (params.tokenIn == address(0)) {
             // Buying with ETH, send tokens to recipient
+            IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+        } else {
+            // Token to token swap
             IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
         }
         return params.amountIn;

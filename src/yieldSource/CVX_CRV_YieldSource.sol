@@ -3,8 +3,8 @@ pragma solidity ^0.8.20;
 
 import "interfaces/IUniswapV3Router.sol";
 import {AYieldSource} from "./AYieldSource.sol";
-import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@oz_reflax/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@oz_reflax/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@oz_reflax/token/ERC20/utils/SafeERC20.sol";
 
 interface ICurvePool {
     function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount) external returns (uint256);
@@ -177,17 +177,16 @@ contract CVX_CRV_YieldSource is AYieldSource {
         // Update TWAP oracle after withdrawal - REMOVED
     }
 
-    function _claimRewardToken(address /* token */) internal override returns (uint256) {
+    function _claimRewardToken(address token) internal override returns (uint256) {
         // Update TWAP oracle before claiming rewards - REMOVED (handled by AYieldSource.claimRewards)
         
-        // Claim rewards from Convex
-        IConvexRewardPool(convexRewardPool).getReward();
-        // Sum reward token balances
-        uint256 total;
-        for (uint256 i = 0; i < rewardTokens.length; i++) {
-            total += IERC20(rewardTokens[i]).balanceOf(address(this));
+        // Check if this is the first reward token being claimed
+        // If so, claim all rewards from Convex
+        if (token == rewardTokens[0]) {
+            IConvexRewardPool(convexRewardPool).getReward();
         }
-        return total;
+        // Return balance of specific reward token
+        return IERC20(token).balanceOf(address(this));
     }
 
     function _sellRewardToken(address token, uint256 amount) internal override returns (uint256 ethAmount) {

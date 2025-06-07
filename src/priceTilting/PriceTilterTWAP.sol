@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@oz_reflax/contracts/access/Ownable.sol";
-import "@oz_reflax/contracts/token/ERC20/IERC20.sol";
+import "@oz_reflax/access/Ownable.sol";
+import "@oz_reflax/token/ERC20/IERC20.sol";
 import "../priceTilting/IOracle.sol";
 import {IUniswapV2Router02} from "@uniswap_reflax/periphery/interfaces/IUniswapV2Router02.sol";
 import {IUniswapV2Factory} from "@uniswap_reflax/core/interfaces/IUniswapV2Factory.sol";
 import {IUniswapV2Pair} from "@uniswap_reflax/core/interfaces/IUniswapV2Pair.sol";
 
-contract PriceTilter is Ownable {
+contract PriceTilterTWAP is Ownable {
     IUniswapV2Factory public factory;
     IUniswapV2Router02 public router;
     IERC20 public flaxToken;

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@oz_reflax/contracts/token/ERC20/utils/SafeERC20.sol";
-import {Ownable} from "@oz_reflax/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@oz_reflax/contracts/utils/ReentrancyGuard.sol";
+import {IERC20} from "@oz_reflax/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@oz_reflax/token/ERC20/utils/SafeERC20.sol";
+import {Ownable} from "@oz_reflax/access/Ownable.sol";
+import {ReentrancyGuard} from "@oz_reflax/utils/ReentrancyGuard.sol";
 import {IPriceTilter} from "../priceTilting/IPriceTilter.sol";
 
 interface IYieldsSource {

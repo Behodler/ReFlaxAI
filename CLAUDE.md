@@ -3,10 +3,14 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Workflow Rules
-
+- Before beginning a coding task, please make a file called CheckList.md in the directory called context with a checklist of proposed steps. Ask me to review the list unless I tell you not to.
+- As you work though the task, update the checklist items to be checked.
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 - Document new test patterns or mock requirements when adding tests
 - Update command sections if new development commands are introduced
+- rename CheckList.md to CheckList.old0.md. If that file already exists, name it CheckList.old1.md and incremement accordingly.I'e
+- always make sure code is compiling successfully before reporting completeness.
+- Sometimes, it is acceptable for some tests to be in a broken state. But for tests that are expected to be passing, ensure they are still passing.
 
 ## Common Development Commands
 
@@ -155,3 +159,4 @@ Tests are written using Foundry with minimal mocks (`test/mocks/Mocks.sol`) that
 - Emergency functionality exists in both Vault and YieldSource for security
 - TWAP oracles are updated at the beginning of deposit, withdraw, and claim operations
 - `testDeposit` verifies that tokens are correctly sent to the YieldSource and not retained in the Vault
+

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {IERC20} from "@oz_reflax/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@oz_reflax/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@oz_reflax/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@oz_reflax/token/ERC20/utils/SafeERC20.sol";
 import "interfaces/IUniswapV3Router.sol";
 
 // Mock ERC20 token for testing
@@ -309,4 +309,50 @@ contract MockPriceTilter {
     // Allow receiving ETH
     receive() external payable {}
     fallback() external payable {}
+}
+
+// Mock Uniswap V2 Router
+contract MockUniswapV2Router {
+    address public WETH;
+    event AddLiquidityETHCalled(
+        address token,
+        uint256 amountToken,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline,
+        uint256 value
+    );
+
+    uint256 public lastAmountToken;
+    uint256 public lastAmountETH;
+    uint256 public liquidityToReturn;
+    
+    constructor(address _weth) {
+        WETH = _weth;
+        liquidityToReturn = 1; // Default to non-zero liquidity
+    }
+    
+    function setLiquidityToReturn(uint256 _liquidity) external {
+        liquidityToReturn = _liquidity;
+    }
+
+    function addLiquidityETH(
+        address token,
+        uint256 amountToken,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    ) external payable returns (uint, uint, uint) {
+        emit AddLiquidityETHCalled(token, amountToken, amountTokenMin, amountETHMin, to, deadline, msg.value);
+        
+        // Store values for later assertions
+        lastAmountToken = amountToken;
+        lastAmountETH = msg.value;
+        
+        return (amountToken, msg.value, liquidityToReturn);
+    }
+    
+    receive() external payable {}
 }

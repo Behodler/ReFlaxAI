@@ -12,7 +12,7 @@ docs/s
 
 # Dotenv file
 .env
-lib/
+
 
 metascripts/
 

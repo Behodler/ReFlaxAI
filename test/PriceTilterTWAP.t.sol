@@ -5,51 +5,6 @@ import "forge-std/Test.sol";
 import "../src/priceTilting/PriceTilterTWAP.sol";
 import "./mocks/Mocks.sol";
 
-// Mock Uniswap V2 Router for PriceTilterTWAP tests
-contract MockUniswapV2Router {
-    address public WETH;
-    event AddLiquidityETHCalled(
-        address token,
-        uint256 amountToken,
-        uint256 amountTokenMin,
-        uint256 amountETHMin,
-        address to,
-        uint256 deadline,
-        uint256 value
-    );
-
-    uint256 public lastAmountToken;
-    uint256 public lastAmountETH;
-    uint256 public liquidityToReturn;
-    
-    constructor(address _weth) {
-        WETH = _weth;
-        liquidityToReturn = 1; // Default to non-zero liquidity
-    }
-    
-    function setLiquidityToReturn(uint256 _liquidity) external {
-        liquidityToReturn = _liquidity;
-    }
-
-    function addLiquidityETH(
-        address token,
-        uint256 amountToken,
-        uint256 amountTokenMin,
-        uint256 amountETHMin,
-        address to,
-        uint256 deadline
-    ) external payable returns (uint, uint, uint) {
-        emit AddLiquidityETHCalled(token, amountToken, amountTokenMin, amountETHMin, to, deadline, msg.value);
-        
-        // Store values for later assertions
-        lastAmountToken = amountToken;
-        lastAmountETH = msg.value;
-        
-        return (amountToken, msg.value, liquidityToReturn);
-    }
-    
-    receive() external payable {}
-}
 
 // Mock Oracle for PriceTilterTWAP tests
 contract MockOracle {
@@ -81,7 +36,7 @@ contract MockOracle {
 }
 
 contract PriceTilterTWAPTest is Test {
-    PriceTilter priceTilter;
+    PriceTilterTWAP priceTilter;
     MockERC20 flaxToken;
     MockERC20 weth;
     MockUniswapV2Factory factory;
@@ -108,7 +63,7 @@ contract PriceTilterTWAPTest is Test {
         oracle.setConsultReturn(1e17); // 0.1 ETH per FLAX
         
         // Deploy PriceTilter
-        priceTilter = new PriceTilter(
+        priceTilter = new PriceTilterTWAP(
             address(factory),
             address(router),
             address(flaxToken),
@@ -249,7 +204,7 @@ contract PriceTilterTWAPTest is Test {
         zeroRouter.setLiquidityToReturn(0);
         
         // Deploy new PriceTilter with zero liquidity router
-        PriceTilter newPriceTilter = new PriceTilter(
+        PriceTilterTWAP newPriceTilter = new PriceTilterTWAP(
             address(factory),
             address(zeroRouter),
             address(flaxToken),
@@ -275,7 +230,7 @@ contract PriceTilterTWAPTest is Test {
         oracle.setConsultReturn(1e17);
         
         // Create new PriceTilter with no Flax tokens
-        PriceTilter emptyPriceTilter = new PriceTilter(
+        PriceTilterTWAP emptyPriceTilter = new PriceTilterTWAP(
             address(factory),
             address(router),
             address(flaxToken),

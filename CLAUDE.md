@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Workflow Rules
+
+- When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
+- Document new test patterns or mock requirements when adding tests
+- Update command sections if new development commands are introduced
+
 ## Common Development Commands
 
 ### Building

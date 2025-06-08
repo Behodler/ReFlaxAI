@@ -5,6 +5,10 @@ libs = ["lib"]
 viaIR = true
 optimizer = true
 optimizer_runs = 200 # or higher, e.g., 1000
-
+# Explicitly ignore the old_reflax directory
+ignored_error_codes = ["license", "code-size"]
+fs_permissions = [{ access = "read", path = "./"}]
+# Prevent compilation of files in old_reflax
+skip = ["old_reflax/**"]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

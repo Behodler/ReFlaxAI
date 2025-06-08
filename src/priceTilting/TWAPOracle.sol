@@ -8,14 +8,33 @@ import "@uniswap_reflax/core/interfaces/IUniswapV2Factory.sol";
 import "@uniswap_reflax/periphery/lib/FixedPoint.sol";
 import "../priceTilting/IOracle.sol";
 
+/**
+ * @title TWAPOracle
+ * @author Justin Goro
+ * @notice Provides time-weighted average prices for Uniswap V2 pairs
+ * @dev Implements 1-hour TWAP calculations for slippage protection
+ */
 contract TWAPOracle is IOracle, Ownable {
     using FixedPoint for FixedPoint.uq112x112;
     using FixedPoint for FixedPoint.uq144x112;
 
+    /// @notice Uniswap V2 factory contract address
     address public immutable factory;
+    
+    /// @notice Wrapped ETH address for ETH pair lookups
     address public immutable WETH;
-    uint256 public constant PERIOD = 1 hours; // TWAP period
+    
+    /// @notice TWAP calculation period (1 hour)
+    uint256 public constant PERIOD = 1 hours;
 
+    /**
+     * @notice Stores TWAP data for a Uniswap V2 pair
+     * @param price0Average Average price of token1 per token0
+     * @param price1Average Average price of token0 per token1
+     * @param lastUpdateTimestamp Last time the pair was updated
+     * @param lastPrice0Cumulative Last recorded cumulative price for token0
+     * @param lastPrice1Cumulative Last recorded cumulative price for token1
+     */
     struct PairMeasurement {
         FixedPoint.uq112x112 price0Average;
         FixedPoint.uq112x112 price1Average;
@@ -24,15 +43,32 @@ contract TWAPOracle is IOracle, Ownable {
         uint256 lastPrice1Cumulative;
     }
 
+    /// @notice Mapping from pair address to its TWAP measurements
     mapping(address => PairMeasurement) public pairMeasurements;
 
+    /**
+     * @notice Emitted when a pair's TWAP is updated
+     * @param pair Address of the Uniswap V2 pair
+     * @param price0Average Updated average price of token1 per token0
+     * @param price1Average Updated average price of token0 per token1
+     */
     event PairUpdated(address indexed pair, uint256 price0Average, uint256 price1Average);
 
+    /**
+     * @notice Initializes the TWAP oracle with factory and WETH addresses
+     * @param _factory Address of the Uniswap V2 factory
+     * @param _WETH Address of the Wrapped ETH contract
+     */
     constructor(address _factory, address _WETH) Ownable(msg.sender) {
         factory = _factory;
         WETH = _WETH;
     }
 
+    /**
+     * @notice Validates that a pair exists and has been initialized
+     * @param tokenIn First token in the pair
+     * @param tokenOut Second token in the pair
+     */
     modifier validPair(address tokenIn, address tokenOut) {
         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);
         require(pair != address(0), "Invalid pair");
@@ -40,6 +76,13 @@ contract TWAPOracle is IOracle, Ownable {
         _;
     }
 
+    /**
+     * @notice Updates the TWAP for a given token pair
+     * @param tokenA First token in the pair
+     * @param tokenB Second token in the pair  
+     * @dev Requires at least 1 hour between updates for TWAP calculation
+     * @dev First call initializes the pair, subsequent calls update TWAP if period elapsed
+     */
     function update(address tokenA, address tokenB) external {
         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
         require(pairAddress != address(0), "TWAPOracle: INVALID_PAIR");
@@ -100,6 +143,15 @@ contract TWAPOracle is IOracle, Ownable {
         }
     }
 
+    /**
+     * @notice Consults the oracle for the TWAP exchange rate
+     * @param tokenIn Address of the input token
+     * @param tokenOut Address of the output token (address(0) for ETH)
+     * @param amountIn Amount of input tokens
+     * @return amountOut Expected output amount based on TWAP
+     * @dev address(0) is automatically converted to WETH for pair lookup
+     * @dev Requires pair to be initialized with at least one successful TWAP update
+     */
     function consult(address tokenIn, address tokenOut, uint256 amountIn)
         external
         view

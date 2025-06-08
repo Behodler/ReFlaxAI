@@ -7,40 +7,155 @@ import {Ownable} from "@oz_reflax/access/Ownable.sol";
 import {ReentrancyGuard} from "@oz_reflax/utils/ReentrancyGuard.sol";
 import {IPriceTilter} from "../priceTilting/IPriceTilter.sol";
 
+/**
+ * @title IYieldsSource
+ * @notice Interface for yield source contracts that manage token deposits and reward generation
+ */
 interface IYieldsSource {
+    /**
+     * @notice Deposits tokens into the yield source
+     * @param amount The amount of input tokens to deposit
+     * @return The amount of yield-bearing tokens received
+     */
     function deposit(uint256 amount) external returns (uint256);
+    
+    /**
+     * @notice Withdraws tokens from the yield source
+     * @param amount The amount to withdraw
+     * @return inputTokenAmount The amount of input tokens received
+     * @return flaxValue The value of rewards in Flax tokens
+     */
     function withdraw(uint256 amount) external returns (uint256 inputTokenAmount, uint256 flaxValue);
+    
+    /**
+     * @notice Claims accumulated rewards and converts them to Flax value
+     * @return The value of claimed rewards in Flax tokens
+     */
     function claimRewards() external returns (uint256);
+    
+    /**
+     * @notice Claims rewards and sells them for input tokens
+     * @return inputTokenAmount The amount of input tokens received from selling rewards
+     */
     function claimAndSellForInputToken() external returns (uint256 inputTokenAmount);
 }
 
+/**
+ * @title IBurnableERC20
+ * @notice Interface for ERC20 tokens with burn functionality
+ */
 interface IBurnableERC20 is IERC20 {
+    /**
+     * @notice Burns a specific amount of tokens
+     * @param amount The amount of tokens to burn
+     */
     function burn(uint256 amount) external;
 }
 
+/**
+ * @title Vault
+ * @author Justin Goro
+ * @notice User-facing vault contract for depositing tokens into yield sources and earning Flax rewards
+ * @dev Manages deposits, withdrawals, and reward distribution with optional sFlax token burning for boosted rewards
+ */
 contract Vault is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
+    /// @notice The token that users deposit into the vault (e.g., USDC)
     IERC20 public immutable inputToken;
+    
+    /// @notice The Flax token distributed as rewards
     IERC20 public immutable flaxToken;
+    
+    /// @notice The sFlax token that can be burned for boosted rewards
     IERC20 public immutable sFlaxToken;
+    
+    /// @notice The current yield source where deposits are forwarded
     address public yieldSource;
+    
+    /// @notice The price tilter contract for Flax/ETH operations
     address public immutable priceTilter;
+    
+    /// @notice Exchange rate for burning sFlax to receive Flax (scaled by 1e18)
     uint256 public flaxPerSFlax;
+    
+    /// @notice Total amount of input tokens deposited across all users
     uint256 public totalDeposits;
+    
+    /// @notice Surplus input tokens from yield source operations
+    /// @dev Used to offset withdrawal shortfalls from impermanent loss or fees
     uint256 public surplusInputToken;
+    
+    /// @notice Tracks each user's original deposit amount
     mapping(address => uint256) public originalDeposits;
+    
+    /// @notice Emergency state flag that prevents deposits, claims, and migrations
     bool public emergencyState;
 
+    /**
+     * @notice Emitted when a user deposits tokens
+     * @param user The address of the depositor
+     * @param amount The amount of input tokens deposited
+     */
     event Deposited(address indexed user, uint256 amount);
+    
+    /**
+     * @notice Emitted when a user claims Flax rewards
+     * @param user The address of the user claiming rewards
+     * @param flaxAmount The amount of Flax tokens claimed
+     */
     event RewardsClaimed(address indexed user, uint256 flaxAmount);
+    
+    /**
+     * @notice Emitted when sFlax is burned for bonus rewards
+     * @param user The address burning sFlax
+     * @param sFlaxAmount The amount of sFlax burned
+     * @param flaxRewarded The amount of bonus Flax received
+     */
     event SFlaxBurned(address indexed user, uint256 sFlaxAmount, uint256 flaxRewarded);
+    
+    /**
+     * @notice Emitted when a user withdraws their deposit
+     * @param user The address of the withdrawer
+     * @param amount The amount of input tokens withdrawn
+     */
     event Withdrawn(address indexed user, uint256 amount);
+    
+    /**
+     * @notice Emitted when the Flax per sFlax ratio is updated
+     * @param newRatio The new exchange ratio (scaled by 1e18)
+     */
     event FlaxPerSFlaxUpdated(uint256 newRatio);
+    
+    /**
+     * @notice Emitted when the yield source is migrated
+     * @param oldYieldSource The previous yield source address
+     * @param newYieldSource The new yield source address
+     */
     event YieldSourceMigrated(address indexed oldYieldSource, address indexed newYieldSource);
+    
+    /**
+     * @notice Emitted when emergency state is changed
+     * @param state The new emergency state
+     */
     event EmergencyStateChanged(bool state);
+    
+    /**
+     * @notice Emitted when emergency withdrawal is executed
+     * @param token The token address withdrawn (address(0) for ETH)
+     * @param recipient The recipient of the withdrawal
+     * @param amount The amount withdrawn
+     */
     event EmergencyWithdrawal(address indexed token, address indexed recipient, uint256 amount);
 
+    /**
+     * @notice Initializes the vault with token addresses and yield source
+     * @param _flaxToken Address of the Flax token contract
+     * @param _sFlaxToken Address of the sFlax token contract (must implement burn)
+     * @param _inputToken Address of the input token (e.g., USDC)
+     * @param _yieldSource Initial yield source contract address
+     * @param _priceTilter Address of the price tilter contract
+     */
     constructor(
         address _flaxToken,
         address _sFlaxToken,
@@ -56,11 +171,19 @@ contract Vault is Ownable, ReentrancyGuard {
         emergencyState = false;
     }
 
+    /**
+     * @notice Modifier to prevent function execution during emergency state
+     */
     modifier notInEmergencyState() {
         require(!emergencyState, "Contract is in emergency state");
         _;
     }
 
+    /**
+     * @notice Deposits input tokens into the yield source
+     * @param amount The amount of input tokens to deposit
+     * @dev Tokens are immediately forwarded to the yield source
+     */
     function deposit(uint256 amount) external nonReentrant notInEmergencyState {
         inputToken.safeTransferFrom(msg.sender, address(this), amount);
         inputToken.approve(yieldSource, amount);
@@ -70,6 +193,13 @@ contract Vault is Ownable, ReentrancyGuard {
         emit Deposited(msg.sender, amount);
     }
 
+    /**
+     * @notice Withdraws deposited tokens and claims rewards
+     * @param amount The amount of input tokens to withdraw
+     * @param protectLoss If true, reverts when shortfall exceeds surplus
+     * @param sFlaxAmount Amount of sFlax to burn for bonus rewards
+     * @dev Uses surplus to cover shortfalls from impermanent loss or fees
+     */
     function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external nonReentrant {
         require(canWithdraw(), "Withdrawal not allowed");
         require(originalDeposits[msg.sender] >= amount, "Insufficient deposit");
@@ -119,6 +249,11 @@ contract Vault is Ownable, ReentrancyGuard {
         emit Withdrawn(msg.sender, amount);
     }
 
+    /**
+     * @notice Claims accumulated rewards from the yield source
+     * @param sFlaxAmount Amount of sFlax to burn for bonus rewards
+     * @dev Rewards are calculated by the yield source and distributed as Flax
+     */
     function claimRewards(uint256 sFlaxAmount) external nonReentrant notInEmergencyState {
         uint256 flaxValue = IYieldsSource(yieldSource).claimRewards();
         uint256 totalFlax = flaxValue;
@@ -137,11 +272,22 @@ contract Vault is Ownable, ReentrancyGuard {
         }
     }
 
+    /**
+     * @notice Sets the exchange rate for burning sFlax to receive Flax
+     * @param _flaxPerSFlax The amount of Flax per sFlax (scaled by 1e18)
+     * @dev Only callable by owner
+     */
     function setFlaxPerSFlax(uint256 _flaxPerSFlax) external onlyOwner {
         flaxPerSFlax = _flaxPerSFlax;
         emit FlaxPerSFlaxUpdated(_flaxPerSFlax);
     }
 
+    /**
+     * @notice Migrates all funds to a new yield source
+     * @param newYieldSource Address of the new yield source contract
+     * @dev Claims rewards, withdraws all funds, and redeposits into new source
+     * @dev Any losses during migration are absorbed by the surplus
+     */
     function migrateYieldSource(address newYieldSource) external onlyOwner nonReentrant notInEmergencyState {
         address oldYieldSource = yieldSource;
 
@@ -171,15 +317,31 @@ contract Vault is Ownable, ReentrancyGuard {
         emit YieldSourceMigrated(oldYieldSource, newYieldSource);
     }
 
+    /**
+     * @notice Checks if withdrawals are currently allowed
+     * @return Whether withdrawals are permitted
+     * @dev Placeholder for future governance rules (e.g., auctions, crowdfunds)
+     */
     function canWithdraw() public view returns (bool) {
         return true; // Placeholder
     }
     
+    /**
+     * @notice Sets the emergency state of the contract
+     * @param state True to enable emergency state, false to disable
+     * @dev Emergency state prevents deposits, claims, and migrations
+     */
     function setEmergencyState(bool state) external onlyOwner {
         emergencyState = state;
         emit EmergencyStateChanged(state);
     }
     
+    /**
+     * @notice Emergency function to withdraw ERC20 tokens
+     * @param token Address of the token to withdraw
+     * @param recipient Address to receive the tokens
+     * @dev Only callable by owner for emergency recovery
+     */
     function emergencyWithdraw(address token, address recipient) external onlyOwner {
         require(token != address(0), "Invalid token address");
         
@@ -192,6 +354,11 @@ contract Vault is Ownable, ReentrancyGuard {
         }
     }
     
+    /**
+     * @notice Emergency function to withdraw ETH
+     * @param recipient Address to receive the ETH
+     * @dev Only callable by owner for emergency recovery
+     */
     function emergencyWithdrawETH(address payable recipient) external onlyOwner {
         uint256 balance = address(this).balance;
         
@@ -201,6 +368,13 @@ contract Vault is Ownable, ReentrancyGuard {
         }
     }
     
+    /**
+     * @notice Emergency function to withdraw from yield source and recover tokens
+     * @param token Address of the token to withdraw
+     * @param recipient Address to receive the tokens
+     * @dev Requires emergency state to be active
+     * @dev First attempts to withdraw from yield source if withdrawing input token
+     */
     function emergencyWithdrawFromYieldSource(address token, address recipient) external onlyOwner {
         require(emergencyState, "Not in emergency state");
         
@@ -221,5 +395,8 @@ contract Vault is Ownable, ReentrancyGuard {
         }
     }
     
+    /**
+     * @notice Allows the contract to receive ETH
+     */
     receive() external payable {}
 }

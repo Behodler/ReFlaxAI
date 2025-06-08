@@ -8,19 +8,61 @@ import {IUniswapV2Router02} from "@uniswap_reflax/periphery/interfaces/IUniswapV
 import {IUniswapV2Factory} from "@uniswap_reflax/core/interfaces/IUniswapV2Factory.sol";
 import {IUniswapV2Pair} from "@uniswap_reflax/core/interfaces/IUniswapV2Pair.sol";
 
+/**
+ * @title PriceTilterTWAP
+ * @author Justin Goro
+ * @notice Manages Flax/ETH pricing and liquidity provision with price tilting mechanism
+ * @dev Uses TWAP oracle for price calculations and tilts Flax price by adding less Flax than oracle value
+ */
 contract PriceTilterTWAP is Ownable {
+    /// @notice Uniswap V2 factory contract
     IUniswapV2Factory public factory;
+    
+    /// @notice Uniswap V2 router contract
     IUniswapV2Router02 public router;
+    
+    /// @notice Flax token contract
     IERC20 public flaxToken;
+    
+    /// @notice TWAP oracle for price calculations
     IOracle public oracle;
-    uint256 public priceTiltRatio; // In basis points (e.g., 8000 = 80%)
+    
+    /// @notice Price tilt ratio in basis points (e.g., 8000 = 80%)
+    /// @dev Determines how much Flax to provide relative to oracle value
+    uint256 public priceTiltRatio;
 
+    /// @notice Tracks which pairs have been registered for TWAP updates
     mapping(address => bool) public isPairRegistered;
 
+    /**
+     * @notice Emitted when a new pair is registered for TWAP tracking
+     * @param tokenA First token in the pair
+     * @param tokenB Second token in the pair
+     * @param pair Address of the Uniswap V2 pair
+     */
     event PairRegistered(address indexed tokenA, address indexed tokenB, address pair);
+    
+    /**
+     * @notice Emitted when the price tilt ratio is updated
+     * @param newRatio New ratio in basis points
+     */
     event PriceTiltRatioUpdated(uint256 newRatio);
+    
+    /**
+     * @notice Emitted when liquidity is added to a pair
+     * @param pair Address of the Uniswap V2 pair
+     * @param amountFlax Amount of Flax tokens added
+     * @param amountETH Amount of ETH added
+     */
     event LiquidityAdded(address indexed pair, uint256 amountFlax, uint256 amountETH);
 
+    /**
+     * @notice Initializes the price tilter with required contracts
+     * @param _factory Address of Uniswap V2 factory
+     * @param _router Address of Uniswap V2 router
+     * @param _flaxToken Address of the Flax token
+     * @param _oracle Address of the TWAP oracle
+     */
     constructor(
         address _factory,
         address _router,
@@ -38,12 +80,23 @@ contract PriceTilterTWAP is Ownable {
         priceTiltRatio = 8000; // Default: 80%
     }
 
+    /**
+     * @notice Sets the price tilt ratio
+     * @param newRatio New ratio in basis points (max 10000 = 100%)
+     * @dev Lower ratio means less Flax added, resulting in higher Flax price
+     */
     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {
         require(newRatio <= 10000, "Ratio exceeds 100%");
         priceTiltRatio = newRatio;
         emit PriceTiltRatioUpdated(newRatio);
     }
 
+    /**
+     * @notice Registers a Uniswap V2 pair for TWAP tracking
+     * @param tokenA First token in the pair
+     * @param tokenB Second token in the pair
+     * @dev Only the Flax/ETH pair is used for price tilting
+     */
     function registerPair(address tokenA, address tokenB) external onlyOwner {
         require(tokenA != address(0) && tokenB != address(0), "Invalid token address");
         require(tokenA != tokenB, "Tokens must be different");
@@ -57,6 +110,13 @@ contract PriceTilterTWAP is Ownable {
         emit PairRegistered(tokenA, tokenB, pair);
     }
 
+    /**
+     * @notice Gets the current TWAP price for a token pair
+     * @param tokenA First token in the pair
+     * @param tokenB Second token in the pair
+     * @return Price of 1e18 tokenA in terms of tokenB
+     * @dev Updates oracle before returning price
+     */
     function getPrice(address tokenA, address tokenB) external returns (uint256) {
         address pair = factory.getPair(tokenA, tokenB);
         require(isPairRegistered[pair], "Pair not registered");
@@ -71,6 +131,14 @@ contract PriceTilterTWAP is Ownable {
         }
     }
 
+    /**
+     * @notice Calculates Flax value of ETH and adds tilted liquidity to Flax/ETH pool
+     * @param token Must be the Flax token address
+     * @param ethAmount Amount of ETH sent (must match msg.value)
+     * @return flaxValue The calculated value in Flax tokens (before tilt)
+     * @dev Adds less Flax than oracle value to increase Flax price
+     * @dev Uses all available ETH balance including any leftover from previous operations
+     */
     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {
         require(token == address(flaxToken), "Invalid token");
         require(msg.value == ethAmount, "ETH amount mismatch");
@@ -122,7 +190,12 @@ contract PriceTilterTWAP is Ownable {
         return flaxValue;
     }
     
-    // Emergency withdrawal function
+    /**
+     * @notice Emergency function to withdraw ETH or ERC20 tokens
+     * @param token Address of the token to withdraw (address(0) for ETH)
+     * @param recipient Address to receive the tokens
+     * @dev Only callable by owner for emergency recovery
+     */
     function emergencyWithdraw(address token, address recipient) external onlyOwner {
         if (token == address(0)) {
             // Withdraw ETH
@@ -140,5 +213,8 @@ contract PriceTilterTWAP is Ownable {
         }
     }
 
+    /**
+     * @notice Allows the contract to receive ETH
+     */
     receive() external payable {}
 }

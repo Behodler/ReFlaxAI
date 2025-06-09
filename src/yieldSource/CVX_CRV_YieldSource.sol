@@ -12,14 +12,6 @@ import {SafeERC20} from "@oz_reflax/token/ERC20/utils/SafeERC20.sol";
  */
 interface ICurvePool {
     /**
-     * @notice Adds liquidity to the pool
-     * @param amounts Array of token amounts to add
-     * @param min_mint_amount Minimum LP tokens to receive
-     * @return Amount of LP tokens minted
-     */
-    function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount) external returns (uint256);
-    
-    /**
      * @notice Removes liquidity in a single token
      * @param token_amount Amount of LP tokens to burn
      * @param i Index of the token to receive
@@ -85,6 +77,9 @@ contract CVX_CRV_YieldSource is AYieldSource {
     
     /// @notice Symbols of pool tokens for identification
     string[] public poolTokenSymbols;
+    
+    /// @notice Number of tokens in the Curve pool (2, 3, or 4)
+    uint256 public immutable numPoolTokens;
     
     /// @notice Mapping from pool address to allocation weights for each token
     /// @dev Weights are in basis points (10000 = 100%)
@@ -160,8 +155,9 @@ contract CVX_CRV_YieldSource is AYieldSource {
         convexRewardPool = _convexRewardPool;
         poolId = _poolId;
         uniswapV3Router = _uniswapV3Router;
+        numPoolTokens = _poolTokens.length;
 
-        // Initialize pool tokens and symbolsapprove
+        // Initialize pool tokens and symbols
         for (uint256 i = 0; i < _poolTokens.length; i++) {
             poolTokens.push(IERC20(_poolTokens[i]));
             poolTokenSymbols.push(_poolTokenSymbols[i]);
@@ -271,11 +267,7 @@ contract CVX_CRV_YieldSource is AYieldSource {
         }
 
         // Add liquidity to Curve
-        uint256[4] memory curveAmounts; // Max 4 tokens
-        for (uint256 i = 0; i < poolTokens.length; i++) {
-            curveAmounts[i] = amounts[i];
-        }
-        uint256 lpAmount = ICurvePool(curvePool).add_liquidity(curveAmounts, 0);
+        uint256 lpAmount = _addLiquidityToCurve(amounts);
 
         // Deposit LP tokens to Convex
         IConvexBooster(convexBooster).deposit(poolId, lpAmount, true);
@@ -443,6 +435,42 @@ contract CVX_CRV_YieldSource is AYieldSource {
         }
         
         // Update TWAP oracle after selling rewards - REMOVED
+    }
+
+    /**
+     * @notice Helper function to add liquidity to Curve pools with variable token counts
+     * @param amounts Array of token amounts to add
+     * @return lpAmount Amount of LP tokens received
+     * @dev Uses low-level calls to handle 2, 3, or 4 token pools
+     */
+    function _addLiquidityToCurve(uint256[] memory amounts) private returns (uint256 lpAmount) {
+        bytes memory data;
+        
+        if (numPoolTokens == 2) {
+            uint256[2] memory amounts2;
+            amounts2[0] = amounts[0];
+            amounts2[1] = amounts[1];
+            data = abi.encodeWithSignature("add_liquidity(uint256[2],uint256)", amounts2, 0);
+        } else if (numPoolTokens == 3) {
+            uint256[3] memory amounts3;
+            amounts3[0] = amounts[0];
+            amounts3[1] = amounts[1];
+            amounts3[2] = amounts[2];
+            data = abi.encodeWithSignature("add_liquidity(uint256[3],uint256)", amounts3, 0);
+        } else if (numPoolTokens == 4) {
+            uint256[4] memory amounts4;
+            amounts4[0] = amounts[0];
+            amounts4[1] = amounts[1];
+            amounts4[2] = amounts[2];
+            amounts4[3] = amounts[3];
+            data = abi.encodeWithSignature("add_liquidity(uint256[4],uint256)", amounts4, 0);
+        } else {
+            revert("Unsupported pool size");
+        }
+        
+        (bool success, bytes memory result) = curvePool.call(data);
+        require(success, "add_liquidity failed");
+        lpAmount = abi.decode(result, (uint256));
     }
 
     /**

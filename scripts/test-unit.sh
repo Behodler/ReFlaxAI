@@ -2,7 +2,7 @@
 
 # Run unit tests only (exclude integration tests)
 echo "Running unit tests..."
-forge test --no-match-path "test/integration/**"
+forge test --no-match-path "**/integration/**"
 
 if [ $? -eq 0 ]; then
     echo "✅ Unit tests passed"

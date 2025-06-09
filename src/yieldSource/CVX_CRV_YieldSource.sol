@@ -379,12 +379,13 @@ contract CVX_CRV_YieldSource is AYieldSource {
      * @param ethAmount Amount of ETH to sell
      * @return inputTokenAmount Amount of input tokens received
      * @dev Uses TWAP oracle for slippage protection
+     * @dev IMPORTANT: Must send ETH value with the swap call when tokenIn is ETH (address(0))
      */
     function _sellEthForInputToken(uint256 ethAmount) internal override returns (uint256 inputTokenAmount) {
         uint256 minInputOut = oracle.consult(address(0), address(inputToken), ethAmount);
         minInputOut = (minInputOut * (10000 - minSlippageBps)) / 10000;
 
-        inputTokenAmount = IUniswapV3Router(uniswapV3Router).exactInputSingle(
+        inputTokenAmount = IUniswapV3Router(uniswapV3Router).exactInputSingle{value: ethAmount}(
             IUniswapV3Router.ExactInputSingleParams({
                 tokenIn: address(0), // ETH
                 tokenOut: address(inputToken),

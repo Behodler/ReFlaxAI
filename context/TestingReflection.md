@@ -5,7 +5,7 @@ This report documents potential false positives and suspicious test patterns fou
 
 ## Critical Findings
 
-### 1. **Missing ETH Value in Uniswap V3 Swaps**
+### ~~1. **Missing ETH Value in Uniswap V3 Swaps**~~ ✅ RESOLVED
 **File**: `src/yieldSource/CVX_CRV_YieldSource.sol`
 **Issue**: The `_sellEthForInputToken` function doesn't send ETH value with the Uniswap V3 swap call.
 
@@ -16,7 +16,9 @@ This report documents potential false positives and suspicious test patterns fou
 
 **Impact**: Real ETH-to-token swaps will fail with 0 output amount.
 
-### 2. **Suspicious Mock Behavior**
+**Resolution**: Fixed by adding `{value: ethAmount}` to the `exactInputSingle` call in `_sellEthForInputToken` function.
+
+### 1. **Suspicious Mock Behavior**
 **File**: `test/mocks/Mocks.sol`
 
 Several mocks exhibit unrealistic behavior that masks bugs:
@@ -36,7 +38,7 @@ c) **MockPriceTilter** (line 509):
    - No actual price calculation or liquidity addition
    - Tests can't verify proper price tilting mechanics
 
-### 3. **Access Control Event Testing**
+### 2. **Access Control Event Testing**
 **File**: `test/AccessControl.t.sol`
 **Issue**: Tests emit events before calling functions, suggesting they test expected behavior rather than actual behavior.
 
@@ -50,7 +52,7 @@ vault.setFlaxPerSFlax(1e17);
 
 **Concern**: If event emission was broken, these tests would still pass.
 
-### 4. **TWAP Oracle Time Manipulation**
+### 3. **TWAP Oracle Time Manipulation**
 **File**: `test/TWAPOracle.t.sol`
 **Issue**: Complex time manipulation in tests makes it difficult to verify correct TWAP calculations.
 
@@ -59,7 +61,7 @@ vault.setFlaxPerSFlax(1e17);
 - Comments acknowledge "oracle will actually see based on timestamp manipulation"
 - Difficult to verify if TWAP window (1 hour) is correctly enforced
 
-### 5. **Emergency State Testing Gap**
+### 4. **Emergency State Testing Gap**
 **File**: `test/Vault.t.sol`
 **Issue**: Emergency withdrawal tests don't verify that funds are actually recovered from external protocols.
 
@@ -68,7 +70,7 @@ vault.setFlaxPerSFlax(1e17);
 - Doesn't verify Convex/Curve withdrawal success
 - Mock always succeeds, hiding potential integration failures
 
-### 6. **False Positive in Deposit Flow**
+### 5. **False Positive in Deposit Flow**
 **File**: `test/integration/DepositFlow.t.sol`
 **Issue**: Test expects specific LP token amounts based on mock behavior, not realistic Curve math.
 
@@ -79,7 +81,7 @@ assertEq(lpBalance, 5_000_000_000, "LP token amount should match expected amount
 
 **Concern**: Hardcoded expectation based on mock's sum behavior, wouldn't work with real Curve pools.
 
-### 7. **Weight Configuration Not Validated**
+### 6. **Weight Configuration Not Validated**
 **File**: `test/YieldSource.t.sol`
 **Issue**: Tests allow setting weights for non-existent pools without validation.
 
@@ -87,20 +89,20 @@ assertEq(lpBalance, 5_000_000_000, "LP token amount should match expected amount
 
 ## Recommendations
 
-1. **Fix ETH Sending**: Add `{value: ethAmount}` to Uniswap V3 ETH swap calls
+1. ~~**Fix ETH Sending**: Add `{value: ethAmount}` to Uniswap V3 ETH swap calls~~ ✅ COMPLETED
 
-2. **Improve Mocks**: 
+1. **Improve Mocks**: 
    - Add realistic slippage to swap mocks
    - Implement basic AMM math in Curve pool mock
    - Add actual liquidity calculations to PriceTilter mock
 
-3. **Add Fork Tests**: Test against real Arbitrum contracts in addition to mocks
+2. **Add Fork Tests**: Test against real Arbitrum contracts in addition to mocks
 
-4. **Fix Event Testing**: Verify events are actually emitted by checking logs
+3. **Fix Event Testing**: Verify events are actually emitted by checking logs
 
-5. **Simplify TWAP Tests**: Use more straightforward time progressions
+4. **Simplify TWAP Tests**: Use more straightforward time progressions
 
-6. **Test Real Emergency Flows**: Verify actual recovery from external protocols
+5. **Test Real Emergency Flows**: Verify actual recovery from external protocols
 
 ## Conclusion
 

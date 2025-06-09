@@ -34,15 +34,19 @@ forge test --no-match-path "test-integration/**"
 
 #### Integration Tests
 ```bash
-# Run integration tests (requires Arbitrum RPC URL)
-export RPC_URL="your-arbitrum-rpc-url"
+# First, allow direnv to load environment variables
+direnv allow
+
+# Run integration tests (uses RPC URL from .envrc)
 ./scripts/test-integration.sh
 
 # Or directly with forge:
 forge test --profile integration -f $RPC_URL -vvv
 ```
 
-**Note**: Integration tests use a separate profile defined in `foundry.toml` with the `test-integration` directory and require an Arbitrum fork.
+**Note**: 
+- Integration tests use a separate profile defined in `foundry.toml` with the `test-integration` directory and require an Arbitrum fork
+- The project uses `direnv` to manage environment variables. Always run `direnv allow` before running integration tests to load the RPC_URL from `.envrc`
 
 #### All Tests
 ```bash

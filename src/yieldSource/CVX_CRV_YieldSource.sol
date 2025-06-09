@@ -244,22 +244,30 @@ contract CVX_CRV_YieldSource is AYieldSource {
         }
 
         uint256[] memory amounts = new uint256[](poolTokens.length);
-        amounts[0] = (amount * weights[0]) / 10000; // inputToken (e.g., USDC)
-        for (uint256 i = 1; i < poolTokens.length; i++) {
-            uint256 swapAmount = (amount * weights[i]) / 10000;
-            uint256 minOut = oracle.consult(address(inputToken), address(poolTokens[i]), swapAmount);
-            minOut = (minOut * (10000 - minSlippageBps)) / 10000;
-            amounts[i] = IUniswapV3Router(uniswapV3Router).exactInputSingle(
-                IUniswapV3Router.ExactInputSingleParams({
-                    tokenIn: address(inputToken),
-                    tokenOut: address(poolTokens[i]),
-                    fee: UNISWAP_FEE,
-                    recipient: address(this),
-                    amountIn: swapAmount,
-                    amountOutMinimum: minOut,
-                    sqrtPriceLimitX96: 0
-                })
-            );
+        
+        // Handle each pool token
+        for (uint256 i = 0; i < poolTokens.length; i++) {
+            uint256 allocatedAmount = (amount * weights[i]) / 10000;
+            
+            // If this pool token is the same as input token, no swap needed
+            if (address(poolTokens[i]) == address(inputToken)) {
+                amounts[i] = allocatedAmount;
+            } else {
+                // Need to swap inputToken to this pool token
+                uint256 minOut = oracle.consult(address(inputToken), address(poolTokens[i]), allocatedAmount);
+                minOut = (minOut * (10000 - minSlippageBps)) / 10000;
+                amounts[i] = IUniswapV3Router(uniswapV3Router).exactInputSingle(
+                    IUniswapV3Router.ExactInputSingleParams({
+                        tokenIn: address(inputToken),
+                        tokenOut: address(poolTokens[i]),
+                        fee: UNISWAP_FEE,
+                        recipient: address(this),
+                        amountIn: allocatedAmount,
+                        amountOutMinimum: minOut,
+                        sqrtPriceLimitX96: 0
+                    })
+                );
+            }
         }
 
         // Add liquidity to Curve
@@ -290,8 +298,40 @@ contract CVX_CRV_YieldSource is AYieldSource {
         // Withdraw from Convex
         IConvexBooster(convexBooster).withdraw(poolId, amount);
 
-        // Remove liquidity from Curve (get inputToken, e.g., USDC)
-        inputTokenAmount = ICurvePool(curvePool).remove_liquidity_one_coin(amount, 0, 0);
+        // Find the index of input token in the pool
+        uint256 inputTokenIndex = type(uint256).max;
+        for (uint256 i = 0; i < poolTokens.length; i++) {
+            if (address(poolTokens[i]) == address(inputToken)) {
+                inputTokenIndex = i;
+                break;
+            }
+        }
+        
+        // If input token is one of the pool tokens, remove liquidity to that token
+        if (inputTokenIndex != type(uint256).max) {
+            inputTokenAmount = ICurvePool(curvePool).remove_liquidity_one_coin(amount, int128(int256(inputTokenIndex)), 0);
+        } else {
+            // Input token is not in the pool, need to remove liquidity and swap
+            // For simplicity, remove to the first token and swap
+            uint256 token0Amount = ICurvePool(curvePool).remove_liquidity_one_coin(amount, 0, 0);
+            
+            // Swap pool token to input token
+            uint256 minOut = oracle.consult(address(poolTokens[0]), address(inputToken), token0Amount);
+            minOut = (minOut * (10000 - minSlippageBps)) / 10000;
+            
+            poolTokens[0].approve(uniswapV3Router, token0Amount);
+            inputTokenAmount = IUniswapV3Router(uniswapV3Router).exactInputSingle(
+                IUniswapV3Router.ExactInputSingleParams({
+                    tokenIn: address(poolTokens[0]),
+                    tokenOut: address(inputToken),
+                    fee: UNISWAP_FEE,
+                    recipient: address(this),
+                    amountIn: token0Amount,
+                    amountOutMinimum: minOut,
+                    sqrtPriceLimitX96: 0
+                })
+            );
+        }
 
         // Claim rewards during withdrawal
         flaxValue = _claimAndSellRewards();

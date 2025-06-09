@@ -102,6 +102,9 @@ contract SlippageProtectionTest is Test {
         // Whitelist vault
         yieldSource.whitelistVault(vault, true);
         
+        // Set pool tokens in curve pool mock
+        curvePool.setPoolTokens(poolTokens);
+        
         // Approve tokens
         inputToken.approve(address(yieldSource), type(uint256).max);
         vm.prank(vault);

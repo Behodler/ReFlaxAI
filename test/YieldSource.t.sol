@@ -103,6 +103,9 @@ contract YieldSourceTest is Test {
         vm.prank(yieldSource.owner());
         yieldSource.whitelistVault(vault, true);
         
+        // Set pool tokens in the curve pool mock
+        curvePool.setPoolTokens(poolTokens);
+        
         // Initialize TWAP Oracle for specific tests
         vm.startPrank(twapOracle.owner());
         twapOracle.update(address(inputToken), address(rewardToken));

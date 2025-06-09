@@ -221,12 +221,20 @@ contract MockUniswapV3Router is IUniswapV3Router {
 // Mock Curve Pool
 contract MockCurvePool {
     address public lpToken;
+    address[] public poolTokens;
 
     constructor(address _lpToken) {
         lpToken = _lpToken;
     }
+    
+    function setPoolTokens(address[] calldata _poolTokens) external {
+        poolTokens = _poolTokens;
+    }
 
-    function coins(uint256) external pure returns (address) {
+    function coins(uint256 i) external view returns (address) {
+        if (i < poolTokens.length) {
+            return poolTokens[i];
+        }
         return address(0);
     }
 
@@ -236,15 +244,23 @@ contract MockCurvePool {
 
     function add_liquidity(uint256[4] calldata amounts, uint256) external returns (uint256) {
         uint256 total;
-        for (uint256 i = 0; i < amounts.length; i++) {
-            total += amounts[i];
+        // Pull tokens from sender
+        for (uint256 i = 0; i < amounts.length && i < poolTokens.length; i++) {
+            if (amounts[i] > 0 && poolTokens[i] != address(0)) {
+                IERC20(poolTokens[i]).transferFrom(msg.sender, address(this), amounts[i]);
+                total += amounts[i];
+            }
         }
         MockERC20(lpToken).mint(msg.sender, total);
         return total;
     }
 
-    function remove_liquidity_one_coin(uint256 token_amount, int128, uint256) external returns (uint256) {
+    function remove_liquidity_one_coin(uint256 token_amount, int128 index, uint256) external returns (uint256) {
         MockERC20(lpToken).transferFrom(msg.sender, address(this), token_amount);
+        // Return tokens to sender based on index
+        if (uint128(index) < poolTokens.length && poolTokens[uint128(index)] != address(0)) {
+            IERC20(poolTokens[uint128(index)]).transfer(msg.sender, token_amount);
+        }
         return token_amount;
     }
 }
@@ -294,11 +310,20 @@ contract MockUniswapV2Pair {
     }
 
     function updateReserves(uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) external {
+        // Update cumulative prices based on time elapsed since last update
+        uint32 timeElapsed = _blockTimestampLast - blockTimestampLast;
+        if (timeElapsed > 0 && reserve0 > 0 && reserve1 > 0) {
+            // price0 = reserve1 / reserve0, price1 = reserve0 / reserve1
+            // Scale by 2**112 for UQ112.112 format
+            uint256 price0 = (uint256(reserve1) << 112) / uint256(reserve0);
+            uint256 price1 = (uint256(reserve0) << 112) / uint256(reserve1);
+            price0CumulativeLast += price0 * timeElapsed;
+            price1CumulativeLast += price1 * timeElapsed;
+        }
+        
         reserve0 = _reserve0;
         reserve1 = _reserve1;
         blockTimestampLast = _blockTimestampLast;
-        price0CumulativeLast += uint256(_reserve1) * 1e18 / _reserve0;
-        price1CumulativeLast += uint256(_reserve0) * 1e18 / _reserve1;
     }
     
     function setPriceCumulativeLast(uint256 _price0CumulativeLast, uint256 _price1CumulativeLast) external {

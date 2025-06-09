@@ -20,8 +20,33 @@ forge build
 ```
 
 ### Running Tests
+
+Tests are organized into unit tests and integration tests that can be run independently:
+
+#### Unit Tests
 ```bash
-# Run all tests
+# Run unit tests only (excludes integration tests)
+./scripts/test-unit.sh
+
+# Or directly with forge:
+forge test --no-match-path "test-integration/**"
+```
+
+#### Integration Tests
+```bash
+# Run integration tests (requires Arbitrum RPC URL)
+export RPC_URL="your-arbitrum-rpc-url"
+./scripts/test-integration.sh
+
+# Or directly with forge:
+forge test --profile integration -f $RPC_URL -vvv
+```
+
+**Note**: Integration tests use a separate profile defined in `foundry.toml` with the `test-integration` directory and require an Arbitrum fork.
+
+#### All Tests
+```bash
+# Run all tests (both unit and integration)
 forge test
 
 # Run specific test file
@@ -129,7 +154,7 @@ Tests are written using Foundry with minimal mocks (`test/mocks/Mocks.sol`) that
 - Each contract has its own test file (e.g., `Vault.t.sol`, `YieldSource.t.sol`, `PriceTilterTWAP.t.sol`)
 - Mocks are designed to be minimal, implementing only functions and state necessary for test cases
 - Focus on isolated unit testing of each component's functionality
-- New tests should follow this approach, creating or extending test files with mocks tailored to contract requirements
+- New tests should follow this approach, creating or extending test files with mocks tailored to contract requirements 
 
 #### Test Structure
 - Test files are named after the contract they test (e.g., `TWAPOracle.t.sol` for `TWAPOracle.sol`)

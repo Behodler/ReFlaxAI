@@ -84,6 +84,10 @@ contract TWAPOracle is IOracle, Ownable {
      * @dev First call initializes the pair, subsequent calls update TWAP if period elapsed
      */
     function update(address tokenA, address tokenB) external {
+        // Convert address(0) to WETH for consistency
+        tokenA = tokenA == address(0) ? WETH : tokenA;
+        tokenB = tokenB == address(0) ? WETH : tokenB;
+        
         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
         require(pairAddress != address(0), "TWAPOracle: INVALID_PAIR");
 

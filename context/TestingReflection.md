@@ -35,6 +35,7 @@ b) **MockUniswapV3Router** (line 395):
    - Always returns `amountIn` for swaps by default
    - Real swaps involve price impact and fees
    - Slippage protection tests become meaningless
+   - **Recommendation**: Add configurable slippage parameter similar to MockCurvePool to simulate realistic swap behavior and price impact
 
 c) **MockPriceTilter** (line 509):
    - `tiltPrice` returns 2x the ETH input as Flax value

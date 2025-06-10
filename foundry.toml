@@ -23,3 +23,8 @@ optimizer = true
 optimizer_runs = 200
 fs_permissions = [{ access = "read", path = "./"}]
 # Fork configuration will be provided via command line with -f flag
+
+## Benchmark with different versions
+#time forge build --solc 0.8.17
+#time forge build --solc 0.8.21
+#

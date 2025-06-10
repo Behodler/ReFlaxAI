@@ -18,6 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 forge build
 ```
+Note that builds can take quite long. Set a timeout of about 10 minutes.
 
 ### Running Tests
 

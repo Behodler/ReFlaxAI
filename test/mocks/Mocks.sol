@@ -100,6 +100,7 @@ contract MockUniswapV3Router is IUniswapV3Router {
     string private _revertReason;
     mapping(bytes32 => uint256) private _specificReturnAmounts;
     bool private _useSpecificAmounts;
+    uint256 public slippageBps = 0; // Default to 0 (no slippage), in basis points (10000 = 100%)
 
     event MockExactInputSingleCalled(IUniswapV3Router.ExactInputSingleParams params, uint256 msgValue);
 
@@ -122,6 +123,16 @@ contract MockUniswapV3Router is IUniswapV3Router {
         _revertReason = reason;
         _shouldSetReturnedAmount = false; 
         _useSpecificAmounts = false;
+    }
+
+    function setSlippageBps(uint256 _slippageBps) external {
+        slippageBps = _slippageBps;
+    }
+
+    function _applySlippage(uint256 amount) internal view returns (uint256) {
+        if (slippageBps == 0) return amount;
+        // Apply slippage: outputAmount = inputAmount * (10000 - slippageBps) / 10000
+        return (amount * (10000 - slippageBps)) / 10000;
     }
 
     function exactInputSingle(ExactInputSingleParams calldata params) external payable override returns (uint256 amountOut) {
@@ -150,25 +161,29 @@ contract MockUniswapV3Router is IUniswapV3Router {
             bytes32 key = keccak256(abi.encodePacked(params.tokenIn, params.tokenOut, params.amountIn));
             uint256 specificAmount = _specificReturnAmounts[key];
             if (specificAmount > 0) {
-                if (specificAmount < params.amountOutMinimum && params.amountOutMinimum > 0) {
+                // Apply slippage to the specific amount
+                uint256 amountWithSlippage = _applySlippage(specificAmount);
+                if (amountWithSlippage < params.amountOutMinimum && params.amountOutMinimum > 0) {
                     revert("MockUniswapV3Router: Output less than amountOutMinimum");
                 }
                 // Handle token transfers
                 if (params.tokenOut == address(0)) {
                     // Selling for ETH, send ETH to recipient
-                    payable(params.recipient).transfer(specificAmount);
+                    payable(params.recipient).transfer(amountWithSlippage);
                 } else if (params.tokenIn == address(0)) {
                     // Buying with ETH, send tokens to recipient
-                    IERC20(params.tokenOut).transfer(params.recipient, specificAmount);
+                    IERC20(params.tokenOut).transfer(params.recipient, amountWithSlippage);
                 } else {
                     // Token to token swap
-                    IERC20(params.tokenOut).transfer(params.recipient, specificAmount);
+                    IERC20(params.tokenOut).transfer(params.recipient, amountWithSlippage);
                 }
-                return specificAmount;
+                return amountWithSlippage;
             }
         }
 
         if (_shouldSetReturnedAmount) {
+            // Apply slippage to the returned amount
+            uint256 amountWithSlippage = _applySlippage(_returnedAmount);
             // If actual output would be less than minimum, a real router would revert.
             // We can simulate this if needed, or let tests configure _returnedAmount appropriately.
             // For now, just ensure returnedAmount respects amountOutMinimum if it's going to be less.
@@ -176,7 +191,7 @@ contract MockUniswapV3Router is IUniswapV3Router {
             // A real router handles the "can't meet minimum" revert.
             // This mock will simply return the configured amount or default.
             // The check params.amountOutMinimum is more for the caller (YieldSource) to set correctly.
-             if (_returnedAmount < params.amountOutMinimum && params.amountOutMinimum > 0) {
+             if (amountWithSlippage < params.amountOutMinimum && params.amountOutMinimum > 0) {
                  // This behavior is to ensure YieldSource's logic based on minOut is tested.
                  // If we are configured to return less than min, and min is specified,
                  // it implies the YieldSource should handle this (e.g. by not proceeding or a prior check failed).
@@ -188,30 +203,37 @@ contract MockUniswapV3Router is IUniswapV3Router {
              // Handle token transfers
              if (params.tokenOut == address(0)) {
                  // Selling for ETH, send ETH to recipient
-                 payable(params.recipient).transfer(_returnedAmount);
+                 payable(params.recipient).transfer(amountWithSlippage);
              } else if (params.tokenIn == address(0)) {
                  // Buying with ETH, send tokens to recipient
-                 IERC20(params.tokenOut).transfer(params.recipient, _returnedAmount);
+                 IERC20(params.tokenOut).transfer(params.recipient, amountWithSlippage);
              } else {
                  // Token to token swap
-                 IERC20(params.tokenOut).transfer(params.recipient, _returnedAmount);
+                 IERC20(params.tokenOut).transfer(params.recipient, amountWithSlippage);
              }
-            return _returnedAmount;
+            return amountWithSlippage;
         }
         
-        // Default behavior: return original amountIn (no slippage)
+        // Default behavior: return original amountIn with slippage applied
+        uint256 defaultAmountWithSlippage = _applySlippage(params.amountIn);
+        
+        // Check if the output meets minimum requirements
+        if (defaultAmountWithSlippage < params.amountOutMinimum && params.amountOutMinimum > 0) {
+            revert("MockUniswapV3Router: Output less than amountOutMinimum");
+        }
+        
         // Handle token transfers
         if (params.tokenOut == address(0)) {
             // Selling for ETH, send ETH to recipient
-            payable(params.recipient).transfer(params.amountIn);
+            payable(params.recipient).transfer(defaultAmountWithSlippage);
         } else if (params.tokenIn == address(0)) {
             // Buying with ETH, send tokens to recipient
-            IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+            IERC20(params.tokenOut).transfer(params.recipient, defaultAmountWithSlippage);
         } else {
             // Token to token swap
-            IERC20(params.tokenOut).transfer(params.recipient, params.amountIn);
+            IERC20(params.tokenOut).transfer(params.recipient, defaultAmountWithSlippage);
         }
-        return params.amountIn;
+        return defaultAmountWithSlippage;
     }
 
     // Fallback to allow receiving ETH

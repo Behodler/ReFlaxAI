@@ -23,10 +23,13 @@ This report documents potential false positives and suspicious test patterns fou
 
 Several mocks exhibit unrealistic behavior that masks bugs:
 
-a) **MockCurvePool** (line 289): 
-   - `add_liquidity` returns sum of all amounts as LP tokens
-   - Real pools use complex bonding curves
-   - Tests can't catch realistic slippage or impermanent loss
+a) **MockCurvePool** (line 289): ✅ RESOLVED
+   - ~~`add_liquidity` returns sum of all amounts as LP tokens~~
+   - ~~Real pools use complex bonding curves~~
+   - ~~Tests can't catch realistic slippage or impermanent loss~~
+   - **Resolution**: Added configurable `slippageBps` parameter (default 0) that applies to all liquidity operations
+   - Slippage affects `add_liquidity`, `remove_liquidity_one_coin`, and `calc_token_amount` functions
+   - Tests can now simulate realistic slippage scenarios without complex bonding curves
 
 b) **MockUniswapV3Router** (line 395):
    - Always returns `amountIn` for swaps by default

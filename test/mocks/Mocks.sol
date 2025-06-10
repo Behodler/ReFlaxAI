@@ -223,6 +223,7 @@ contract MockCurvePool {
     address public lpToken;
     address[] public poolTokens;
     uint256 public numTokens;
+    uint256 public slippageBps = 0; // Default to 0 (no slippage), in basis points (10000 = 100%)
 
     constructor(address _lpToken) {
         lpToken = _lpToken;
@@ -254,8 +255,9 @@ contract MockCurvePool {
                 total += amounts[i];
             }
         }
-        MockERC20(lpToken).mint(msg.sender, total);
-        return total;
+        uint256 lpAmount = _applySlippage(total);
+        MockERC20(lpToken).mint(msg.sender, lpAmount);
+        return lpAmount;
     }
 
     // Support 3-token pools
@@ -268,8 +270,9 @@ contract MockCurvePool {
                 total += amounts[i];
             }
         }
-        MockERC20(lpToken).mint(msg.sender, total);
-        return total;
+        uint256 lpAmount = _applySlippage(total);
+        MockERC20(lpToken).mint(msg.sender, lpAmount);
+        return lpAmount;
     }
 
     // Support 4-token pools
@@ -282,17 +285,72 @@ contract MockCurvePool {
                 total += amounts[i];
             }
         }
-        MockERC20(lpToken).mint(msg.sender, total);
-        return total;
+        uint256 lpAmount = _applySlippage(total);
+        MockERC20(lpToken).mint(msg.sender, lpAmount);
+        return lpAmount;
     }
 
     function remove_liquidity_one_coin(uint256 token_amount, int128 index, uint256) external returns (uint256) {
         MockERC20(lpToken).transferFrom(msg.sender, address(this), token_amount);
+        // Apply slippage to the returned token amount
+        uint256 returnAmount = _applySlippage(token_amount);
         // Return tokens to sender based on index
         if (uint128(index) < poolTokens.length && poolTokens[uint128(index)] != address(0)) {
-            IERC20(poolTokens[uint128(index)]).transfer(msg.sender, token_amount);
+            // If pool doesn't have enough tokens, mint them (for testing purposes)
+            address token = poolTokens[uint128(index)];
+            uint256 poolBalance = IERC20(token).balanceOf(address(this));
+            if (poolBalance < returnAmount) {
+                MockERC20(token).mint(address(this), returnAmount - poolBalance);
+            }
+            IERC20(token).transfer(msg.sender, returnAmount);
         }
-        return token_amount;
+        return returnAmount;
+    }
+
+    function setSlippage(uint256 _slippageBps) external {
+        require(_slippageBps <= 10000, "Slippage cannot exceed 100%");
+        slippageBps = _slippageBps;
+    }
+
+    function _applySlippage(uint256 amount) internal view returns (uint256) {
+        if (slippageBps == 0) {
+            return amount;
+        }
+        return amount * (10000 - slippageBps) / 10000;
+    }
+
+    // Calculate expected LP tokens for given input amounts (view function)
+    function calc_token_amount(uint256[2] calldata amounts, bool) external view returns (uint256) {
+        require(numTokens == 2, "Wrong pool size");
+        uint256 total;
+        for (uint256 i = 0; i < 2 && i < poolTokens.length; i++) {
+            if (amounts[i] > 0 && poolTokens[i] != address(0)) {
+                total += amounts[i];
+            }
+        }
+        return _applySlippage(total);
+    }
+
+    function calc_token_amount(uint256[3] calldata amounts, bool) external view returns (uint256) {
+        require(numTokens == 3, "Wrong pool size");
+        uint256 total;
+        for (uint256 i = 0; i < 3 && i < poolTokens.length; i++) {
+            if (amounts[i] > 0 && poolTokens[i] != address(0)) {
+                total += amounts[i];
+            }
+        }
+        return _applySlippage(total);
+    }
+
+    function calc_token_amount(uint256[4] calldata amounts, bool) external view returns (uint256) {
+        require(numTokens == 4, "Wrong pool size");
+        uint256 total;
+        for (uint256 i = 0; i < 4 && i < poolTokens.length; i++) {
+            if (amounts[i] > 0 && poolTokens[i] != address(0)) {
+                total += amounts[i];
+            }
+        }
+        return _applySlippage(total);
     }
 
     // Fallback to handle calls with unknown signatures

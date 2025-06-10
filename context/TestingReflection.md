@@ -31,7 +31,7 @@ a) **MockCurvePool** (line 289): ✅ RESOLVED
    - Slippage affects `add_liquidity`, `remove_liquidity_one_coin`, and `calc_token_amount` functions
    - Tests can now simulate realistic slippage scenarios without complex bonding curves
 
-b) **MockUniswapV3Router** (line 395):
+b) **MockUniswapV3Router** (line 395):✅ RESOLVED
    - Always returns `amountIn` for swaps by default
    - Real swaps involve price impact and fees
    - Slippage protection tests become meaningless

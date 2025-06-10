@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
+import "forge-std/Vm.sol";
 import {Vault} from "../src/vault/Vault.sol";
 import {CVX_CRV_YieldSource} from "../src/yieldSource/CVX_CRV_YieldSource.sol";
 import {PriceTilterTWAP} from "../src/priceTilting/PriceTilterTWAP.sol";
@@ -305,30 +306,48 @@ contract AccessControlTest is Test {
         vault.setFlaxPerSFlax(3e17);
     }
 
-    // Test that critical state changes emit events
+    // Test that critical state changes emit events by verifying actual emission
     function testOwnerOperationsEmitEvents() public {
-        // Test Vault events
-        vm.expectEmit(false, false, false, true);
-        emit FlaxPerSFlaxUpdated(1e17);
+        // Test Vault FlaxPerSFlaxUpdated event
+        vm.recordLogs();
         vm.prank(vault.owner());
         vault.setFlaxPerSFlax(1e17);
+        
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        assertEq(entries.length, 1, "Should emit exactly one event");
+        assertEq(entries[0].topics[0], keccak256("FlaxPerSFlaxUpdated(uint256)"), "Wrong event signature");
+        assertEq(abi.decode(entries[0].data, (uint256)), 1e17, "Wrong flaxPerSFlax value");
 
-        vm.expectEmit(false, false, false, true);
-        emit EmergencyStateChanged(true);
+        // Test Vault EmergencyStateChanged event
+        vm.recordLogs();
         vm.prank(vault.owner());
         vault.setEmergencyState(true);
+        
+        entries = vm.getRecordedLogs();
+        assertEq(entries.length, 1, "Should emit exactly one event");
+        assertEq(entries[0].topics[0], keccak256("EmergencyStateChanged(bool)"), "Wrong event signature");
+        assertEq(abi.decode(entries[0].data, (bool)), true, "Wrong emergency state value");
 
-        // Test YieldSource events
-        vm.expectEmit(true, false, false, true);
-        emit VaultWhitelisted(address(vault), true);
+        // Test YieldSource VaultWhitelisted event
+        vm.recordLogs();
         vm.prank(yieldSource.owner());
         yieldSource.whitelistVault(address(vault), true);
+        
+        entries = vm.getRecordedLogs();
+        assertEq(entries.length, 1, "Should emit exactly one event");
+        assertEq(entries[0].topics[0], keccak256("VaultWhitelisted(address,bool)"), "Wrong event signature");
+        assertEq(entries[0].topics[1], bytes32(uint256(uint160(address(vault)))), "Wrong vault address");
+        assertEq(abi.decode(entries[0].data, (bool)), true, "Wrong whitelisted value");
 
-        // Test PriceTilter events
-        vm.expectEmit(false, false, false, true);
-        emit PriceTiltRatioUpdated(5000);
+        // Test PriceTilter PriceTiltRatioUpdated event
+        vm.recordLogs();
         vm.prank(priceTilter.owner());
         priceTilter.setPriceTiltRatio(5000);
+        
+        entries = vm.getRecordedLogs();
+        assertEq(entries.length, 1, "Should emit exactly one event");
+        assertEq(entries[0].topics[0], keccak256("PriceTiltRatioUpdated(uint256)"), "Wrong event signature");
+        assertEq(abi.decode(entries[0].data, (uint256)), 5000, "Wrong priceTiltRatio value");
     }
 
     // Events (copied from contracts for testing)

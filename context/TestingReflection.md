@@ -37,12 +37,12 @@ b) **MockUniswapV3Router** (line 395):✅ RESOLVED
    - Slippage protection tests become meaningless
    - **Recommendation**: Add configurable slippage parameter similar to MockCurvePool to simulate realistic swap behavior and price impact
 
-c) **MockPriceTilter** (line 509):
+c) **MockPriceTilter** (line 509): ✅ RESOLVED
    - `tiltPrice` returns 2x the ETH input as Flax value
    - No actual price calculation or liquidity addition
    - Tests can't verify proper price tilting mechanics
 
-### 2. **Access Control Event Testing**
+### ~~2. **Access Control Event Testing**~~ ✅ RESOLVED
 **File**: `test/AccessControl.t.sol`
 **Issue**: Tests emit events before calling functions, suggesting they test expected behavior rather than actual behavior.
 
@@ -55,6 +55,13 @@ vault.setFlaxPerSFlax(1e17);
 ```
 
 **Concern**: If event emission was broken, these tests would still pass.
+
+**Resolution**: Fixed by using `vm.recordLogs()` and `vm.getRecordedLogs()` to verify actual event emission:
+- Tests now record logs during function execution
+- Verify the exact number of events emitted
+- Check event signatures match expected values
+- Validate event data matches function parameters
+- This ensures tests fail if events are not properly emitted by the contract
 
 ### 3. **TWAP Oracle Time Manipulation**
 **File**: `test/TWAPOracle.t.sol`

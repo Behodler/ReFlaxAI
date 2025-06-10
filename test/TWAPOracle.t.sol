@@ -175,55 +175,71 @@ contract TWAPOracleTest is Test {
     }
     
     function testWETHPricing() public {
-        vm.warp(10 hours); // Ensure block.timestamp starts at a reasonably large value
-
-        // Get the WETH pair instance that was created in setUp
+        // Start at a reasonable timestamp
+        vm.warp(10 hours);
+        
+        // Get the WETH pair instance
         MockUniswapV2Pair wethPair = MockUniswapV2Pair(factory.getPair(address(tokenA), address(weth)));
-        uint256 testDeltaTime = 1 hours; // This is the deltaTime the test *intends* for price averaging over a specific segment
-        uint256 oracleEffectiveElapsedTime = 3 hours; // This is what the oracle will actually see based on timestamp manipulation
-
-        // Explicitly set initial state for THIS test for the WETH pair
-        uint256 initialP0C_weth_test = 7000; 
-        uint256 initialP1C_weth_test = 8000;
-        uint112 reserve0_weth_test = 150 ether; 
-        uint112 reserve1_weth_test = 75 ether; 
-        uint32 initialTimestamp_weth_test = uint32(block.timestamp - (oracleEffectiveElapsedTime - testDeltaTime)); // e.g., 10h - (3h - 1h) = 8h
-
-        wethPair.updateReserves(reserve0_weth_test, reserve1_weth_test, initialTimestamp_weth_test);
-        wethPair.setPriceCumulativeLast(initialP0C_weth_test, initialP1C_weth_test);
         
-        // Initialize pair in oracle - this will record the above cumulatives and timestamp (e.g., 8h)
+        // Step 1: Set up initial state at time T0
+        uint256 startTime = block.timestamp;
+        uint112 reserve0_initial = 100 ether;  // tokenA
+        uint112 reserve1_initial = 50 ether;   // WETH
+        // Initial spot price: 1 tokenA = 0.5 WETH
+        
+        // Set initial cumulative prices (arbitrary starting values)
+        uint256 price0Cumulative_initial = 1000;
+        uint256 price1Cumulative_initial = 2000;
+        
+        // Set initial state
+        wethPair.updateReserves(reserve0_initial, reserve1_initial, uint32(startTime));
+        wethPair.setPriceCumulativeLast(price0Cumulative_initial, price1Cumulative_initial);
+        
+        // Step 2: Initialize oracle at T0 (first call just records state)
         oracle.update(address(tokenA), address(weth));
         
-        // Move time forward for TWAP calculation period. block.timestamp becomes e.g., 10h + 1h = 11h
-        vm.warp(block.timestamp + testDeltaTime); 
+        // Step 3: Move forward exactly 1 hour (the TWAP period)
+        vm.warp(startTime + 1 hours);
         
-        // Update reserves for the WETH pair again for the "current" state
-        uint112 currentReserve0_weth = 160 ether;
-        uint112 currentReserve1_weth = 96 ether; 
-        uint32 currentTimestamp_weth_for_pair = uint32(block.timestamp); // e.g., 11h
-        wethPair.updateReserves(currentReserve0_weth, currentReserve1_weth, currentTimestamp_weth_for_pair);
+        // Step 4: Set up new state at time T1 (1 hour later)
+        uint112 reserve0_final = 200 ether;  // tokenA
+        uint112 reserve1_final = 50 ether;   // WETH
+        // Final spot price: 1 tokenA = 0.25 WETH
         
-        // Calculate and set new cumulative prices for the WETH pair for target avg price
-        // The oracle will see an elapsed time of (currentTimestamp_weth_for_pair - initialTimestamp_weth_test) = oracleEffectiveElapsedTime (3h)
-        // So, the delta cumulative must be calculated for this period to achieve target avg price.
-        // Target avg price of tokenA/WETH (token0/token1 price) = 0.55 (11/20)
-        uint256 targetP0C_weth = initialP0C_weth_test + (11 * Q112 * oracleEffectiveElapsedTime) / 20;
-        // Target avg price of WETH/tokenA (token1/token0 price) = 1/0.55 (20/11)
-        uint256 targetP1C_weth = initialP1C_weth_test + (20 * Q112 * oracleEffectiveElapsedTime) / 11; 
-        wethPair.setPriceCumulativeLast(targetP0C_weth, targetP1C_weth);
+        // Step 5: Calculate what the cumulative prices should be after 1 hour
+        // The TWAP oracle expects cumulative prices to increase by: price * time_elapsed
+        // Average price over the period: (0.5 + 0.25) / 2 = 0.375 WETH per tokenA
+        // Average price reverse: (2 + 4) / 2 = 3 tokenA per WETH
         
-        // Update oracle - this will calculate averages based on the change from initialP0C/P1C_weth_test over oracleEffectiveElapsedTime
+        // price0Cumulative increases by: (WETH per tokenA) * time * Q112
+        uint256 avgPrice0 = (Q112 * 3) / 8;  // 0.375 in Q112 format
+        uint256 price0Cumulative_final = price0Cumulative_initial + (avgPrice0 * 1 hours);
+        
+        // price1Cumulative increases by: (tokenA per WETH) * time * Q112
+        uint256 avgPrice1 = 3 * Q112;  // 3 in Q112 format
+        uint256 price1Cumulative_final = price1Cumulative_initial + (avgPrice1 * 1 hours);
+        
+        // Update pair state at T1
+        wethPair.updateReserves(reserve0_final, reserve1_final, uint32(block.timestamp));
+        wethPair.setPriceCumulativeLast(price0Cumulative_final, price1Cumulative_final);
+        
+        // Step 6: Update oracle at T1 - this calculates TWAP over the last hour
         oracle.update(address(tokenA), address(weth));
         
-        // Consult tokenA -> ETH price (ETH is tokenOut = address(0))
-        // tokenA is token0 of the wethPair. ETH (WETH) is token1.
-        // We are asking for price of token1 (WETH) in terms of token0 (tokenA).
-        // The oracle's price0Average stores (price of token1 / price of token0).
+        // Step 7: Test consulting prices
+        // How much ETH for 1 tokenA? (uses address(0) for ETH)
         uint256 ethOut = oracle.consult(address(tokenA), address(0), 1 ether);
         
-        // Verify ETH price
-        assertApproxEqAbs(ethOut, 0.55 ether, 0.01 ether, "Token -> ETH price should be approximately 0.55 ETH");
+        // Should be approximately 0.375 ETH (the average price over the hour)
+        assertApproxEqAbs(ethOut, 0.375 ether, 0.01 ether, "TWAP: 1 tokenA should equal ~0.375 ETH");
+        
+        // How much tokenA for 1 ETH?
+        // Note: Since we only have tokenA/WETH pair, we need to use the same pair
+        // The oracle should handle the reverse calculation
+        uint256 tokenAOut = oracle.consult(address(weth), address(tokenA), 1 ether);
+        
+        // Should be approximately 3 tokenA (the reverse average price)
+        assertApproxEqAbs(tokenAOut, 3 ether, 0.01 ether, "TWAP: 1 ETH should equal ~3 tokenA");
     }
     
     function testUpdateRequiresPair() public {

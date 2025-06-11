@@ -16,6 +16,7 @@ library ArbitrumConstants {
     // Curve Pools - from old_reflax
     address public constant USDC_USDe_CRV_POOL = 0x1c34204FCFE5314Dcf53BE2671C02c35DB58B4e3; // USDC/USDe pool
     address public constant USDe_USDx_CRV_POOL = 0x096A8865367686290639bc50bF8D85C0110d9Fea; // USDe/USDx pool
+    address public constant USDCUSDe_LP = 0x1c34204FCFE5314Dcf53BE2671C02c35DB58B4e3; // LP token is same as pool address for newer Curve pools
     
     // Additional tokens from old_reflax
     address public constant USDe = 0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34;
@@ -25,6 +26,8 @@ library ArbitrumConstants {
     address public constant CONVEX_BOOSTER = 0xF403C135812408BFbE8713b5A23a04b3D48AAE31;
     address public constant CONVEX_POOL = 0xe062e302091f44d7483d9D6e0Da9881a0817E2be; // From old_reflax
     uint256 public constant CONVEX_POOL_ID = 34; // From old_reflax
+    address public constant USDC_USDe_REWARDS = 0xe062e302091f44d7483d9D6e0Da9881a0817E2be; // Using CONVEX_POOL as rewards address
+    uint256 public constant USDC_USDe_CONVEX_PID = 34; // Using CONVEX_POOL_ID
     
     // Uniswap V3
     address public constant UNISWAP_V3_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;

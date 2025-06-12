@@ -3,14 +3,16 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Workflow Rules
-- Before beginning a coding task, please make a file called CheckList.md in the directory called context with a checklist of proposed steps. Ask me to review the list unless I tell you not to.
-- As you work though the task, update the checklist items to be checked.
+- When beginnning a task, always produce a checklist which you progressively check ooff.
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 - Document new test patterns or mock requirements when adding tests
 - Update command sections if new development commands are introduced
-- rename CheckList.md to CheckList.old0.md. If that file already exists, name it CheckList.old1.md and incremement accordingly.I'e
 - always make sure code is compiling successfully before reporting completeness.
 - Sometimes, it is acceptable for some tests to be in a broken state. But for tests that are expected to be passing, ensure they are still passing.
+
+## Conventions
+- When I ask you to look at a markdown file, if I say "do" or "execute" an item on a list, I mean do the programming task it describes.
+- If I mention a markdown file without giving a location, look first in context/ and then in the root of this project.
 
 ## Common Development Commands
 

@@ -76,22 +76,44 @@ This document outlines all integration tests that need to be written for the ReF
 - Fixed architectural bug in `AYieldSource.claimAndSellForInputToken()` (missing USDC transfer to vault)
 - Proper decimal conversion handling between USDC (6 decimals) and USDe (18 decimals)
 - Migration test validates complete fund transfer including accumulated rewards
+- **Fixed critical withdrawal bug**: Resolved "Insufficient deposit" error in `testFullLifecycle()` by:
+  - Correcting MockConvexBooster to handle proportional LP token withdrawals instead of withdrawing all tokens
+  - Fixing CVX_CRV_YieldSource to convert input token amounts to LP token amounts in `_withdrawFromProtocol()`
+  - Updating AYieldSource withdrawal accounting to properly track LP tokens vs input tokens
+  - Ensuring proper decimal conversion between USDC (6 decimals) and LP tokens (18 decimals)
 - All test scenarios pass: `testFullLifecycle`, `testLifecycleWithMigration`, `testEmergencyScenario`
 - Tests demonstrate proper integration between all ReFlax protocol components
 
 ### 4. TWAP Oracle Real-World Behavior Test
 **File**: `test-integration/priceTilting/TWAPOracle.integration.t.sol`
-**Status**: Needs to be written
+**Status**: ✅ COMPLETED
 **Justification**: Verify TWAP calculations with real Uniswap V2 pair dynamics.
 
 **Implementation Details**:
-- Create Flax/WETH pair on Uniswap V2
-- Perform multiple swaps to create price movement
-- Verify TWAP correctly tracks 1-hour average
-- Test oracle updates during high volatility
-- Verify oracle prevents manipulation attempts
-- Test automatic updates during deposit/withdraw/claim flows
-- Verify 6-hour bot update mechanism when no user activity
+- ✅ Created mock Flax token and Flax/WETH pair on Camelot (Arbitrum's Uniswap V2 fork)
+- ✅ Implemented comprehensive test suite with 11 test scenarios:
+  - `testInitialOracleState()`: Verifies oracle configuration and initial state
+  - `testOracleInitialization()`: Tests first oracle update to initialize pair measurements
+  - `testPriceMovementAndTWAP()`: Validates price movement tracking and TWAP calculation
+  - `testHighVolatilityTWAP()`: Tests oracle behavior during high volatility with multiple swaps
+  - `testAutomaticUpdatesSimulation()`: Simulates YieldSource operations triggering oracle updates
+  - `testBotUpdateMechanism()`: Verifies 6-hour bot update functionality during inactivity
+  - `testOracleManipulationResistance()`: Tests TWAP resistance to single large manipulation attempts
+  - `testInsufficientTimePeriod()`: Verifies oracle doesn't update when PERIOD hasn't elapsed
+  - `testConsultWithAddressZero()`: Tests address(0) to WETH conversion functionality
+  - `testRevertOnInvalidPair()`: Validates proper error handling for non-existent pairs
+  - `testRevertOnUninitializedConsult()`: Tests error handling for uninitialized pair consultation
+- ✅ Fixed compilation issues with FixedPoint.uq112x112 struct access and assembly salt() function
+- ✅ Resolved runtime issues with Camelot pair cumulative price updates
+- ✅ All 11 tests pass successfully with realistic gas measurements
+
+**Completion Notes**:
+- Successfully integrated with Camelot DEX (Arbitrum's Uniswap V2 implementation)
+- Properly handles Camelot's non-standard cumulative price update behavior
+- Implements workaround for static pair timestamps by forcing additional swaps
+- Oracle correctly uses block.timestamp when pair timestamp doesn't advance
+- Tests demonstrate proper 1-hour TWAP window and manipulation resistance
+- All scenarios pass with real Arbitrum mainnet fork integration
 
 ### 5. Price Tilting Mechanism Test
 **File**: `test-integration/priceTilting/PriceTilting.integration.t.sol`

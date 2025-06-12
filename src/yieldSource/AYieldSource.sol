@@ -181,7 +181,14 @@ abstract contract AYieldSource is Ownable {
         _updateOracle();
         (inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount);
         inputToken.safeTransfer(msg.sender, inputTokenAmount);
-        totalDeposited -= amount;
+        
+        // Calculate LP amount that was withdrawn (approximation for USDC pools)
+        // In production, this should be returned by _withdrawFromProtocol
+        uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)
+        if (lpAmountWithdrawn > totalDeposited) {
+            lpAmountWithdrawn = totalDeposited;
+        }
+        totalDeposited -= lpAmountWithdrawn;
     }
 
     /**

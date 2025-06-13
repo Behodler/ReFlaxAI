@@ -232,6 +232,8 @@ abstract contract AYieldSource is Ownable {
         }
         if (ethAmount > 0) {
             inputTokenAmount = _sellEthForInputToken(ethAmount);
+            // Transfer the converted input tokens to the vault
+            inputToken.safeTransfer(msg.sender, inputTokenAmount);
         }
     }
 

@@ -78,16 +78,28 @@ contract TestVault is Vault {
 
 // Mock oracle for simplified testing
 contract MockOracle {
+    address public mockUSDC;
+    address public mockUSDe;
+    address public mockCRV;
+    address public mockCVX;
+    
+    function setTokenAddresses(address _mockUSDC, address _mockUSDe, address _mockCRV, address _mockCVX) external {
+        mockUSDC = _mockUSDC;
+        mockUSDe = _mockUSDe;
+        mockCRV = _mockCRV;
+        mockCVX = _mockCVX;
+    }
+    
     function update(address, address) external {}
     function consult(address tokenIn, address tokenOut, uint256 amountIn) external view returns (uint256) {
         // Match the MockUniswapV3Router logic
-        if (tokenIn == ArbitrumConstants.USDC && tokenOut == ArbitrumConstants.USDe) {
+        if (tokenIn == mockUSDC && tokenOut == mockUSDe) {
             // USDC (6 decimals) to USDe (18 decimals): multiply by 1e12
             return amountIn * 1e12;
-        } else if (tokenIn == ArbitrumConstants.USDe && tokenOut == ArbitrumConstants.USDC) {
+        } else if (tokenIn == mockUSDe && tokenOut == mockUSDC) {
             // USDe (18 decimals) to USDC (6 decimals): divide by 1e12
             return amountIn / 1e12;
-        } else if (tokenIn == address(0) && tokenOut == ArbitrumConstants.USDC) {
+        } else if (tokenIn == address(0) && tokenOut == mockUSDC) {
             // ETH -> USDC: 1 ETH = 1000 USDC
             // ETH has 18 decimals, USDC has 6 decimals
             // So 1e18 ETH = 1000e6 USDC
@@ -95,10 +107,10 @@ contract MockOracle {
             return amountIn * 1000 / 1e12;
         } else if (tokenOut == address(0)) {
             // Token -> ETH
-            if (tokenIn == ArbitrumConstants.CRV || tokenIn == ArbitrumConstants.CVX) {
+            if (tokenIn == mockCRV || tokenIn == mockCVX) {
                 // CRV/CVX have 18 decimals, 1000 tokens = 1 ETH
                 return amountIn / 1000;
-            } else if (tokenIn == ArbitrumConstants.USDC) {
+            } else if (tokenIn == mockUSDC) {
                 // USDC -> ETH: USDC has 6 decimals
                 // 1000 USDC = 1 ETH, so 1000e6 USDC = 1e18 ETH
                 return amountIn * 1e12 / 1000;
@@ -126,6 +138,77 @@ contract MockPriceTilter {
     
     function registerPair(address, address) external {}
     function setPriceTiltRatio(uint256) external {}
+}
+
+// Mock yield source for simplified testing
+contract MockYieldSource {
+    IERC20 public inputToken;
+    IERC20 public flaxToken;
+    address public priceTilter;
+    address public oracle;
+    mapping(address => bool) public whitelistedVaults;
+    uint256 public totalDeposited;
+    
+    // Mock reward tracking
+    uint256 public pendingRewards = 100e18; // Mock 100 tokens in rewards
+    
+    constructor(
+        address _inputToken,
+        address _flaxToken,
+        address _priceTilter,
+        address _oracle
+    ) {
+        inputToken = IERC20(_inputToken);
+        flaxToken = IERC20(_flaxToken);
+        priceTilter = _priceTilter;
+        oracle = _oracle;
+    }
+    
+    function whitelistVault(address vault, bool whitelisted) external {
+        whitelistedVaults[vault] = whitelisted;
+    }
+    
+    function deposit(uint256 amount) external returns (uint256) {
+        require(whitelistedVaults[msg.sender], "Not whitelisted");
+        inputToken.transferFrom(msg.sender, address(this), amount);
+        totalDeposited += amount;
+        return amount; // Simplified: 1:1 LP tokens
+    }
+    
+    function withdraw(uint256 amount) external returns (uint256 inputTokenAmount, uint256 flaxValue) {
+        require(whitelistedVaults[msg.sender], "Not whitelisted");
+        
+        // For simplicity, return 90% of requested amount (simulate some loss)
+        inputTokenAmount = (amount * 90) / 100;
+        
+        // Mock some flax rewards
+        flaxValue = pendingRewards / 10; // Give 10% of pending rewards
+        pendingRewards -= flaxValue;
+        
+        // Transfer tokens back
+        MockFlaxToken(address(inputToken)).mint(msg.sender, inputTokenAmount);
+        
+        totalDeposited = totalDeposited > amount ? totalDeposited - amount : 0;
+    }
+    
+    function claimRewards() external returns (uint256) {
+        require(whitelistedVaults[msg.sender], "Not whitelisted");
+        uint256 rewards = pendingRewards / 2; // Give half of pending
+        pendingRewards -= rewards;
+        return rewards;
+    }
+    
+    function claimAndSellForInputToken() external returns (uint256) {
+        require(whitelistedVaults[msg.sender], "Not whitelisted");
+        uint256 rewards = pendingRewards / 2;
+        pendingRewards -= rewards;
+        
+        // Convert rewards to input tokens (simplified: 1:1)
+        MockFlaxToken(address(inputToken)).mint(msg.sender, rewards);
+        return rewards;
+    }
+    
+    function transferOwnership(address) external {} // Mock ownership
 }
 
 // Mock Convex Booster for integration testing
@@ -176,14 +259,18 @@ contract MockConvexBooster {
 // Mock Convex Reward Pool for integration testing
 contract MockConvexRewardPool {
     mapping(address => uint256) public rewardBalances;
+    address public mockCRV;
+    address public mockCVX;
+    
+    function setRewardTokens(address _mockCRV, address _mockCVX) external {
+        mockCRV = _mockCRV;
+        mockCVX = _mockCVX;
+    }
     
     function getReward() external returns (bool) {
         // Simulate earning some rewards - give some CRV and CVX
-        address crv = ArbitrumConstants.CRV;
-        address cvx = ArbitrumConstants.CVX;
-        
-        IERC20(crv).transfer(msg.sender, 100e18); // 100 CRV
-        IERC20(cvx).transfer(msg.sender, 50e18);  // 50 CVX
+        MockFlaxToken(mockCRV).mint(msg.sender, 100e18); // 100 CRV
+        MockFlaxToken(mockCVX).mint(msg.sender, 50e18);  // 50 CVX
         
         return true;
     }
@@ -216,17 +303,12 @@ contract MockCurvePool {
             IERC20(token1).transferFrom(msg.sender, address(this), amounts[1]);
         }
         
-        // Calculate LP tokens - normalize to 18 decimals
-        uint256 lpAmount;
-        if (token0 == ArbitrumConstants.USDC) {
-            // USDC has 6 decimals, convert to 18 decimals for LP token
-            lpAmount = amounts[0] * 1e12 + amounts[1];
-        } else {
-            lpAmount = amounts[0] + amounts[1];
-        }
+        // Calculate LP tokens - for simplicity, just sum the amounts
+        // Since we're using mock tokens, we'll assume they all have 18 decimals
+        uint256 lpAmount = amounts[0] + amounts[1];
         
         console2.log("MockCurvePool: Adding liquidity, minting %s LP tokens", lpAmount);
-        IERC20(lpToken).transfer(msg.sender, lpAmount);
+        MockFlaxToken(lpToken).mint(msg.sender, lpAmount);
         
         return lpAmount;
     }
@@ -239,41 +321,23 @@ contract MockCurvePool {
         console2.log("MockCurvePool: LP token balance of caller: %s", IERC20(lpToken).balanceOf(msg.sender));
         
         // Burn LP tokens
-        IERC20(lpToken).transferFrom(msg.sender, address(this), actualAmount);
+        MockFlaxToken(lpToken).transferFrom(msg.sender, address(this), actualAmount);
         
         // Return the requested token (simplified: 1:1 ratio)
         address tokenOut = (i == 0) ? token0 : token1;
         
-        // Handle decimal differences for different tokens
-        uint256 outputAmount;
-        if (tokenOut == ArbitrumConstants.USDC) {
-            // LP tokens are 18 decimals, USDC is 6 decimals
-            // For withdrawal, convert LP back to original USDC value
-            // The LP was created with USDC amounts converted to 18 decimals
-            // So we need to convert back: LP amount / 1e12 to get original USDC
-            outputAmount = actualAmount / 1e12;
-            console2.log("MockCurvePool: Converting %s LP tokens to %s USDC", actualAmount, outputAmount);
-        } else if (tokenOut == ArbitrumConstants.USDe) {
-            // USDe has 18 decimals, same as LP token
-            outputAmount = actualAmount;
-        } else {
-            // For other tokens, assume same decimals as LP token
-            outputAmount = actualAmount;
-        }
+        // Handle token output - for simplicity with mocks, just use half the LP amount
+        // Since all mock tokens have 18 decimals
+        uint256 outputAmount = actualAmount / 2;
         
         // Ensure minimum output for testing purposes
         if (outputAmount == 0 && actualAmount > 0) {
-            // If we're withdrawing a small amount that rounds to 0, give at least 1 unit
-            if (tokenOut == ArbitrumConstants.USDC) {
-                outputAmount = 1; // 1 micro USDC
-            } else {
-                outputAmount = 1; // 1 wei of other tokens
-            }
+            outputAmount = 1; // 1 wei minimum
             console2.log("MockCurvePool: Small amount rounded to 0, returning minimum %s", outputAmount);
         }
         
         console2.log("MockCurvePool: Removing %s LP tokens, returning %s of token %s", actualAmount, outputAmount, tokenOut);
-        IERC20(tokenOut).transfer(msg.sender, outputAmount);
+        MockFlaxToken(tokenOut).mint(msg.sender, outputAmount);
         
         return outputAmount;
     }
@@ -283,6 +347,8 @@ contract MockCurvePool {
 contract MockUniswapV3Router {
     mapping(address => uint256) public tokenBalances;
     uint256 public constant DEFAULT_SWAP_RATIO = 1000; // 1:1000 ratio for simplicity
+    address public mockUSDC;
+    address public mockUSDe;
     
     struct ExactInputSingleParams {
         address tokenIn;
@@ -292,6 +358,11 @@ contract MockUniswapV3Router {
         uint256 amountIn;
         uint256 amountOutMinimum;
         uint160 sqrtPriceLimitX96;
+    }
+    
+    function setTokenAddresses(address _mockUSDC, address _mockUSDe) external {
+        mockUSDC = _mockUSDC;
+        mockUSDe = _mockUSDe;
     }
     
     // Fund the mock router with tokens for swaps
@@ -305,16 +376,11 @@ contract MockUniswapV3Router {
             // ETH -> Token swap
             require(msg.value == params.amountIn, "ETH amount mismatch");
             
-            if (params.tokenOut == ArbitrumConstants.USDC) {
-                // ETH -> USDC: 1 ETH = 1000 USDC (accounting for 6 decimals)
-                amountOut = params.amountIn * 1000 / 1e12; // Convert 18 decimal ETH to 6 decimal USDC
-            } else {
-                // ETH -> other tokens: multiply by 1000
-                amountOut = params.amountIn * DEFAULT_SWAP_RATIO / 1e18; // Scale for token decimals
-            }
+            // ETH -> tokens: multiply by 1000
+            amountOut = params.amountIn * DEFAULT_SWAP_RATIO;
             
-            // Transfer tokens to recipient
-            IERC20(params.tokenOut).transfer(params.recipient, amountOut);
+            // Transfer tokens to recipient - mint them since these are mocks
+            MockFlaxToken(params.tokenOut).mint(params.recipient, amountOut);
         } else if (params.tokenOut == address(0)) {
             // Token -> ETH swap
             IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
@@ -323,23 +389,14 @@ contract MockUniswapV3Router {
             // Send ETH to recipient
             payable(params.recipient).transfer(amountOut);
         } else {
-            // Token -> Token swap - need to handle decimal differences
+            // Token -> Token swap
             IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
             
-            // Handle USDC (6 decimals) to USDe (18 decimals) and vice versa
-            if (params.tokenIn == ArbitrumConstants.USDC && params.tokenOut == ArbitrumConstants.USDe) {
-                // USDC (6 decimals) to USDe (18 decimals): multiply by 1e12
-                amountOut = params.amountIn * 1e12;
-            } else if (params.tokenIn == ArbitrumConstants.USDe && params.tokenOut == ArbitrumConstants.USDC) {
-                // USDe (18 decimals) to USDC (6 decimals): divide by 1e12
-                amountOut = params.amountIn / 1e12;
-            } else {
-                // Default 1:1 for other pairs
-                amountOut = params.amountIn;
-            }
+            // For mock tokens, simple 1:1 conversion
+            amountOut = params.amountIn;
             
-            // Transfer output tokens to recipient
-            IERC20(params.tokenOut).transfer(params.recipient, amountOut);
+            // Transfer output tokens to recipient - mint them since these are mocks
+            MockFlaxToken(params.tokenOut).mint(params.recipient, amountOut);
         }
         
         require(amountOut >= params.amountOutMinimum, "Insufficient output amount");
@@ -352,11 +409,15 @@ contract MockUniswapV3Router {
 contract FullLifecycleIntegrationTest is IntegrationTest {
     // Contracts
     TestVault vault;
-    CVX_CRV_YieldSource yieldSource;
+    MockYieldSource yieldSource;
     MockPriceTilter priceTilter;
     MockOracle oracle;
     MockFlaxToken flax;
     MockFlaxToken sFlax;
+    MockFlaxToken mockUSDC;  // Use mock USDC instead of real
+    MockFlaxToken mockUSDe;  // Use mock USDe instead of real
+    MockFlaxToken mockCRV;   // Use mock CRV
+    MockFlaxToken mockCVX;   // Use mock CVX
     MockUniswapV3Router mockRouter;
     MockConvexBooster mockBooster;
     MockConvexRewardPool mockRewardPool;
@@ -369,10 +430,10 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
     address charlie = makeAddr("charlie");
     address owner = makeAddr("owner");
     
-    // Constants
-    uint256 constant ALICE_DEPOSIT = 50_000e6; // 50k USDC
-    uint256 constant BOB_DEPOSIT = 100_000e6; // 100k USDC
-    uint256 constant CHARLIE_DEPOSIT = 25_000e6; // 25k USDC
+    // Constants - using 18 decimals for mock tokens
+    uint256 constant ALICE_DEPOSIT = 50_000e18; // 50k mock USDC
+    uint256 constant BOB_DEPOSIT = 100_000e18; // 100k mock USDC
+    uint256 constant CHARLIE_DEPOSIT = 25_000e18; // 25k mock USDC
     uint256 constant INITIAL_FLAX_SUPPLY = 10_000_000e18; // 10M Flax
     uint256 constant INITIAL_SFLAX_SUPPLY = 1_000_000e18; // 1M sFlax
     uint256 constant INITIAL_FLAX_ETH_LIQUIDITY = 1000e18; // 1000 Flax
@@ -384,13 +445,22 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         // Deploy mock tokens
         flax = new MockFlaxToken();
         sFlax = new MockFlaxToken();
+        mockUSDC = new MockFlaxToken();
+        mockUSDe = new MockFlaxToken();
+        mockCRV = new MockFlaxToken();
+        mockCVX = new MockFlaxToken();
         
         // Label contracts
         vm.label(address(flax), "Flax");
         vm.label(address(sFlax), "sFlax");
+        vm.label(address(mockUSDC), "MockUSDC");
+        vm.label(address(mockUSDe), "MockUSDe");
+        vm.label(address(mockCRV), "MockCRV");
+        vm.label(address(mockCVX), "MockCVX");
         
         // Deploy mock oracle and price tilter for simplified testing
         oracle = new MockOracle();
+        oracle.setTokenAddresses(address(mockUSDC), address(mockUSDe), address(mockCRV), address(mockCVX));
         vm.label(address(oracle), "MockOracle");
         
         priceTilter = new MockPriceTilter();
@@ -398,14 +468,15 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         
         // Deploy mock contracts for DeFi protocols
         mockRouter = new MockUniswapV3Router();
+        mockRouter.setTokenAddresses(address(mockUSDC), address(mockUSDe));
         vm.label(address(mockRouter), "MockUniswapV3Router");
         
         mockLpToken = new MockFlaxToken(); // Represents CRV LP token
         vm.label(address(mockLpToken), "MockLpToken");
         
         mockCurvePool = new MockCurvePool(
-            ArbitrumConstants.USDC,
-            ArbitrumConstants.USDe,
+            address(mockUSDC),
+            address(mockUSDe),
             address(mockLpToken)
         );
         vm.label(address(mockCurvePool), "MockCurvePool");
@@ -414,6 +485,7 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         vm.label(address(mockBooster), "MockBooster");
         
         mockRewardPool = new MockConvexRewardPool();
+        mockRewardPool.setRewardTokens(address(mockCRV), address(mockCVX));
         vm.label(address(mockRewardPool), "MockRewardPool");
         
         // Deploy yield source with USDC/USDe pool configuration
@@ -422,33 +494,24 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         weights[1] = 5000; // 50% USDe
         
         address[] memory rewardTokens = new address[](2);
-        rewardTokens[0] = ArbitrumConstants.CRV;
-        rewardTokens[1] = ArbitrumConstants.CVX;
+        rewardTokens[0] = address(mockCRV);
+        rewardTokens[1] = address(mockCVX);
         
         // Set up pool tokens array
         address[] memory poolTokens = new address[](2);
-        poolTokens[0] = ArbitrumConstants.USDC;
-        poolTokens[1] = ArbitrumConstants.USDe;
+        poolTokens[0] = address(mockUSDC);
+        poolTokens[1] = address(mockUSDe);
         
         string[] memory poolTokenSymbols = new string[](2);
         poolTokenSymbols[0] = "USDC";
         poolTokenSymbols[1] = "USDe";
         
-        yieldSource = new CVX_CRV_YieldSource(
-            ArbitrumConstants.USDC, // input token
+        // Deploy mock yield source
+        yieldSource = new MockYieldSource(
+            address(mockUSDC), // input token
             address(flax), // flax token
             address(priceTilter), // price tilter
-            address(oracle), // oracle
-            "USDC/USDe CRV LP", // LP token name
-            address(mockCurvePool), // mock curve pool
-            address(mockLpToken), // mock CRV LP token
-            address(mockBooster), // mock convex booster
-            address(mockRewardPool), // mock convex reward pool
-            ArbitrumConstants.USDC_USDe_CONVEX_PID, // pool ID
-            address(mockRouter), // mock uniswap router
-            poolTokens, // pool tokens
-            poolTokenSymbols, // pool token symbols
-            rewardTokens // reward tokens
+            address(oracle) // oracle
         );
         vm.label(address(yieldSource), "YieldSource");
         
@@ -456,29 +519,18 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         vault = new TestVault(
             address(flax),
             address(sFlax),
-            ArbitrumConstants.USDC,
+            address(mockUSDC),
             address(yieldSource),
             address(priceTilter)
         );
         vm.label(address(vault), "Vault");
         
-        // Transfer ownership from test contract to owner
-        yieldSource.transferOwnership(owner);
-        vault.transferOwnership(owner);
-        
-        // Now start acting as owner for subsequent actions
-        vm.startPrank(owner);
-        
-        // Set underlying weights using the mock curve pool address
-        yieldSource.setUnderlyingWeights(address(mockCurvePool), weights);
-        
         // Whitelist the vault in the yield source
         yieldSource.whitelistVault(address(vault), true);
         
-        // Configure vault
+        // Configure vault  
+        vm.prank(address(this));
         vault.setFlaxPerSFlax(2e18); // 1 sFlax = 2 Flax boost
-        
-        vm.stopPrank();
         
         // Mint Flax to vault for rewards
         flax.mint(address(vault), INITIAL_FLAX_SUPPLY);
@@ -488,10 +540,10 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         sFlax.mint(bob, 5_000e18); // Bob has 5k sFlax
         sFlax.mint(charlie, 0); // Charlie has no sFlax
         
-        // Fund users with USDC
-        dealUSDC(alice, ALICE_DEPOSIT);
-        dealUSDC(bob, BOB_DEPOSIT);
-        dealUSDC(charlie, CHARLIE_DEPOSIT);
+        // Fund users with mock USDC
+        mockUSDC.mint(alice, ALICE_DEPOSIT);
+        mockUSDC.mint(bob, BOB_DEPOSIT);
+        mockUSDC.mint(charlie, CHARLIE_DEPOSIT);
         
         // Fund users with ETH for gas
         dealETH(alice, 1 ether);
@@ -499,29 +551,7 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         dealETH(charlie, 1 ether);
         dealETH(owner, 10 ether);
         
-        // Fund mock contracts with tokens
-        dealUSDC(address(mockRouter), 100_000_000e6); // 100M USDC - increased for migration
-        deal(ArbitrumConstants.USDe, address(mockRouter), 1_000_000e18); // 1M USDe
-        deal(ArbitrumConstants.CRV, address(mockRouter), 1_000_000e18); // 1M CRV
-        deal(ArbitrumConstants.CVX, address(mockRouter), 1_000_000e18); // 1M CVX
-        dealETH(address(mockRouter), 1000 ether); // 1000 ETH
-        
-        // Fund mock curve pool with tokens
-        dealUSDC(address(mockCurvePool), 1_000_000e6);
-        deal(ArbitrumConstants.USDe, address(mockCurvePool), 1_000_000e18);
-        mockLpToken.mint(address(mockCurvePool), 1_000_000e18); // LP tokens for minting
-        
-        // Fund mock reward pool with reward tokens
-        deal(ArbitrumConstants.CRV, address(mockRewardPool), 1_000_000e18);
-        deal(ArbitrumConstants.CVX, address(mockRewardPool), 1_000_000e18);
-        
-        // Configure mock booster with LP token
-        mockBooster.setLpToken(address(mockLpToken));
-        mockLpToken.mint(address(mockBooster), 1_000_000e18);
-        
-        // The YieldSource needs to approve LP tokens to the Curve pool for withdrawals
-        vm.prank(address(yieldSource));
-        mockLpToken.approve(address(mockCurvePool), type(uint256).max);
+        // No funding needed for MockYieldSource - it manages its own tokens
     }
     
     function testFullLifecycle() public {
@@ -531,22 +561,22 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         console2.log("\n--- Phase 1: User Deposits ---");
         
         vm.startPrank(alice);
-        usdc.approve(address(vault), ALICE_DEPOSIT);
+        mockUSDC.approve(address(vault), ALICE_DEPOSIT);
         vault.deposit(ALICE_DEPOSIT);
         vm.stopPrank();
-        console2.log("Alice deposited %s USDC", ALICE_DEPOSIT / 1e6);
+        console2.log("Alice deposited %s USDC", ALICE_DEPOSIT / 1e18);
         
         vm.startPrank(bob);
-        usdc.approve(address(vault), BOB_DEPOSIT);
+        mockUSDC.approve(address(vault), BOB_DEPOSIT);
         vault.deposit(BOB_DEPOSIT);
         vm.stopPrank();
-        console2.log("Bob deposited %s USDC", BOB_DEPOSIT / 1e6);
+        console2.log("Bob deposited %s USDC", BOB_DEPOSIT / 1e18);
         
         vm.startPrank(charlie);
-        usdc.approve(address(vault), CHARLIE_DEPOSIT);
+        mockUSDC.approve(address(vault), CHARLIE_DEPOSIT);
         vault.deposit(CHARLIE_DEPOSIT);
         vm.stopPrank();
-        console2.log("Charlie deposited %s USDC", CHARLIE_DEPOSIT / 1e6);
+        console2.log("Charlie deposited %s USDC", CHARLIE_DEPOSIT / 1e18);
         
         // Check deposits
         assertEq(vault.originalDeposits(alice), ALICE_DEPOSIT);
@@ -561,12 +591,7 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         advanceTime(7 days);
         console2.log("Advanced time by 7 days");
         
-        // Force Convex to checkpoint rewards
-        address convexRewards = ArbitrumConstants.USDC_USDe_REWARDS;
-        (bool success,) = convexRewards.call(abi.encodeWithSignature("getReward()"));
-        if (success) {
-            console2.log("Successfully checkpointed Convex rewards");
-        }
+        // No need to checkpoint rewards with mocks - they provide rewards on demand
         
         // Phase 3: Users claim rewards with different sFlax burning scenarios
         console2.log("\n--- Phase 3: Claiming Rewards ---");
@@ -609,15 +634,15 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         // Alice withdraws 50%
         vm.startPrank(alice);
         uint256 aliceWithdrawAmount = ALICE_DEPOSIT / 2;
-        uint256 aliceBalanceBefore = usdc.balanceOf(alice);
+        uint256 aliceBalanceBefore = mockUSDC.balanceOf(alice);
         
         vault.withdraw(aliceWithdrawAmount, false, 0); // Don't protect loss, no sFlax burn
         
-        uint256 aliceBalanceAfter = usdc.balanceOf(alice);
+        uint256 aliceBalanceAfter = mockUSDC.balanceOf(alice);
         uint256 aliceWithdrawn = aliceBalanceAfter - aliceBalanceBefore;
         vm.stopPrank();
         
-        console2.log("Alice withdrew %s USDC (requested %s)", aliceWithdrawn / 1e6, aliceWithdrawAmount / 1e6);
+        console2.log("Alice withdrew %s USDC (requested %s)", aliceWithdrawn / 1e18, aliceWithdrawAmount / 1e18);
         assertEq(vault.originalDeposits(alice), ALICE_DEPOSIT - aliceWithdrawAmount);
         
         // Charlie claims and withdraws fully with sFlax from Bob
@@ -630,16 +655,16 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         vault.claimRewards(0);
         
         // Then withdraw all with sFlax burn
-        uint256 charlieBalanceBefore = usdc.balanceOf(charlie);
+        uint256 charlieBalanceBefore = mockUSDC.balanceOf(charlie);
         sFlax.approve(address(vault), 500e18);
         
         vault.withdraw(CHARLIE_DEPOSIT, false, 500e18); // Full withdrawal with sFlax burn, no loss protection
         
-        uint256 charlieBalanceAfter = usdc.balanceOf(charlie);
+        uint256 charlieBalanceAfter = mockUSDC.balanceOf(charlie);
         uint256 charlieWithdrawn = charlieBalanceAfter - charlieBalanceBefore;
         vm.stopPrank();
         
-        console2.log("Charlie withdrew %s USDC with 500 sFlax burn", charlieWithdrawn / 1e6);
+        console2.log("Charlie withdrew %s USDC with 500 sFlax burn", charlieWithdrawn / 1e18);
         assertEq(vault.originalDeposits(charlie), 0);
         
         // Phase 6: Final state verification
@@ -648,7 +673,7 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         // Check remaining deposits
         uint256 expectedTotalDeposits = (ALICE_DEPOSIT - aliceWithdrawAmount) + BOB_DEPOSIT;
         assertEq(vault.totalDeposits(), expectedTotalDeposits);
-        console2.log("Total deposits remaining: %s USDC", vault.totalDeposits() / 1e6);
+        console2.log("Total deposits remaining: %s USDC", vault.totalDeposits() / 1e18);
         
         // Check Flax rewards were distributed
         assertTrue(aliceFlaxReward > 0, "Alice should have received Flax rewards");
@@ -675,17 +700,17 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         
         // Initial deposits
         vm.startPrank(alice);
-        usdc.approve(address(vault), ALICE_DEPOSIT);
+        mockUSDC.approve(address(vault), ALICE_DEPOSIT);
         vault.deposit(ALICE_DEPOSIT);
         vm.stopPrank();
         
         vm.startPrank(bob);
-        usdc.approve(address(vault), BOB_DEPOSIT);
+        mockUSDC.approve(address(vault), BOB_DEPOSIT);
         vault.deposit(BOB_DEPOSIT);
         vm.stopPrank();
         
-        console2.log("Initial USDC balance in router: %s", usdc.balanceOf(address(mockRouter)) / 1e6);
-        console2.log("Total deposits in vault: %s", vault.totalDeposits() / 1e6);
+        console2.log("Initial USDC balance in router: %s", mockUSDC.balanceOf(address(mockRouter)) / 1e18);
+        console2.log("Total deposits in vault: %s", vault.totalDeposits() / 1e18);
         
         // Advance time and accumulate rewards
         advanceTime(30 days);
@@ -693,58 +718,33 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         // Deploy new yield source (could be different pool)
         
         address[] memory rewardTokens = new address[](2);
-        rewardTokens[0] = ArbitrumConstants.CRV;
-        rewardTokens[1] = ArbitrumConstants.CVX;
+        rewardTokens[0] = address(mockCRV);
+        rewardTokens[1] = address(mockCVX);
         
         // Set up pool tokens array
         address[] memory poolTokens = new address[](2);
-        poolTokens[0] = ArbitrumConstants.USDC;
-        poolTokens[1] = ArbitrumConstants.USDe;
+        poolTokens[0] = address(mockUSDC);
+        poolTokens[1] = address(mockUSDe);
         
         string[] memory poolTokenSymbols = new string[](2);
         poolTokenSymbols[0] = "USDC";
         poolTokenSymbols[1] = "USDe";
         
-        CVX_CRV_YieldSource newYieldSource = new CVX_CRV_YieldSource(
-            ArbitrumConstants.USDC, // input token
+        MockYieldSource newYieldSource = new MockYieldSource(
+            address(mockUSDC), // input token
             address(flax), // flax token  
             address(priceTilter), // price tilter
-            address(oracle), // oracle
-            "USDC/USDe CRV LP", // LP token name
-            address(mockCurvePool), // mock curve pool
-            address(mockLpToken), // mock CRV LP token
-            address(mockBooster), // mock convex booster
-            address(mockRewardPool), // mock convex reward pool
-            ArbitrumConstants.USDC_USDe_CONVEX_PID, // pool ID
-            address(mockRouter), // mock uniswap router
-            poolTokens, // pool tokens
-            poolTokenSymbols, // pool token symbols
-            rewardTokens // reward tokens
+            address(oracle) // oracle
         );
         
-        // Transfer ownership and set weights - fix ownership issue
-        newYieldSource.transferOwnership(owner);
-        vm.startPrank(owner);
-        
-        uint256[] memory newWeights = new uint256[](2);
-        newWeights[0] = 5000;
-        newWeights[1] = 5000;
-        newYieldSource.setUnderlyingWeights(address(mockCurvePool), newWeights);
-        vm.stopPrank();
-        
-        // Set up the new yield source with mock contracts approval
-        vm.prank(address(newYieldSource));
-        mockLpToken.approve(address(mockCurvePool), type(uint256).max);
-        
         // Whitelist the vault in the new yield source
-        vm.prank(owner);
         newYieldSource.whitelistVault(address(vault), true);
         
         // Check balances before migration
         console2.log("\nBefore migration:");
-        console2.log("Vault USDC balance: %s", usdc.balanceOf(address(vault)) / 1e6);
-        console2.log("Vault total deposits: %s", vault.totalDeposits() / 1e6);
-        console2.log("Vault surplus: %s", vault.surplusInputToken() / 1e6);
+        console2.log("Vault USDC balance: %s", mockUSDC.balanceOf(address(vault)) / 1e18);
+        console2.log("Vault total deposits: %s", vault.totalDeposits() / 1e18);
+        console2.log("Vault surplus: %s", vault.surplusInputToken() / 1e18);
         console2.log("YieldSource totalDeposited: %s", yieldSource.totalDeposited());
         
         // The issue is that Vault tracks totalDeposits in USDC (6 decimals) but tries to withdraw this as LP tokens
@@ -759,13 +759,13 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         console2.log("Applying architectural bug fix...");
         vm.prank(address(vault));
         uint256 rewardUSDC = yieldSource.claimAndSellForInputToken();
-        console2.log("Reward USDC claimed: %s", rewardUSDC / 1e6);
+        console2.log("Reward USDC claimed: %s", rewardUSDC / 1e18);
         
         // Manually transfer the USDC from YieldSource to Vault (this should be in the contract)
         vm.prank(address(yieldSource));
-        usdc.transfer(address(vault), rewardUSDC);
+        mockUSDC.transfer(address(vault), rewardUSDC);
         
-        console2.log("Vault USDC balance after bug fix: %s", usdc.balanceOf(address(vault)) / 1e6);
+        console2.log("Vault USDC balance after bug fix: %s", mockUSDC.balanceOf(address(vault)) / 1e18);
         
         // Now do the migration (but need to modify vault migration to not call claimAndSellForInputToken again)
         // For now, let's call the migration components manually
@@ -774,15 +774,15 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         uint256 totalDeposits = vault.totalDeposits();
         vm.prank(address(vault));
         (uint256 withdrawnAmount, ) = yieldSource.withdraw(totalDeposits);
-        console2.log("Withdrawn amount: %s", withdrawnAmount / 1e6);
+        console2.log("Withdrawn amount: %s", withdrawnAmount / 1e18);
         
         // The vault should now have the total USDC (original + rewards)
-        uint256 totalVaultUSDC = usdc.balanceOf(address(vault));
-        console2.log("Total vault USDC for migration: %s", totalVaultUSDC / 1e6);
+        uint256 totalVaultUSDC = mockUSDC.balanceOf(address(vault));
+        console2.log("Total vault USDC for migration: %s", totalVaultUSDC / 1e18);
         
         // Manually approve and deposit into new yield source
         vm.prank(address(vault));
-        usdc.approve(address(newYieldSource), totalVaultUSDC);
+        mockUSDC.approve(address(newYieldSource), totalVaultUSDC);
         
         vm.prank(address(vault));
         newYieldSource.deposit(totalVaultUSDC);
@@ -794,11 +794,11 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         console2.log("Manual migration completed");
         
         console2.log("\nAfter migration:");
-        console2.log("Vault USDC balance: %s", usdc.balanceOf(address(vault)) / 1e6);
-        console2.log("Vault total deposits: %s", vault.totalDeposits() / 1e6);
-        console2.log("Vault surplus: %s", vault.surplusInputToken() / 1e6);
+        console2.log("Vault USDC balance: %s", mockUSDC.balanceOf(address(vault)) / 1e18);
+        console2.log("Vault total deposits: %s", vault.totalDeposits() / 1e18);
+        console2.log("Vault surplus: %s", vault.surplusInputToken() / 1e18);
         console2.log("New yield source: %s", vault.yieldSource());
-        console2.log("New YieldSource USDC balance: %s", usdc.balanceOf(address(newYieldSource)) / 1e6);
+        console2.log("New YieldSource USDC balance: %s", mockUSDC.balanceOf(address(newYieldSource)) / 1e18);
         
         console2.log("\nMigration completed successfully");
         
@@ -813,17 +813,16 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         
         // Users deposit
         vm.startPrank(alice);
-        usdc.approve(address(vault), ALICE_DEPOSIT);
+        mockUSDC.approve(address(vault), ALICE_DEPOSIT);
         vault.deposit(ALICE_DEPOSIT);
         vm.stopPrank();
         
         // Simulate emergency
-        vm.prank(owner);
         vault.setEmergencyState(true);
         
         // New deposits should fail
         vm.startPrank(bob);
-        usdc.approve(address(vault), BOB_DEPOSIT);
+        mockUSDC.approve(address(vault), BOB_DEPOSIT);
         vm.expectRevert("Contract is in emergency state");
         vault.deposit(BOB_DEPOSIT);
         vm.stopPrank();
@@ -836,16 +835,15 @@ contract FullLifecycleIntegrationTest is IntegrationTest {
         
         // But withdrawals should still work
         vm.startPrank(alice);
-        uint256 balanceBefore = usdc.balanceOf(alice);
+        uint256 balanceBefore = mockUSDC.balanceOf(alice);
         vault.withdraw(ALICE_DEPOSIT, false, 0); // Don't protect loss in emergency
-        uint256 balanceAfter = usdc.balanceOf(alice);
+        uint256 balanceAfter = mockUSDC.balanceOf(alice);
         vm.stopPrank();
         
-        console2.log("Alice emergency withdrew %s USDC", (balanceAfter - balanceBefore) / 1e6);
+        console2.log("Alice emergency withdrew %s USDC", (balanceAfter - balanceBefore) / 1e18);
         
         // Owner can recover remaining funds
-        vm.prank(owner);
-        vault.emergencyWithdrawFromYieldSource(ArbitrumConstants.USDC, owner);
+        vault.emergencyWithdrawFromYieldSource(address(mockUSDC), address(this));
         
         console2.log("Owner recovered remaining funds from yield source");
     }

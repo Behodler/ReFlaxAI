@@ -309,8 +309,9 @@ contract Vault is Ownable, ReentrancyGuard {
         // Deposit into new yieldSource
         if (surplusInputToken > 0) {
             inputToken.approve(newYieldSource, surplusInputToken);
-            uint256 received = IYieldsSource(newYieldSource).deposit(surplusInputToken);
-            totalDeposits = received;
+            uint256 deposited = surplusInputToken;
+            IYieldsSource(newYieldSource).deposit(surplusInputToken);
+            totalDeposits = deposited;  // Track input token amount, not LP amount
             surplusInputToken = 0;
         }
 

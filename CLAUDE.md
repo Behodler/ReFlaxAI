@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Workflow Rules
 - Before beginning a new feature, clear context/TestLog.md. 
 - When beginnning a task, always produce a checklist which you progressively check ooff.
+- Every coding task should begin by using context/CurrentStoryTemplate.md to populate context/CurrentStory.md appropriately with the current task details, plan, and progress tracking.
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 - Document new test patterns or mock requirements when adding tests
 - Update command sections if new development commands are introduced

@@ -3,16 +3,22 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Workflow Rules
+- Before beginning a new feature, clear context/TestLog.md. 
 - When beginnning a task, always produce a checklist which you progressively check ooff.
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 - Document new test patterns or mock requirements when adding tests
 - Update command sections if new development commands are introduced
 - always make sure code is compiling successfully before reporting completeness.
 - Sometimes, it is acceptable for some tests to be in a broken state. But for tests that are expected to be passing, ensure they are still passing.
+- At the end, run all tests and add a summary of results for all tests in context/TestLog.md. Distinguish between tests that should fail, tests that shouldn't fail and passing tests by putting them in different sections. Only the test name, status (Pass or Fail) and reason. No stack dumps or debug output of any kind.
 
 ## Conventions
 - When I ask you to look at a markdown file, if I say "do" or "execute" an item on a list, I mean do the programming task it describes.
 - If I mention a markdown file without giving a location, look first in context/ and then in the root of this project.
+
+## Calibrations
+This section is for variables to keep in mind at all times and will be presented as a list.
+1. Build times. Whenever compiling, set the timeout to 15 minutes. This is for tests, builds, compiles and anything else that invokes solc.
 
 ## Common Development Commands
 

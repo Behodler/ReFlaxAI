@@ -185,6 +185,7 @@ contract Vault is Ownable, ReentrancyGuard {
      * @dev Tokens are immediately forwarded to the yield source
      */
     function deposit(uint256 amount) external nonReentrant notInEmergencyState {
+        require(amount > 0, "Deposit amount must be greater than 0");
         inputToken.safeTransferFrom(msg.sender, address(this), amount);
         inputToken.approve(yieldSource, amount);
         uint256 received = IYieldsSource(yieldSource).deposit(amount);

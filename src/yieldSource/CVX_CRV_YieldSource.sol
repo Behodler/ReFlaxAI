@@ -248,8 +248,8 @@ contract CVX_CRV_YieldSource is AYieldSource {
             // If this pool token is the same as input token, no swap needed
             if (address(poolTokens[i]) == address(inputToken)) {
                 amounts[i] = allocatedAmount;
-            } else {
-                // Need to swap inputToken to this pool token
+            } else if (allocatedAmount > 0) {
+                // Need to swap inputToken to this pool token (only if amount > 0)
                 uint256 minOut = oracle.consult(address(inputToken), address(poolTokens[i]), allocatedAmount);
                 minOut = (minOut * (10000 - minSlippageBps)) / 10000;
                 amounts[i] = IUniswapV3Router(uniswapV3Router).exactInputSingle(
@@ -263,6 +263,9 @@ contract CVX_CRV_YieldSource is AYieldSource {
                         sqrtPriceLimitX96: 0
                     })
                 );
+            } else {
+                // Zero allocated amount, skip swap
+                amounts[i] = 0;
             }
         }
 
@@ -327,22 +330,26 @@ contract CVX_CRV_YieldSource is AYieldSource {
                 // For simplicity, remove to the first token and swap
                 uint256 token0Amount = ICurvePool(curvePool).remove_liquidity_one_coin(lpAmountToWithdraw, 0, 0);
                 
-                // Swap pool token to input token
-                uint256 minOut = oracle.consult(address(poolTokens[0]), address(inputToken), token0Amount);
-                minOut = (minOut * (10000 - minSlippageBps)) / 10000;
-                
-                poolTokens[0].approve(uniswapV3Router, token0Amount);
-                inputTokenAmount = IUniswapV3Router(uniswapV3Router).exactInputSingle(
-                    IUniswapV3Router.ExactInputSingleParams({
-                        tokenIn: address(poolTokens[0]),
-                        tokenOut: address(inputToken),
-                        fee: UNISWAP_FEE,
-                        recipient: address(this),
-                        amountIn: token0Amount,
-                        amountOutMinimum: minOut,
-                        sqrtPriceLimitX96: 0
-                    })
-                );
+                if (token0Amount > 0) {
+                    // Swap pool token to input token
+                    uint256 minOut = oracle.consult(address(poolTokens[0]), address(inputToken), token0Amount);
+                    minOut = (minOut * (10000 - minSlippageBps)) / 10000;
+                    
+                    poolTokens[0].approve(uniswapV3Router, token0Amount);
+                    inputTokenAmount = IUniswapV3Router(uniswapV3Router).exactInputSingle(
+                        IUniswapV3Router.ExactInputSingleParams({
+                            tokenIn: address(poolTokens[0]),
+                            tokenOut: address(inputToken),
+                            fee: UNISWAP_FEE,
+                            recipient: address(this),
+                            amountIn: token0Amount,
+                            amountOutMinimum: minOut,
+                            sqrtPriceLimitX96: 0
+                        })
+                    );
+                } else {
+                    inputTokenAmount = 0;
+                }
             }
         }
 
@@ -378,6 +385,8 @@ contract CVX_CRV_YieldSource is AYieldSource {
      * @dev Uses TWAP oracle for slippage protection
      */
     function _sellRewardToken(address token, uint256 amount) internal override returns (uint256 ethAmount) {
+        if (amount == 0) return 0;
+        
         uint256 minEthOut = oracle.consult(token, address(0), amount);
         minEthOut = (minEthOut * (10000 - minSlippageBps)) / 10000;
 
@@ -403,6 +412,8 @@ contract CVX_CRV_YieldSource is AYieldSource {
      * @dev IMPORTANT: Must send ETH value with the swap call when tokenIn is ETH (address(0))
      */
     function _sellEthForInputToken(uint256 ethAmount) internal override returns (uint256 inputTokenAmount) {
+        if (ethAmount == 0) return 0;
+        
         uint256 minInputOut = oracle.consult(address(0), address(inputToken), ethAmount);
         minInputOut = (minInputOut * (10000 - minSlippageBps)) / 10000;
 

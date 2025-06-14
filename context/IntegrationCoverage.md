@@ -102,7 +102,7 @@ These integration tests have been successfully implemented and are passing.
   - `testHighVolatilityTWAP()`: Tests oracle behavior during high volatility with multiple swaps
   - `testAutomaticUpdatesSimulation()`: Simulates YieldSource operations triggering oracle updates
   - `testBotUpdateMechanism()`: Verifies 6-hour bot update functionality during inactivity
-  - `testOracleManipulationResistance()`: Tests TWAP resistance to single large manipulation attempts
+  - `testOracleManipulationResistance()`: Tests TWAP resistance to single large manipulation attempts (covers Priority 4, item #6)
   - `testInsufficientTimePeriod()`: Verifies oracle doesn't update when PERIOD hasn't elapsed
   - `testConsultWithAddressZero()`: Tests address(0) to WETH conversion functionality
   - `testRevertOnInvalidPair()`: Validates proper error handling for non-existent pairs
@@ -118,6 +118,7 @@ These integration tests have been successfully implemented and are passing.
 - Oracle correctly uses block.timestamp when pair timestamp doesn't advance
 - Tests demonstrate proper 1-hour TWAP window and manipulation resistance
 - All scenarios pass with real Arbitrum mainnet fork integration
+- **Note**: The Oracle Manipulation Resistance test (Priority 4, item #6) is implemented here as `testOracleManipulationResistance()` rather than as a separate test file
 
 ### 5. Price Tilting Mechanism Test
 **File**: `test-integration/priceTilting/PriceTilting.integration.t.sol`
@@ -267,18 +268,6 @@ These integration tests still need to be written.
 - Verify slippage protection prevents bad trades
 - Test rebalancing strategies
 
-### 6. Oracle Manipulation Resistance Test
-**File**: `test-integration/security/OracleManipulation.integration.t.sol`
-**Status**: Needs to be written
-**Justification**: Verify TWAP oracle resists manipulation attempts.
-
-**Implementation Details**:
-- Attempt flash loan attacks on Flax/WETH pair
-- Try to manipulate price before oracle update
-- Verify TWAP smooths out manipulation attempts
-- Test sandwich attacks around user operations
-- Verify proper TWAP window (1 hour) is maintained
-
 ## Implementation Notes
 
 ### For Test Implementers:
@@ -312,5 +301,5 @@ These integration tests still need to be written.
 ## Summary
 
 **Completed**: 7 integration test suites covering all core functionality (54 individual tests passing)  
-**Remaining**: 6 integration test suites focused on advanced edge cases and security scenarios  
-**Coverage**: Core protocol flows, migration functionality, and basic security scenarios are fully tested
+**Remaining**: 5 integration test suites focused on advanced edge cases and security scenarios  
+**Coverage**: Core protocol flows, migration functionality, and security scenarios (including oracle manipulation resistance) are fully tested

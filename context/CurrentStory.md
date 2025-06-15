@@ -1,68 +1,87 @@
-# Current Story: Multi-Token Yield Source Test
+# Current Story: Fix Gas Integration Tests
 
-## Story Title
-Implement integration test for yield sources that use different Curve pools with multiple token types
+## Story Overview
+**Title**: Debug and fix failing gas integration tests  
+**Type**: Bug Fix  
+**Priority**: High  
+**Status**: COMPLETED ✅  
+**Date**: 2025-06-15
 
-## Background & Motivation
-- The ReFlax protocol is designed to support multiple input tokens through various Curve pools
-- Current tests only cover single-token scenarios (USDC/USDe pool)
-- We need to verify the system works correctly with different token combinations
-- This test will use the Curve 3pool (USDC/USDT/USDS) to validate multi-token functionality
-- Note: DAI is being replaced by USDS in modern DeFi
+## Problem Statement
+The gas integration tests were failing with "ERC20: transfer amount exceeds balance" error when running `testGenerateGasReport`. This function runs all individual gas tests sequentially, causing account balances to be depleted by the time later tests execute.
 
-## Success Criteria
-- Deploy a YieldSource that works with Curve 3pool (USDC/USDT/USDS)
-- Test deposits with each of the three supported tokens
-- Verify correct routing through the appropriate Curve pool
-- Test withdrawals returning the same token that was deposited
-- Verify reward claiming works regardless of input token
-- All tests pass with real Arbitrum mainnet fork
+## Root Cause Analysis
+- `testGenerateGasReport` calls all individual test functions in sequence
+- Each test consumes tokens from test accounts (USDC, sFlax, ETH)
+- By the time later tests run, accounts have insufficient balances
+- This caused the "transfer amount exceeds balance" error
 
-## Technical Requirements
-- Use real Arbitrum 3pool addresses and contracts
-- Handle different decimal places (USDC/USDT: 6 decimals, USDS: 18 decimals)
-- Implement proper slippage protection for each token
-- Test realistic deposit amounts for each token type
-- Verify LP token calculations are correct for each input token
+## Solution Implemented
+Added balance reset logic at the beginning of `testGenerateGasReport` to restore all test account balances before running the sequential tests.
 
-## Implementation Plan
-1. **Phase 1**: Setup and Infrastructure
-   - [x] Create test file `test-integration/yieldSource/MultiTokenSimple.integration.t.sol`
-   - [x] Look up Arbitrum 3pool addresses and verify USDS support
-   - [x] Set up practical test infrastructure for multi-token validation
-   - [x] Configure test scenarios to handle multiple input tokens
+## Implementation Details
 
-2. **Phase 2**: Core Test Implementation
-   - [x] Test different token decimal handling (6 vs 18 decimals)
-   - [x] Test token transfers and basic operations
-   - [x] Test multi-token configuration with weight allocation
-   - [x] Test decimal conversions between token types
-   - [x] Test slippage calculations for different tokens
-   - [x] Test multi-token deposit scenario configuration
+### Files Modified
+- `test-integration/gas/GasOptimization.integration.t.sol`
+  - Added balance reset logic in `testGenerateGasReport`
+  - Ensures accounts have sufficient USDC, ETH, and sFlax tokens
 
-3. **Phase 3**: Validation and Documentation
-   - [x] Validate all 6 test scenarios pass successfully
-   - [x] Document comprehensive results in TestLog.md
-   - [x] Update IntegrationCoverage.md with completion status
-   - [x] Verify integration with existing test suite
+### Key Changes
+```solidity
+function testGenerateGasReport() public {
+    // Reset account balances before running all tests
+    dealUSDC(alice, 100000 * 1e6);    // 100k USDC
+    dealUSDC(bob, 50000 * 1e6);       // 50k USDC  
+    dealUSDC(charlie, 10000 * 1e6);   // 10k USDC
+    dealETH(alice, 10 ether);
+    dealETH(bob, 10 ether);
+    dealETH(charlie, 10 ether);
+    
+    // Reset sFlax balances
+    sFlaxToken.mint(alice, 10000 * 1e18);
+    sFlaxToken.mint(bob, 5000 * 1e18);
+    
+    // Run all gas measurements...
+}
+```
 
-## Progress Log
-- **[2025-01-14]**: Starting implementation of Multi-Token Yield Source Test
-- **[2025-01-14]**: Initial comprehensive implementation attempted with full mock infrastructure
-- **[2025-01-14]**: Pivoted to practical validation approach due to contract size constraints
-- **[2025-01-14]**: Successfully implemented MultiTokenSimple.integration.t.sol with 6 passing tests
-- **[2025-01-14]**: ✅ **COMPLETED** - All tests passing, documentation updated
+## Test Results
+- **Gas Integration Tests**: 21/21 tests passing (100% success rate)
+  - `GasOptimization.integration.t.sol`: 11/11 tests passing
+  - `GasOptimizationSimple.integration.t.sol`: 10/10 tests passing
+- **Full Integration Suite**: 81/81 tests passing
+- Successfully generates comprehensive gas optimization report
 
-## Notes and Discoveries
-- **USDS Research**: USDS is available on Arbitrum via Sky's SkyLink bridge system
-- **DAI Deprecation**: DAI is being replaced by USDS in modern DeFi implementations
-- **Pool Reality**: No standard Curve 3pool with USDS found on Arbitrum; used USDC/USDT/WETH for testing
-- **Architecture Validation**: CVX_CRV_YieldSource confirmed to support 2-4 token pools with configurable weights
-- **Implementation Strategy**: Focused on practical validation of multi-token concepts rather than full protocol deployment
-- **Contract Size Issue**: Initial comprehensive mock approach exceeded contract size limits, requiring simpler validation approach
+## Gas Measurements Summary
+| Operation | Gas Used | Cost at 0.01 Gwei |
+|-----------|----------|-------------------|
+| Small Deposit (1k USDC) | 172,129 | $0.006 |
+| Medium Deposit (10k USDC) | 87,329 | $0.003 |
+| Large Deposit (50k USDC) | 65,429 | $0.002 |
+| Claim Rewards | 39,344 | $0.001 |
+| Full Withdrawal | 77,388 | $0.003 |
+| Migration | 159,584 | $0.006 |
+| Price Tilting | 253,404 | $0.009 |
 
-## Final Results ✅
-- **Test File**: `test-integration/yieldSource/MultiTokenSimple.integration.t.sol`
-- **Test Count**: 6 tests, all passing (100% success rate)
-- **Coverage**: Multi-token decimal handling, weight allocation, slippage calculations, and configuration validation
-- **Integration**: Successfully integrated with existing test suite (61 total tests passing)
+### Conservative Estimate
+- **500k gas transaction**: 0.000005 ETH ≈ $0.0175 (1.75 cents)
+
+## Technical Architecture
+The tests use a mock-based approach to isolate gas measurements:
+- **MockTWAPOracle**: Bypasses complex oracle dependencies
+- **MockYieldSource**: Simplified yield source without Curve/Convex
+- **MockFlaxToken**: ERC20 with mint/burn capabilities
+- **TestVault**: Concrete implementation of abstract Vault
+
+## Completion Checklist
+- [x] Identify root cause of test failures
+- [x] Implement balance reset fix
+- [x] Verify all gas tests pass individually
+- [x] Verify testGenerateGasReport passes
+- [x] Run full integration test suite
+- [x] Update documentation (TestLog.md)
+- [x] Update CurrentStory.md
+- [ ] Commit and push changes
+
+## Story Status: COMPLETED ✅
+All gas integration tests are now passing and providing reliable, reproducible gas measurements for the ReFlax protocol. The fix ensures that sequential test execution doesn't cause balance depletion issues.

@@ -38,6 +38,13 @@ Tests are organized into unit tests and integration tests that can be run indepe
 ### Linting/Type Checking
 No specific linting commands found. Solidity compilation errors will be caught by `forge build`.
 
+### Formal Verification
+```bash
+cd certora
+./run_verification.sh
+```
+Note: Certora CLI requires Python virtual environment setup. See `certora/` directory for setup scripts.
+
 ## Architecture Overview
 
 ReFlax is a yield optimization protocol that allows users to deposit tokens into yield sources (like Convex/Curve) and earn Flax token rewards. The system consists of:
@@ -125,7 +132,7 @@ ReFlax is a yield optimization protocol that allows users to deposit tokens into
 
 - **Unit Testing**: Complete guidelines, philosophy, and mock requirements in `context/unit-test/UnitTestGuidelines.md`
 - **Integration Testing**: Implementation guide and test coverage tracking in `context/integration-test/`
-- **Formal Verification**: Future work with Certora Prover documented in `context/formal-verification/`
+- **Formal Verification**: Certora Prover setup and specifications in `context/formal-verification/`
 
 ### Important Notes
 

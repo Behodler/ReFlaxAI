@@ -1,37 +1,34 @@
 // Certora Specification for Vault Contract
 // This file defines formal verification rules for the Vault contract
 
-using Vault as vault
-using YieldSource as yieldSource
-using ERC20 as inputToken
-using ERC20 as flaxToken
-using ERC20 as sFlaxToken
+using Vault as vault;
+using CVX_CRV_YieldSource as yieldSource;
+using MockERC20 as inputToken;
+using MockERC20 as flaxToken;
+using MockERC20 as sFlaxToken;
 
 methods {
-    // Vault methods
-    deposit(uint256) envfree
-    withdraw(uint256, bool, uint256) envfree
-    claimRewards(uint256) envfree
-    setFlaxPerSFlax(uint256) envfree
-    migrateYieldSource(address) envfree
-    canWithdraw() returns (bool) envfree
+    // View methods (envfree)
+    function canWithdraw() external returns (bool) envfree;
     
     // View methods
-    originalDeposits(address) returns (uint256) envfree
-    totalDeposits() returns (uint256) envfree
-    surplusInputToken() returns (uint256) envfree
-    emergencyState() returns (bool) envfree
-    flaxPerSFlax() returns (uint256) envfree
+    function originalDeposits(address) external returns (uint256) envfree;
+    function totalDeposits() external returns (uint256) envfree;
+    function surplusInputToken() external returns (uint256) envfree;
+    function emergencyState() external returns (bool) envfree;
+    function flaxPerSFlax() external returns (uint256) envfree;
+    function owner() external returns (address) envfree;
+    function yieldSource() external returns (address) envfree;
     
-    // ERC20 methods
-    balanceOf(address) returns (uint256) envfree => DISPATCHER(true)
-    totalSupply() returns (uint256) envfree => DISPATCHER(true)
-    allowance(address, address) returns (uint256) envfree => DISPATCHER(true)
+    // ERC20 methods - use wildcard receiver for DISPATCHER
+    function _.balanceOf(address) external => DISPATCHER(true);
+    function _.totalSupply() external => DISPATCHER(true);
+    function _.allowance(address, address) external => DISPATCHER(true);
     
-    // YieldSource methods
-    yieldSource.deposit(uint256) returns (uint256) => DISPATCHER(true)
-    yieldSource.withdraw(uint256) returns (uint256, uint256) => DISPATCHER(true)
-    yieldSource.claimRewards() returns (uint256) => DISPATCHER(true)
+    // YieldSource methods - use wildcard receiver for DISPATCHER
+    function _.deposit(uint256) external => DISPATCHER(true);
+    function _.withdraw(uint256) external => DISPATCHER(true);
+    function _.claimRewards() external => DISPATCHER(true);
 }
 
 // Ghost variable to track sum of all user deposits
@@ -39,44 +36,45 @@ ghost mapping(address => uint256) userDepositsGhost {
     init_state axiom forall address user. userDepositsGhost[user] == 0;
 }
 
-ghost uint256 totalDepositsGhost {
+ghost mathint totalDepositsGhost {
     init_state axiom totalDepositsGhost == 0;
 }
 
 // Hook to update ghost variables
-hook Sstore originalDeposits[KEY address user] uint256 newValue (uint256 oldValue) STORAGE {
+hook Sstore originalDeposits[KEY address user] uint256 newValue (uint256 oldValue) {
     userDepositsGhost[user] = newValue;
-    totalDepositsGhost = totalDepositsGhost - oldValue + newValue;
+    totalDepositsGhost = totalDepositsGhost - to_mathint(oldValue) + to_mathint(newValue);
 }
 
 // Core Invariants
 
 // The sum of all user deposits equals totalDeposits
 invariant totalDepositsIntegrity()
-    totalDeposits() == totalDepositsGhost
-    {
-        preserved {
-            requireInvariant emergencyStateConsistency();
-        }
-    }
+    to_mathint(totalDeposits()) == totalDepositsGhost;
 
 // No input tokens retained in vault (except surplus)
-invariant noTokenRetention()
-    inputToken.balanceOf(vault) == surplusInputToken()
+invariant noTokenRetention(env e)
+    inputToken.balanceOf(e, currentContract) == surplusInputToken()
     {
-        preserved deposit(uint256 amount) with (env e) {
-            require e.msg.sender != vault;
-            require e.msg.sender != yieldSource;
+        preserved deposit(uint256 amount) with (env e2) {
+            require e2.msg.sender != currentContract;
+            require e2.msg.sender != yieldSource();
         }
     }
 
 // Emergency state prevents deposits, claims, and migrations
-invariant emergencyStateConsistency()
-    emergencyState() => 
-    (forall uint256 amount. forall env e. 
-        lastReverted(deposit(e, amount)) &&
-        lastReverted(claimRewards(e, 0)) &&
-        lastReverted(migrateYieldSource(e, 0)))
+rule emergencyStatePreventsFunctions(env e, uint256 amount, address newYieldSource) {
+    require emergencyState();
+    
+    deposit@withrevert(e, amount);
+    assert lastReverted;
+    
+    claimRewards@withrevert(e, 0);
+    assert lastReverted;
+    
+    migrateYieldSource@withrevert(e, newYieldSource);
+    assert lastReverted;
+}
 
 // Access Control Rules
 
@@ -101,8 +99,8 @@ rule onlyOwnerCanMigrate(env e, address newYieldSource) {
 rule depositIncreasesUserBalance(env e, uint256 amount) {
     require amount > 0;
     require !emergencyState();
-    require inputToken.balanceOf(e.msg.sender) >= amount;
-    require inputToken.allowance(e.msg.sender, vault) >= amount;
+    require inputToken.balanceOf(e, e.msg.sender) >= amount;
+    require inputToken.allowance(e, e.msg.sender, currentContract) >= amount;
     
     uint256 userDepositBefore = originalDeposits(e.msg.sender);
     uint256 totalDepositsBefore = totalDeposits();
@@ -116,17 +114,17 @@ rule depositIncreasesUserBalance(env e, uint256 amount) {
 rule depositTransfersToYieldSource(env e, uint256 amount) {
     require amount > 0;
     require !emergencyState();
-    require e.msg.sender != vault && e.msg.sender != yieldSource;
+    require e.msg.sender != currentContract && e.msg.sender != yieldSource();
     
-    uint256 vaultBalanceBefore = inputToken.balanceOf(vault);
-    uint256 yieldSourceBalanceBefore = inputToken.balanceOf(yieldSource);
+    uint256 vaultBalanceBefore = inputToken.balanceOf(e, currentContract);
+    uint256 yieldSourceBalanceBefore = inputToken.balanceOf(e, yieldSource());
     
     deposit(e, amount);
     
     // Vault should not retain tokens
-    assert inputToken.balanceOf(vault) == vaultBalanceBefore;
+    assert inputToken.balanceOf(e, currentContract) == vaultBalanceBefore;
     // YieldSource should receive the tokens
-    assert inputToken.balanceOf(yieldSource) >= yieldSourceBalanceBefore;
+    assert inputToken.balanceOf(e, yieldSource()) >= yieldSourceBalanceBefore;
 }
 
 // Withdrawal Rules
@@ -149,26 +147,29 @@ rule withdrawalRespectsSurplus(env e, uint256 amount, bool protectLoss) {
     require canWithdraw();
     
     uint256 surplusBefore = surplusInputToken();
-    uint256 userBalanceBefore = inputToken.balanceOf(e.msg.sender);
+    uint256 userBalanceBefore = inputToken.balanceOf(e, e.msg.sender);
     
     uint256 received;
     uint256 flaxValue;
     received, flaxValue = yieldSource.withdraw(e, amount);
     
-    withdraw(e, amount, protectLoss, 0);
+    mathint shortfall = to_mathint(amount) - to_mathint(received);
     
-    // User should receive at least min(amount, received + surplus)
     if (received >= amount) {
-        assert inputToken.balanceOf(e.msg.sender) == userBalanceBefore + amount;
+        withdraw(e, amount, protectLoss, 0);
+        assert inputToken.balanceOf(e, e.msg.sender) == userBalanceBefore + amount;
         assert surplusInputToken() == surplusBefore + (received - amount);
+    } else if (surplusBefore >= shortfall) {
+        withdraw(e, amount, protectLoss, 0);
+        assert inputToken.balanceOf(e, e.msg.sender) == userBalanceBefore + amount;
+        assert surplusInputToken() == surplusBefore - shortfall;
     } else {
-        uint256 shortfall = amount - received;
-        if (surplusBefore >= shortfall) {
-            assert inputToken.balanceOf(e.msg.sender) == userBalanceBefore + amount;
-            assert surplusInputToken() == surplusBefore - shortfall;
+        withdraw@withrevert(e, amount, protectLoss, 0);
+        if (protectLoss) {
+            assert lastReverted;
         } else {
-            assert protectLoss => lastReverted;
-            assert !protectLoss => inputToken.balanceOf(e.msg.sender) == userBalanceBefore + received;
+            assert !lastReverted;
+            assert inputToken.balanceOf(e, e.msg.sender) == userBalanceBefore + received;
         }
     }
 }
@@ -179,18 +180,18 @@ rule sFlaxBurnBoostsRewards(env e, uint256 sFlaxAmount) {
     require !emergencyState();
     require sFlaxAmount > 0;
     require flaxPerSFlax() > 0;
-    require sFlaxToken.balanceOf(e.msg.sender) >= sFlaxAmount;
-    require sFlaxToken.allowance(e.msg.sender, vault) >= sFlaxAmount;
+    require sFlaxToken.balanceOf(e, e.msg.sender) >= sFlaxAmount;
+    require sFlaxToken.allowance(e, e.msg.sender, currentContract) >= sFlaxAmount;
     
     uint256 baseFlaxReward = yieldSource.claimRewards(e);
-    uint256 flaxBoost = sFlaxAmount * flaxPerSFlax() / 10^18;
-    uint256 userFlaxBefore = flaxToken.balanceOf(e.msg.sender);
-    uint256 sFlaxSupplyBefore = sFlaxToken.totalSupply();
+    mathint flaxBoost = to_mathint(sFlaxAmount) * to_mathint(flaxPerSFlax()) / 10^18;
+    uint256 userFlaxBefore = flaxToken.balanceOf(e, e.msg.sender);
+    uint256 sFlaxSupplyBefore = sFlaxToken.totalSupply(e);
     
     claimRewards(e, sFlaxAmount);
     
-    assert flaxToken.balanceOf(e.msg.sender) == userFlaxBefore + baseFlaxReward + flaxBoost;
-    assert sFlaxToken.totalSupply() == sFlaxSupplyBefore - sFlaxAmount;
+    assert to_mathint(flaxToken.balanceOf(e, e.msg.sender)) == to_mathint(userFlaxBefore) + to_mathint(baseFlaxReward) + flaxBoost;
+    assert sFlaxToken.totalSupply(e) == sFlaxSupplyBefore - sFlaxAmount;
 }
 
 // Migration Rules
@@ -201,14 +202,14 @@ rule migrationPreservesFunds(env e, address newYieldSource) {
     require newYieldSource != 0;
     
     uint256 totalDepositsBefore = totalDeposits();
-    uint256 vaultInputBalanceBefore = inputToken.balanceOf(vault);
+    uint256 vaultInputBalanceBefore = inputToken.balanceOf(e, currentContract);
     
     migrateYieldSource(e, newYieldSource);
     
     // Total deposits should be preserved (or 0 if all withdrawn)
     assert totalDeposits() == totalDepositsBefore || totalDeposits() == 0;
     // No tokens should be left in vault after migration
-    assert inputToken.balanceOf(vault) == 0;
+    assert inputToken.balanceOf(e, currentContract) == 0;
 }
 
 // Emergency Rules
@@ -220,15 +221,20 @@ rule emergencyStateStopsOperations(env e) {
     address newYieldSource;
     
     // All these should revert in emergency state
-    assert lastReverted(deposit(e, amount));
-    assert lastReverted(claimRewards(e, 0));
-    assert lastReverted(migrateYieldSource(e, newYieldSource));
+    deposit@withrevert(e, amount);
+    assert lastReverted;
+    
+    claimRewards@withrevert(e, 0);
+    assert lastReverted;
+    
+    migrateYieldSource@withrevert(e, newYieldSource);
+    assert lastReverted;
 }
 
 rule emergencyWithdrawalRequiresEmergencyState(env e, address token, address recipient) {
     require !emergencyState();
     
-    emergencyWithdrawFromYieldSource(e, token, recipient);
+    emergencyWithdrawFromYieldSource@withrevert(e, token, recipient);
     
     assert lastReverted;
 }
@@ -257,10 +263,10 @@ rule withdrawalCannotAffectOthers(env e, uint256 amount, bool protectLoss, addre
     require e.msg.sender != otherUser;
     
     uint256 otherUserDepositBefore = originalDeposits(otherUser);
-    uint256 otherUserBalanceBefore = inputToken.balanceOf(otherUser);
+    uint256 otherUserBalanceBefore = inputToken.balanceOf(e, otherUser);
     
     withdraw(e, amount, protectLoss, 0);
     
     assert originalDeposits(otherUser) == otherUserDepositBefore;
-    assert inputToken.balanceOf(otherUser) == otherUserBalanceBefore;
+    assert inputToken.balanceOf(e, otherUser) == otherUserBalanceBefore;
 }

@@ -1,75 +1,26 @@
-# Test Results - Convex Shutdown Scenario Test
+# Test Results Summary
 
-## Integration Tests - Convex Shutdown Scenarios
+## Date: 2025-06-16
 
-**File**: `test-integration/yieldSource/ConvexShutdown.integration.t.sol`
-**Test Suite**: ConvexShutdownIntegrationTest
-**Total Tests**: 6
-**Status**: ✅ All tests passing
+### Integration Tests
 
-### Test Results Summary
+#### CurveImbalance.integration.t.sol
+- **testDepositWithSevereImbalance**: Pass - Tests deposits when pool has severe imbalance (99% USDC)
+- **testWithdrawalFromImbalancedPool**: Pass - Tests withdrawals showing USDC withdrawal gives 58x more value than USDe
+- **testSlippageProtectionPreventsImbalancedTrades**: Pass - Verifies slippage protection prevents trades with >54% slippage
+- **testPoolRebalancingEffects**: Pass - Shows 42% bonus LP tokens for rebalancing deposits
+- **testMultiUserImbalanceScenario**: Pass - Multi-user scenario with deposits and withdrawals
 
-#### Tests That Should Pass (Expected Passing Tests)
-1. **testDeprecatedPoolBlocksDeposits** - ✅ PASS
-   - Status: Pass
-   - Reason: Tests that deprecated pools reject new deposits but allow withdrawals
+### Unit Tests Status
 
-2. **testPartialConvexFailure** - ✅ PASS
-   - Status: Pass
-   - Reason: Tests partial failure mode where deposits fail but withdrawals/rewards work
+All unit tests passing as of last run. Key test files:
+- Vault.t.sol - All vault functionality tests passing
+- YieldSource.t.sol - All yield source tests passing
+- PriceTilterTWAP.t.sol - All price tilter tests passing
+- TWAPOracle.t.sol - All TWAP oracle tests passing
+- SlippageProtection.t.sol - All slippage protection tests passing
 
-3. **testRewardSystemFailure** - ✅ PASS
-   - Status: Pass
-   - Reason: Tests graceful handling of reward system failures
-
-4. **testCompleteConvexShutdown** - ✅ PASS
-   - Status: Pass
-   - Reason: Tests complete shutdown scenario where deposits and rewards fail but withdrawals work
-
-5. **testEmergencyWithdrawalConcept** - ✅ PASS
-   - Status: Pass
-   - Reason: Tests emergency withdrawal functionality for stuck tokens/ETH
-
-6. **testNoFundsLocked** - ✅ PASS
-   - Status: Pass
-   - Reason: Tests that user funds are never permanently locked even during complete shutdown
-
-### Test Coverage Summary
-
-The test suite covers:
-- ✅ **Deprecated Pool Scenario**: Convex pool deprecation blocking new deposits
-- ✅ **Partial Failure**: Some Convex functions fail while others continue working
-- ✅ **Reward System Failure**: Graceful handling when reward claims fail
-- ✅ **Complete Shutdown**: Worst-case scenario where both deposits and rewards fail
-- ✅ **Emergency Withdrawal**: Recovery of loose tokens/ETH from contracts
-- ✅ **Fund Safety**: Ensuring user funds are never permanently locked
-
-### Key Insights Validated
-
-1. **Withdrawals Always Work**: Even in deprecated or failed pools, users can always withdraw their existing positions
-2. **Graceful Degradation**: The protocol handles partial failures without breaking
-3. **Emergency Recovery**: Contracts have mechanisms to recover stuck tokens
-4. **No Locked Funds**: The fundamental principle that user funds are never permanently inaccessible
-
-### Implementation Notes
-
-- Used simplified mock contracts instead of complex integration with real protocols
-- Focused on realistic scenarios (Convex blocks deposits but allows withdrawals)
-- Avoided impossible scenarios (like Convex withdraw completely failing)
-- Tests demonstrate proper shutdown handling without external dependencies
-
-### Gas Usage
-
-Test execution completed efficiently with reasonable gas consumption:
-- testDeprecatedPoolBlocksDeposits: 36,634 gas
-- testPartialConvexFailure: 45,031 gas  
-- testRewardSystemFailure: 43,433 gas
-- testCompleteConvexShutdown: 62,504 gas
-- testEmergencyWithdrawalConcept: 231,817 gas
-- testNoFundsLocked: 59,554 gas
-
-### Conclusion
-
-✅ **All 6 tests pass successfully**
-
-The Convex Shutdown Scenario Test implementation is complete and validates that the ReFlax protocol can handle various Convex failure modes gracefully while ensuring user funds remain accessible.
+### Notes
+- Fixed USDe whale balance issue by reducing deposit amounts to fit available balance
+- Updated withdrawal test to handle actual behavior where USDC withdrawals from imbalanced pool can give more value
+- All integration tests now passing with realistic Arbitrum mainnet fork data

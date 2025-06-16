@@ -1,56 +1,55 @@
-# Current Story: Convex Shutdown Scenario Test
+# Current Story: Curve Pool Imbalance Integration Test
 
 ## Purpose of This Story
 
-Implement comprehensive integration tests that verify the ReFlax protocol's behavior when Convex experiences various shutdown or deprecation scenarios.
+Implement comprehensive integration tests that verify the ReFlax protocol's behavior when Curve pools experience significant imbalances, ensuring proper handling of slippage, LP token calculations, and user protection.
 
 ## Story Status
 
-**Status**: ✅ COMPLETED
+**Status**: Completed
 
-**Last Updated**: 2025-06-15
+**Last Updated**: 2025-06-16
 
 ## Story Title
-Convex Shutdown Scenario Integration Test Implementation
+Curve Pool Imbalance Integration Test Implementation
 
 ### Background & Motivation
-- Convex Finance is a critical dependency for the ReFlax protocol's yield generation
-- Convex pools can be deprecated over time, blocking new deposits while allowing withdrawals
-- The protocol needs to handle scenarios where Convex functionality is partially or fully compromised
-- Users must never have their funds locked due to external protocol issues
-- This test ensures graceful degradation and migration capabilities when Convex becomes unavailable
+- Curve pools can become significantly imbalanced when one asset is in high demand or low supply
+- Pool imbalances affect LP token calculations, slippage, and withdrawal values
+- The protocol needs to handle extreme imbalances gracefully without exposing users to excessive losses
+- Slippage protection mechanisms must prevent bad trades during imbalanced conditions
+- This test ensures the protocol operates safely even under stressed market conditions
 
 ### Success Criteria
-- Test passes with realistic Convex shutdown scenarios
-- All user funds remain accessible even when Convex deposits are blocked
-- Protocol can migrate to alternative yield sources during Convex deprecation
-- Emergency withdrawal mechanisms work correctly
-- No user funds are ever permanently locked
-- Test demonstrates proper handling of partial Convex functionality failures
+- Test passes with real Arbitrum mainnet fork
+- Successfully creates and tests various pool imbalance scenarios
+- Slippage protection correctly prevents excessive losses
+- LP token calculations accurately reflect pool conditions
+- Users are protected from unfavorable trades
+- Clear documentation of imbalance effects on protocol operations
 
 ### Technical Requirements
 - Extend IntegrationTest base contract following project patterns
-- Mock Convex components to simulate shutdown scenarios accurately
-- Test both deprecated pool scenarios and reward system failures
-- Verify CVX_CRV_YieldSource emergency mechanisms
-- Ensure proper integration with Vault migration functionality
-- Follow existing test patterns from other integration tests in the project
+- Use real Curve pool (USDC/USDe) on Arbitrum mainnet fork
+- Manipulate pool balance through large one-sided trades
+- Test deposit, withdrawal, and slippage protection under imbalanced conditions
+- Use calc_token_amount() for realistic LP calculations
+- Follow existing test patterns from RealisticDepositFlow.integration.t.sol
 
 ### Implementation Plan
 
 1. **Phase 1**: Setup and Infrastructure
    - [x] Clear context/TestLog.md 
    - [x] Update context/CurrentStory.md with task details
-   - [x] Create test file: `test-integration/yieldSource/ConvexShutdown.integration.t.sol`
-   - [x] Set up simplified test structure (standalone instead of IntegrationTest extension)
+   - [x] Create test file: `test-integration/yieldSource/CurveImbalance.integration.t.sol`
+   - [x] Set up test structure extending IntegrationTest
 
 2. **Phase 2**: Core Test Implementation
-   - [x] Implement deprecated pool scenario (deposits fail, withdrawals work)
-   - [x] Implement reward system failure scenarios
-   - [x] Test emergency withdrawal functionality
-   - [x] Test partial functionality scenarios
-   - [x] Test complete shutdown scenario
-   - [x] Test that no funds are permanently locked
+   - [x] Implement testDepositWithSevereImbalance()
+   - [x] Implement testWithdrawalFromImbalancedPool()
+   - [x] Implement testSlippageProtectionPreventsImbalancedTrades()
+   - [x] Implement testPoolRebalancingEffects()
+   - [x] Implement testMultiUserImbalanceScenario()
 
 3. **Phase 3**: Testing and Validation
    - [x] Run tests and ensure they pass
@@ -58,13 +57,17 @@ Convex Shutdown Scenario Integration Test Implementation
    - [x] Update IntegrationCoverage.md to mark completed
 
 ### Progress Log
-- **2025-06-15**: Started implementation, clarified Convex shutdown mechanics with user
-- **2025-06-15**: Created simplified test suite with 6 test scenarios, all tests passing
-- **2025-06-15**: Implemented comprehensive mock contracts for testing shutdown scenarios
-- **2025-06-15**: ✅ COMPLETED - All tests passing, documentation updated
+- **2025-06-16**: Started implementation, cleared TestLog.md and updated CurrentStory.md
+- **2025-06-16**: Completed all 5 test implementations
+- **2025-06-16**: Fixed whale balance issues by adjusting deposit amounts
+- **2025-06-16**: All tests passing, updated documentation
 
 ### Notes and Discoveries
-- Key insight: Convex withdrawals should always work even for deprecated pools, since they need to allow users to exit
-- Convex typically only blocks new deposits when deprecating a pool
-- Emergency withdrawal in YieldSource is for recovering loose tokens, not LP tokens held by Convex
-- Need to test realistic scenarios rather than impossible ones (like Convex withdraw reverting)
+- Will use USDC/USDe Curve pool on Arbitrum for testing
+- Need to create imbalances by executing large one-sided trades
+- Must handle StableSwapNG interface with dynamic arrays
+- Consider pool virtual price effects on LP calculations
+- Discovered that extreme pool imbalances can lead to counterintuitive behavior where withdrawing to the abundant token gives more value
+- USDe whale balance constraints required reducing test amounts from initial plans
+- Scarce token deposits receive over 100x bonus LP tokens in heavily imbalanced pools
+- Slippage protection successfully prevents trades with >54% slippage

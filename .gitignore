@@ -18,6 +18,8 @@ metascripts/
 
 TODO.md
 testResults
-
+.envrc
+.certora_internal/
+certora/.venv
 
 src_flat*

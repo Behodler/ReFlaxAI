@@ -20,6 +20,12 @@ All unit tests passing as of last run. Key test files:
 - TWAPOracle.t.sol - All TWAP oracle tests passing
 - SlippageProtection.t.sol - All slippage protection tests passing
 
+### Formal Verification Status
+
+**Status**: Not yet started
+- Formal verification using Certora Prover is planned
+- See `context/formal-verification/` for future specifications and results
+
 ### Notes
 - Fixed USDe whale balance issue by reducing deposit amounts to fit available balance
 - Updated withdrawal test to handle actual behavior where USDC withdrawals from imbalanced pool can give more value

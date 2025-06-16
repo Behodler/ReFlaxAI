@@ -3,19 +3,15 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Workflow Rules
-- Before beginning a new feature, clear context/TestLog.md. 
-- When beginnning a task, always produce a checklist which you progressively check ooff.
-- Every coding task should begin by using context/CurrentStoryTemplate.md to populate context/CurrentStory.md appropriately with the current task details, plan, and progress tracking.
+- For feature development workflow rules, see `context/feature/WorkflowRules.md`
+- For unit testing guidelines, see `context/unit-test/`
+- For integration testing guidelines, see `context/integration-test/`
+- For formal verification (future), see `context/formal-verification/`
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
-- Document new test patterns or mock requirements when adding tests
-- Update command sections if new development commands are introduced
-- always make sure code is compiling successfully before reporting completeness.
-- Sometimes, it is acceptable for some tests to be in a broken state. But for tests that are expected to be passing, ensure they are still passing.
-- At the end, run all tests and add a summary of results for all tests in context/TestLog.md. Distinguish between tests that should fail, tests that shouldn't fail and passing tests by putting them in different sections. Only the test name, status (Pass or Fail) and reason. No stack dumps or debug output of any kind.
 
 ## Conventions
-- When I ask you to look at a markdown file, if I say "do" or "execute" an item on a list, I mean do the programming task it describes.
-- If I mention a markdown file without giving a location, look first in context/ and then in the root of this project.
+- When asked to look at a markdown file, if someone says "do" or "execute" an item on a list, it means do the programming task it describes
+- If a markdown file is mentioned without giving a location, look first in the appropriate subdirectory under context/ based on the task type, then in the root context/, then in the root of this project
 
 ## Calibrations
 This section is for variables to keep in mind at all times and will be presented as a list.
@@ -33,48 +29,11 @@ Note that builds can take quite long. Set a timeout of about 10 minutes.
 
 Tests are organized into unit tests and integration tests that can be run independently:
 
-#### Unit Tests
-```bash
-# Run unit tests only (excludes integration tests)
-./scripts/test-unit.sh
+#### Testing
 
-# Or directly with forge:
-forge test --no-match-path "test-integration/**"
-```
-
-#### Integration Tests
-```bash
-# First, allow direnv to load environment variables
-direnv allow
-
-# Run integration tests (uses RPC URL from .envrc)
-./scripts/test-integration.sh
-
-# Or directly with forge:
-forge test --profile integration -f $RPC_URL -vvv
-```
-
-**Note**: 
-- Integration tests use a separate profile defined in `foundry.toml` with the `test-integration` directory and require an Arbitrum fork
-- The project uses `direnv` to manage environment variables. Always run `direnv allow` before running integration tests to load the RPC_URL from `.envrc`
-
-#### All Tests
-```bash
-# Run all tests (both unit and integration)
-forge test
-
-# Run specific test file
-forge test --match-path test/Vault.t.sol
-
-# Run specific test function
-forge test --match-test testDeposit
-
-# Run tests with verbosity
-forge test -vvv
-
-# Run tests with gas reporting
-forge test --gas-report
-```
+- **Unit Tests**: See `context/unit-test/UnitTestCommands.md` for commands and guidelines
+- **Integration Tests**: See `context/integration-test/IntegrationTestCommands.md` for setup and commands
+- **Test Results**: All test results are tracked in `context/TestLog.md`
 
 ### Linting/Type Checking
 No specific linting commands found. Solidity compilation errors will be caught by `forge build`.
@@ -162,34 +121,11 @@ ReFlax is a yield optimization protocol that allows users to deposit tokens into
 - Only the Flax/ETH Uniswap V2 pair is used for price tilting
 - ETH sent to PriceTilter should be used immediately for liquidity addition (no retention)
 
-### Testing Philosophy
+### Testing Documentation
 
-Tests are written using Foundry with minimal mocks (`test/mocks/Mocks.sol`) that implement only required functionality:
-- Each contract has its own test file (e.g., `Vault.t.sol`, `YieldSource.t.sol`, `PriceTilterTWAP.t.sol`)
-- Mocks are designed to be minimal, implementing only functions and state necessary for test cases
-- Focus on isolated unit testing of each component's functionality
-- New tests should follow this approach, creating or extending test files with mocks tailored to contract requirements 
-
-#### Test Structure
-- Test files are named after the contract they test (e.g., `TWAPOracle.t.sol` for `TWAPOracle.sol`)
-- Mocks simulate only behavior required by corresponding test file (e.g., `MockYieldSource` only mocks `deposit`, `withdraw`, and `claimRewards`)
-- Shared mocks are added to `Mocks.sol`, while test-specific mocks remain in the test file
-
-#### Mock Requirements
-- `MockERC20` must implement a `burn(uint256)` function for tokens used as sFlaxToken
-- When working with Uniswap V2 pairs, ensure proper initialization of price cumulatives and reserves for TWAP calculations
-- For Curve pool interactions, remember to properly approve LP tokens before attempting to remove liquidity
-
-#### Recent Test Improvements
-- Fixed `testWithdraw` in `YieldSource.t.sol` by adding proper LP token approval for the Curve pool
-- Implemented a simple `MockOracle` for tests that don't need full TWAP oracle functionality
-- Ensured proper setup of price cumulative values in `MockUniswapV2Pair` for TWAP oracle tests
-- Implemented comprehensive slippage protection tests in `SlippageProtection.t.sol` including:
-  - `testDepositWithMaximumTolerableSlippage()`: Tests deposits when swap incurs exactly the maximum tolerable slippage
-  - `testRevertOnExcessiveSlippage()`: Tests that deposits revert when slippage exceeds tolerance
-  - Enhanced `MockUniswapV3Router` with `setSpecificReturnAmount()` for precise control over individual swap returns
-  - Fixed mock ETH handling for reward token sales and ETH-to-token swaps
-  - Addressed a source code issue where `_sellEthForInputToken` doesn't send ETH with the Uniswap call
+- **Unit Testing**: Complete guidelines, philosophy, and mock requirements in `context/unit-test/UnitTestGuidelines.md`
+- **Integration Testing**: Implementation guide and test coverage tracking in `context/integration-test/`
+- **Formal Verification**: Future work with Certora Prover documented in `context/formal-verification/`
 
 ### Important Notes
 

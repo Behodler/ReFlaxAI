@@ -198,6 +198,10 @@ contract YieldSourceTest is Test {
         // Mock ETH presence in the contract
         vm.deal(address(yieldSource), 100 ether);
 
+        // Pre-mint input tokens to the yield source to simulate what the router would transfer
+        // This simulates the result of selling ETH for input tokens
+        inputToken.mint(address(yieldSource), 1500);
+
         // Mock the router to return expected value for selling ETH
         vm.mockCall(
             address(uniswapRouter),

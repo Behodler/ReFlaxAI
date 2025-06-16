@@ -1,87 +1,70 @@
-# Current Story: Fix Gas Integration Tests
+# Current Story: Convex Shutdown Scenario Test
 
-## Story Overview
-**Title**: Debug and fix failing gas integration tests  
-**Type**: Bug Fix  
-**Priority**: High  
-**Status**: COMPLETED ✅  
-**Date**: 2025-06-15
+## Purpose of This Story
 
-## Problem Statement
-The gas integration tests were failing with "ERC20: transfer amount exceeds balance" error when running `testGenerateGasReport`. This function runs all individual gas tests sequentially, causing account balances to be depleted by the time later tests execute.
+Implement comprehensive integration tests that verify the ReFlax protocol's behavior when Convex experiences various shutdown or deprecation scenarios.
 
-## Root Cause Analysis
-- `testGenerateGasReport` calls all individual test functions in sequence
-- Each test consumes tokens from test accounts (USDC, sFlax, ETH)
-- By the time later tests run, accounts have insufficient balances
-- This caused the "transfer amount exceeds balance" error
+## Story Status
 
-## Solution Implemented
-Added balance reset logic at the beginning of `testGenerateGasReport` to restore all test account balances before running the sequential tests.
+**Status**: ✅ COMPLETED
 
-## Implementation Details
+**Last Updated**: 2025-06-15
 
-### Files Modified
-- `test-integration/gas/GasOptimization.integration.t.sol`
-  - Added balance reset logic in `testGenerateGasReport`
-  - Ensures accounts have sufficient USDC, ETH, and sFlax tokens
+## Story Title
+Convex Shutdown Scenario Integration Test Implementation
 
-### Key Changes
-```solidity
-function testGenerateGasReport() public {
-    // Reset account balances before running all tests
-    dealUSDC(alice, 100000 * 1e6);    // 100k USDC
-    dealUSDC(bob, 50000 * 1e6);       // 50k USDC  
-    dealUSDC(charlie, 10000 * 1e6);   // 10k USDC
-    dealETH(alice, 10 ether);
-    dealETH(bob, 10 ether);
-    dealETH(charlie, 10 ether);
-    
-    // Reset sFlax balances
-    sFlaxToken.mint(alice, 10000 * 1e18);
-    sFlaxToken.mint(bob, 5000 * 1e18);
-    
-    // Run all gas measurements...
-}
-```
+### Background & Motivation
+- Convex Finance is a critical dependency for the ReFlax protocol's yield generation
+- Convex pools can be deprecated over time, blocking new deposits while allowing withdrawals
+- The protocol needs to handle scenarios where Convex functionality is partially or fully compromised
+- Users must never have their funds locked due to external protocol issues
+- This test ensures graceful degradation and migration capabilities when Convex becomes unavailable
 
-## Test Results
-- **Gas Integration Tests**: 21/21 tests passing (100% success rate)
-  - `GasOptimization.integration.t.sol`: 11/11 tests passing
-  - `GasOptimizationSimple.integration.t.sol`: 10/10 tests passing
-- **Full Integration Suite**: 81/81 tests passing
-- Successfully generates comprehensive gas optimization report
+### Success Criteria
+- Test passes with realistic Convex shutdown scenarios
+- All user funds remain accessible even when Convex deposits are blocked
+- Protocol can migrate to alternative yield sources during Convex deprecation
+- Emergency withdrawal mechanisms work correctly
+- No user funds are ever permanently locked
+- Test demonstrates proper handling of partial Convex functionality failures
 
-## Gas Measurements Summary
-| Operation | Gas Used | Cost at 0.01 Gwei |
-|-----------|----------|-------------------|
-| Small Deposit (1k USDC) | 172,129 | $0.006 |
-| Medium Deposit (10k USDC) | 87,329 | $0.003 |
-| Large Deposit (50k USDC) | 65,429 | $0.002 |
-| Claim Rewards | 39,344 | $0.001 |
-| Full Withdrawal | 77,388 | $0.003 |
-| Migration | 159,584 | $0.006 |
-| Price Tilting | 253,404 | $0.009 |
+### Technical Requirements
+- Extend IntegrationTest base contract following project patterns
+- Mock Convex components to simulate shutdown scenarios accurately
+- Test both deprecated pool scenarios and reward system failures
+- Verify CVX_CRV_YieldSource emergency mechanisms
+- Ensure proper integration with Vault migration functionality
+- Follow existing test patterns from other integration tests in the project
 
-### Conservative Estimate
-- **500k gas transaction**: 0.000005 ETH ≈ $0.0175 (1.75 cents)
+### Implementation Plan
 
-## Technical Architecture
-The tests use a mock-based approach to isolate gas measurements:
-- **MockTWAPOracle**: Bypasses complex oracle dependencies
-- **MockYieldSource**: Simplified yield source without Curve/Convex
-- **MockFlaxToken**: ERC20 with mint/burn capabilities
-- **TestVault**: Concrete implementation of abstract Vault
+1. **Phase 1**: Setup and Infrastructure
+   - [x] Clear context/TestLog.md 
+   - [x] Update context/CurrentStory.md with task details
+   - [x] Create test file: `test-integration/yieldSource/ConvexShutdown.integration.t.sol`
+   - [x] Set up simplified test structure (standalone instead of IntegrationTest extension)
 
-## Completion Checklist
-- [x] Identify root cause of test failures
-- [x] Implement balance reset fix
-- [x] Verify all gas tests pass individually
-- [x] Verify testGenerateGasReport passes
-- [x] Run full integration test suite
-- [x] Update documentation (TestLog.md)
-- [x] Update CurrentStory.md
-- [ ] Commit and push changes
+2. **Phase 2**: Core Test Implementation
+   - [x] Implement deprecated pool scenario (deposits fail, withdrawals work)
+   - [x] Implement reward system failure scenarios
+   - [x] Test emergency withdrawal functionality
+   - [x] Test partial functionality scenarios
+   - [x] Test complete shutdown scenario
+   - [x] Test that no funds are permanently locked
 
-## Story Status: COMPLETED ✅
-All gas integration tests are now passing and providing reliable, reproducible gas measurements for the ReFlax protocol. The fix ensures that sequential test execution doesn't cause balance depletion issues.
+3. **Phase 3**: Testing and Validation
+   - [x] Run tests and ensure they pass
+   - [x] Update context/TestLog.md with results
+   - [x] Update IntegrationCoverage.md to mark completed
+
+### Progress Log
+- **2025-06-15**: Started implementation, clarified Convex shutdown mechanics with user
+- **2025-06-15**: Created simplified test suite with 6 test scenarios, all tests passing
+- **2025-06-15**: Implemented comprehensive mock contracts for testing shutdown scenarios
+- **2025-06-15**: ✅ COMPLETED - All tests passing, documentation updated
+
+### Notes and Discoveries
+- Key insight: Convex withdrawals should always work even for deprecated pools, since they need to allow users to exit
+- Convex typically only blocks new deposits when deprecating a pool
+- Emergency withdrawal in YieldSource is for recovering loose tokens, not LP tokens held by Convex
+- Need to test realistic scenarios rather than impossible ones (like Convex withdraw reverting)

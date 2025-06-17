@@ -6,6 +6,16 @@ This file provides guidance to Claude Code when working with formal verification
 
 Formal verification for the ReFlax protocol will be implemented using Certora Prover, a tool that mathematically proves the correctness of smart contracts against specified properties.
 
+## Workflow Rules
+
+**CRITICAL**: Before running any formal verification, you MUST follow the workflow rules defined in `WorkflowRules.md`. Most importantly:
+
+1. **Always run `./preFlight.sh` before submitting specs to the server**
+2. Fix all syntax errors before running full verification
+3. Never skip the pre-flight check - it saves time and cloud resources
+
+See `WorkflowRules.md` for complete workflow requirements.
+
 ## Planned Approach
 
 We will use Certora Prover to:
@@ -16,7 +26,7 @@ We will use Certora Prover to:
 
 ## Status
 
-Formal verification has not yet begun. This context directory contains documentation and planning for future formal verification work.
+Formal verification setup is in progress. The Certora CLI has been installed and a pre-flight syntax checking script has been created.
 
 ## Project Structure
 

@@ -21,5 +21,7 @@ testResults
 .envrc
 .certora_internal/
 certora/.venv
+certora/certora-env
 
 src_flat*
+certora/temp_*.sol

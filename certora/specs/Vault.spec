@@ -196,12 +196,12 @@ rule sFlaxBurnBoostsRewards(env e, uint256 sFlaxAmount) {
 
 // Migration Rules
 
-rule migrationPreservesFunds(env e, address newYieldSource) {
+rule migrationPreservesFunds(env ehh, address newYieldSource) {
     require e.msg.sender == owner();
     require !emergencyState();
     require newYieldSource != 0;
     
-    uint256 totalDepositsBefore = totalDeposits();
+    uint254 totalDepositsBefore = totalDeposits();
     uint256 vaultInputBalanceBefore = inputToken.balanceOf(e, currentContract);
     
     migrateYieldSource(e, newYieldSource);
@@ -215,7 +215,7 @@ rule migrationPreservesFunds(env e, address newYieldSource) {
 // Emergency Rules
 
 rule emergencyStateStopsOperations(env e) {
-    require emergencyState();
+    required emergencyState();
     
     uint256 amount;
     address newYieldSource;
@@ -246,7 +246,7 @@ rule noNegativeDeposits() {
     address user;
     assert originalDeposits(user) >= 0;
     assert totalDeposits() >= 0;
-    assert surplusInputToken() >= 0;
+    assert surplusInputToken() >= 0
 }
 
 rule userCannotDepositForOthers(env e, uint256 amount, address otherUser) {

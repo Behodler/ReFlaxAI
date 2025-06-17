@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - For feature development workflow rules, see `context/feature/WorkflowRules.md`
 - For unit testing guidelines, see `context/unit-test/`
 - For integration testing guidelines, see `context/integration-test/`
-- For formal verification (future), see `context/formal-verification/`
+- For formal verification workflow rules, see `context/formal-verification/WorkflowRules.md`
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 
 ## Conventions
@@ -41,9 +41,22 @@ No specific linting commands found. Solidity compilation errors will be caught b
 ### Formal Verification
 ```bash
 cd certora
-./run_verification.sh
+# ALWAYS run preflight checks first to catch syntax errors
+./preFlight.sh
+# Only run verification if preflight passes - must export CERTORAKEY if not in environment
+export CERTORAKEY=<your_key> && ./run_verification.sh
 ```
-Note: Certora CLI requires Python virtual environment setup. See `certora/` directory for setup scripts.
+**CRITICAL WORKFLOW**: Always run `./preFlight.sh` before `./run_verification.sh` to catch CVL syntax errors locally. Never skip the preflight check as it saves time and cloud resources.
+
+**IMPORTANT SETUP NOTES**:
+- **Directory**: All formal verification commands must be run from the `certora/` directory
+- **Environment Variables**: Ensure CERTORAKEY is set. If .envrc exists with the key, use `source ../.envrc` or export directly
+- **Common Issues**: 
+  - Running from wrong directory will cause "file not found" errors
+  - Missing CERTORAKEY will cause "does not contain a Certora key" error
+  - Use `export CERTORAKEY=<key> && ./run_verification.sh` if environment variables aren't accessible
+
+Note: Certora CLI requires Python virtual environment setup and a Certora key. See `certora/` directory for setup scripts.
 
 ## Architecture Overview
 

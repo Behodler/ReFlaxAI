@@ -2,13 +2,32 @@
 
 ## Pre-Verification Requirements
 
-### 1. Syntax Validation (MANDATORY)
+### 1. Environment Setup (MANDATORY)
+Before running any formal verification commands:
+
+1. **Navigate to correct directory**:
+   ```bash
+   cd certora  # All verification commands must be run from here
+   ```
+
+2. **Ensure CERTORAKEY is available**:
+   ```bash
+   # Option 1: If .envrc exists in parent directory
+   source ../.envrc
+   
+   # Option 2: Export directly
+   export CERTORAKEY=<your_certora_key>
+   
+   # Option 3: Inline with verification command
+   export CERTORAKEY=<key> && ./run_verification.sh
+   ```
+
+### 2. Syntax Validation (MANDATORY)
 Before submitting any specification to the Certora cloud server, you MUST:
 
 1. **Run the pre-flight syntax check**:
    ```bash
-   cd certora
-   ./preFlight.sh
+   ./preFlight.sh  # Must be run from certora/ directory
    ```
 
 2. **Ensure all specs pass**:
@@ -23,11 +42,13 @@ Before submitting any specification to the Certora cloud server, you MUST:
 
 ## Workflow Steps
 
-1. **Write or modify specification** in `certora/specs/`
-2. **Run pre-flight check**: `./preFlight.sh`
-3. **Fix any syntax errors** identified
-4. **Re-run pre-flight** until all specs pass
-5. **Only then** run full verification with `./run_verification.sh`
+1. **Navigate to certora directory**: `cd certora`
+2. **Ensure CERTORAKEY is set** (see Environment Setup above)
+3. **Write or modify specification** in `specs/`
+4. **Run pre-flight check**: `./preFlight.sh`
+5. **Fix any syntax errors** identified
+6. **Re-run pre-flight** until all specs pass
+7. **Only then** run full verification with `export CERTORAKEY=<key> && ./run_verification.sh`
 
 ## Adding New Specifications
 

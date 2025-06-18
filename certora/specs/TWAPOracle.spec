@@ -1,30 +1,30 @@
 // Certora Specification for TWAPOracle Contract
 // This file defines formal verification rules for the TWAPOracle contract
 
-using TWAPOracle as oracle
-using UniswapV2Pair as pair
-using UniswapV2Factory as factory
+using TWAPOracle as oracle;
+using UniswapV2Pair as pair;
+using UniswapV2Factory as factory;
 
 methods {
     // Oracle methods
-    update(address, address) envfree
-    consult(address, address, uint256) returns (uint256) envfree
+    function update(address, address) external;
+    function consult(address, address, uint256) external returns (uint256) envfree;
     
     // View methods
-    factory() returns (address) envfree
-    WETH() returns (address) envfree
-    PERIOD() returns (uint256) envfree
-    pairMeasurements(address) returns (uint112, uint112, uint256, uint256, uint256) envfree
+    function factory() external returns (address) envfree;
+    function WETH() external returns (address) envfree;
+    function PERIOD() external returns (uint256) envfree;
+    function pairMeasurements(address) external returns (uint112, uint112, uint256, uint256, uint256) envfree;
     
     // Pair methods
-    pair.getReserves() returns (uint112, uint112, uint32) envfree => DISPATCHER(true)
-    pair.price0CumulativeLast() returns (uint256) envfree => DISPATCHER(true)
-    pair.price1CumulativeLast() returns (uint256) envfree => DISPATCHER(true)
-    pair.token0() returns (address) envfree => DISPATCHER(true)
-    pair.token1() returns (address) envfree => DISPATCHER(true)
+    function _.getReserves() external returns (uint112, uint112, uint32) envfree => DISPATCHER(true);
+    function _.price0CumulativeLast() external returns (uint256) envfree => DISPATCHER(true);
+    function _.price1CumulativeLast() external returns (uint256) envfree => DISPATCHER(true);
+    function _.token0() external returns (address) envfree => DISPATCHER(true);
+    function _.token1() external returns (address) envfree => DISPATCHER(true);
     
     // Factory methods
-    factory.getPair(address, address) returns (address) envfree => DISPATCHER(true)
+    function _.getPair(address, address) external returns (address) envfree => DISPATCHER(true);
 }
 
 // Ghost variables to track oracle state
@@ -44,23 +44,23 @@ ghost mapping(address => uint256) lastPrice1Cumulative {
 
 // PERIOD is always 1 hour
 invariant periodIs1Hour()
-    PERIOD() == 3600
+    PERIOD() == 3600;
 
 // Time must advance for price updates
 rule timeAdvancesForUpdate(env e, address tokenA, address tokenB) {
     address pairAddr = factory.getPair(tokenA, tokenB);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
-    uint112 r0, r1;
+    uint112 r0; uint112 r1;
     uint32 blockTimestamp;
     r0, r1, blockTimestamp = pair.getReserves();
     
     update(e, tokenA, tokenB);
     
-    uint112 price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter;
+    uint112 price0AvgAfter; uint112 price1AvgAfter; uint256 lastTimestampAfter; uint256 lastP0CumAfter; uint256 lastP1CumAfter;
     price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter = pairMeasurements(pairAddr);
     
     // If update happened, time must have advanced
@@ -89,14 +89,14 @@ rule firstUpdateOnlyInitializes(env e, address tokenA, address tokenB) {
     address pairAddr = factory.getPair(tokenA, tokenB);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
     require lastTimestamp == 0; // First update
     
     update(e, tokenA, tokenB);
     
-    uint112 price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter;
+    uint112 price0AvgAfter; uint112 price1AvgAfter; uint256 lastTimestampAfter; uint256 lastP0CumAfter; uint256 lastP1CumAfter;
     price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter = pairMeasurements(pairAddr);
     
     // Price averages should still be 0 after first update
@@ -110,12 +110,12 @@ rule updateRequiresPeriodElapsed(env e, address tokenA, address tokenB) {
     address pairAddr = factory.getPair(tokenA, tokenB);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
     require lastTimestamp > 0; // Not first update
     
-    uint112 r0, r1;
+    uint112 r0; uint112 r1;
     uint32 blockTimestamp;
     r0, r1, blockTimestamp = pair.getReserves();
     
@@ -124,7 +124,7 @@ rule updateRequiresPeriodElapsed(env e, address tokenA, address tokenB) {
     
     update(e, tokenA, tokenB);
     
-    uint112 price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter;
+    uint112 price0AvgAfter; uint112 price1AvgAfter; uint256 lastTimestampAfter; uint256 lastP0CumAfter; uint256 lastP1CumAfter;
     price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter = pairMeasurements(pairAddr);
     
     // No update should occur
@@ -138,7 +138,7 @@ rule consultRequiresInitialization(env e, address tokenIn, address tokenOut, uin
     address pairAddr = factory.getPair(tokenIn, tokenOut);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
     require lastTimestamp == 0; // Not initialized
@@ -164,7 +164,7 @@ rule twapCalculationCorrect(env e, address tokenA, address tokenB) {
     address pairAddr = factory.getPair(tokenA, tokenB);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
     require lastTimestamp > 0; // Already initialized
@@ -172,7 +172,7 @@ rule twapCalculationCorrect(env e, address tokenA, address tokenB) {
     uint256 currentP0Cum = pair.price0CumulativeLast();
     uint256 currentP1Cum = pair.price1CumulativeLast();
     
-    uint112 r0, r1;
+    uint112 r0; uint112 r1;
     uint32 blockTimestamp;
     r0, r1, blockTimestamp = pair.getReserves();
     
@@ -181,7 +181,7 @@ rule twapCalculationCorrect(env e, address tokenA, address tokenB) {
     
     update(e, tokenA, tokenB);
     
-    uint112 price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter;
+    uint112 price0AvgAfter; uint112 price1AvgAfter; uint256 lastTimestampAfter; uint256 lastP0CumAfter; uint256 lastP1CumAfter;
     price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter = pairMeasurements(pairAddr);
     
     // Verify TWAP calculation
@@ -207,7 +207,7 @@ rule noZeroOutput(env e, address tokenIn, address tokenOut, uint256 amountIn) {
     address pairAddr = factory.getPair(tokenIn, tokenOut);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
     require lastTimestamp > 0; // Initialized
@@ -223,18 +223,18 @@ rule updateIdempotency(env e, address tokenA, address tokenB) {
     address pairAddr = factory.getPair(tokenA, tokenB);
     require pairAddr != 0;
     
-    uint112 price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum;
+    uint112 price0Avg; uint112 price1Avg; uint256 lastTimestamp; uint256 lastP0Cum; uint256 lastP1Cum;
     price0Avg, price1Avg, lastTimestamp, lastP0Cum, lastP1Cum = pairMeasurements(pairAddr);
     
     update(e, tokenA, tokenB);
     
-    uint112 price0AvgMid, price1AvgMid, lastTimestampMid, lastP0CumMid, lastP1CumMid;
+    uint112 price0AvgMid; uint112 price1AvgMid; uint256 lastTimestampMid; uint256 lastP0CumMid; uint256 lastP1CumMid;
     price0AvgMid, price1AvgMid, lastTimestampMid, lastP0CumMid, lastP1CumMid = pairMeasurements(pairAddr);
     
     // Second update in same conditions
     update(e, tokenA, tokenB);
     
-    uint112 price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter;
+    uint112 price0AvgAfter; uint112 price1AvgAfter; uint256 lastTimestampAfter; uint256 lastP0CumAfter; uint256 lastP1CumAfter;
     price0AvgAfter, price1AvgAfter, lastTimestampAfter, lastP0CumAfter, lastP1CumAfter = pairMeasurements(pairAddr);
     
     // State should be same after both updates

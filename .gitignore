@@ -25,3 +25,4 @@ certora/certora-env
 
 src_flat*
 certora/temp_*.sol
+logOfFailures*

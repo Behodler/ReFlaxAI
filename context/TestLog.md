@@ -1,32 +1,8 @@
 # Test Results Summary
 
-## Date: 2025-06-16
+*Test log cleared for new feature development*
 
-### Integration Tests
+## Status
+No tests have been run for the current feature. This file will be updated as the feature progresses.
 
-#### CurveImbalance.integration.t.sol
-- **testDepositWithSevereImbalance**: Pass - Tests deposits when pool has severe imbalance (99% USDC)
-- **testWithdrawalFromImbalancedPool**: Pass - Tests withdrawals showing USDC withdrawal gives 58x more value than USDe
-- **testSlippageProtectionPreventsImbalancedTrades**: Pass - Verifies slippage protection prevents trades with >54% slippage
-- **testPoolRebalancingEffects**: Pass - Shows 42% bonus LP tokens for rebalancing deposits
-- **testMultiUserImbalanceScenario**: Pass - Multi-user scenario with deposits and withdrawals
-
-### Unit Tests Status
-
-All unit tests passing as of last run. Key test files:
-- Vault.t.sol - All vault functionality tests passing
-- YieldSource.t.sol - All yield source tests passing
-- PriceTilterTWAP.t.sol - All price tilter tests passing
-- TWAPOracle.t.sol - All TWAP oracle tests passing
-- SlippageProtection.t.sol - All slippage protection tests passing
-
-### Formal Verification Status
-
-**Status**: Not yet started
-- Formal verification using Certora Prover is planned
-- See `context/formal-verification/` for future specifications and results
-
-### Notes
-- Fixed USDe whale balance issue by reducing deposit amounts to fit available balance
-- Updated withdrawal test to handle actual behavior where USDC withdrawals from imbalanced pool can give more value
-- All integration tests now passing with realistic Arbitrum mainnet fork data
+---

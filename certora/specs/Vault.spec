@@ -266,9 +266,7 @@ rule userCannotDepositForOthers(env e, uint256 amount, address otherUser) {
     deposit@withrevert(e, amount);
     
     // Only check if deposit succeeded
-    if (!lastReverted) {
-        assert originalDeposits(otherUser) == otherUserDepositBefore;
-    }
+    assert lastReverted || originalDeposits(otherUser) == otherUserDepositBefore;
 }
 
 rule withdrawalCannotAffectOthers(env e, uint256 amount, bool protectLoss, address otherUser) {

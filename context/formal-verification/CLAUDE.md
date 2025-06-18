@@ -13,6 +13,10 @@ Formal verification for the ReFlax protocol will be implemented using Certora Pr
 1. **Always run `./preFlight.sh` before submitting specs to the server**
 2. Fix all syntax errors before running full verification
 3. Never skip the pre-flight check - it saves time and cloud resources
+4. **IMPORTANT**: When the user asks to "run formal verification", "submit verification", or "run Certora", this ALWAYS means:
+   - First run `./preFlight.sh`
+   - Fix any errors found
+   - Only then run `./run_verification.sh`
 
 See `WorkflowRules.md` for complete workflow requirements.
 

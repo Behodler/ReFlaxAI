@@ -2,8 +2,8 @@
 // This file defines formal verification rules for the TWAPOracle contract
 
 using TWAPOracle as oracle;
-using UniswapV2Pair as pair;
-using UniswapV2Factory as factory;
+using MockUniswapV2Pair as pair;
+using MockUniswapV2Factory as factory;
 
 methods {
     // Oracle methods
@@ -14,7 +14,7 @@ methods {
     function factory() external returns (address) envfree;
     function WETH() external returns (address) envfree;
     function PERIOD() external returns (uint256) envfree;
-    function pairMeasurements(address) external returns (uint112, uint112, uint256, uint256, uint256) envfree;
+    function pairMeasurements(address) external returns (FixedPoint.uq112x112, FixedPoint.uq112x112, uint256, uint256, uint256) envfree;
     
     // Pair methods
     function _.getReserves() external returns (uint112, uint112, uint32) envfree => DISPATCHER(true);

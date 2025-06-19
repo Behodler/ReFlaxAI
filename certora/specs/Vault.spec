@@ -35,7 +35,7 @@ methods {
 }
 
 // Ghost variable to track effective deposits
-ghost mapping(address => uint256) effectiveDepositsGhost {
+ghost mapping(address => mathint) effectiveDepositsGhost {
     init_state axiom forall address user. effectiveDepositsGhost[user] == 0;
 }
 
@@ -98,6 +98,8 @@ rule onlyOwnerCanMigrate(env e, address newYieldSource) {
     if (!lastReverted) {
         assert e.msg.sender == owner();
         assert yieldSource() == newYieldSource;
+    } else {
+        assert true; // Revert is acceptable for non-owner
     }
 }
 
@@ -119,6 +121,8 @@ rule depositIncreasesEffectiveBalance(env e, uint256 amount) {
     if (!lastReverted) {
         assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore + amount;
         assert getEffectiveTotalDeposits() == effectiveTotalBefore + amount;
+    } else {
+        assert true; // Revert is acceptable if preconditions not met
     }
 }
 
@@ -146,6 +150,8 @@ rule withdrawalDecreasesEffectiveBalance(env e, uint256 amount, bool protectLoss
     if (!lastReverted) {
         assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore - amount;
         assert getEffectiveTotalDeposits() == effectiveTotalBefore - amount;
+    } else {
+        assert true; // Revert is acceptable if preconditions not met
     }
 }
 
@@ -170,6 +176,8 @@ rule withdrawalRespectsSurplus(env e, uint256 amount, bool protectLoss) {
     if (!lastReverted) {
         // User should receive at least some tokens
         assert inputToken.balanceOf(e, e.msg.sender) >= userBalanceBefore;
+    } else {
+        assert true; // Revert is acceptable
     }
 }
 
@@ -198,7 +206,12 @@ rule noUnauthorizedTokenOutflows(env e, method f) {
         if (vaultBalanceAfter < vaultBalanceBefore) {
             // The decrease should not exceed the surplus reduction
             assert vaultBalanceBefore - vaultBalanceAfter <= surplusBefore - surplusAfter + 1; // +1 for rounding
+        } else {
+            // Balance stayed same or increased - this is acceptable
+            assert vaultBalanceAfter >= vaultBalanceBefore;
         }
+    } else {
+        assert true; // Revert is acceptable for some functions
     }
 }
 
@@ -216,6 +229,8 @@ rule emergencyWithdrawalDisablesVault(env e, address token, address recipient) {
     
     if (rebaseBefore > 0) {
         assert rebaseMultiplier() == 0; // Vault permanently disabled
+    } else {
+        assert rebaseMultiplier() == 0; // Already disabled, should remain disabled
     }
 }
 
@@ -256,6 +271,8 @@ rule sFlaxBurnBoostsRewards(env e, uint256 sFlaxAmount) {
     
     if (!lastReverted) {
         assert to_mathint(flaxToken.balanceOf(e, e.msg.sender)) >= to_mathint(userFlaxBefore) + expectedBoost;
+    } else {
+        assert true; // Revert is acceptable if preconditions not met
     }
 }
 

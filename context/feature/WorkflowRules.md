@@ -11,7 +11,8 @@
 - When implementing new features or making significant architectural changes, proactively update relevant sections of the root CLAUDE.md file
 - Document new test patterns or mock requirements when adding tests
 - Update command sections if new development commands are introduced
-- Always make sure code is compiling successfully before reporting completeness
+- **CRITICAL**: Always make sure code is compiling successfully before reporting completeness - run `forge build` 
+- **CRITICAL**: A task is never complete until the code compiles and the tests which should pass are passing
 - Sometimes, it is acceptable for some tests to be in a broken state. But for tests that are expected to be passing, ensure they are still passing
 
 ## Completing a Feature

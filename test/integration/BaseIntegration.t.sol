@@ -339,6 +339,7 @@ abstract contract BaseIntegration is Test {
     
     function assertUserDeposit(address user, uint256 expected, string memory message) public {
         assertEq(vault.originalDeposits(user), expected, message);
+        assertEq(vault.getEffectiveDeposit(user), expected, string.concat(message, " (effective)"));
     }
     
     function assertApproxEq(uint256 actual, uint256 expected, uint256 tolerance, string memory message) public {

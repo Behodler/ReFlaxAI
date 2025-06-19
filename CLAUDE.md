@@ -48,9 +48,11 @@ export CERTORAKEY=<your_key> && ./run_verification.sh
 ```
 **CRITICAL WORKFLOW**: 
 1. **MANDATORY**: Always run `./preFlight.sh` BEFORE `./run_verification.sh` to catch CVL syntax errors locally
-2. **NEVER** skip the preflight check - it saves time and cloud resources
+2. **NEVER** skip the preflight check - it saves time and cloud resources  
 3. **ALWAYS** fix all syntax errors identified by preflight before proceeding
-4. When asked to "run formal verification" or "submit verification", this ALWAYS means running BOTH preflight AND verification in sequence
+4. **VERIFICATION REQUIREMENT**: Only submit to Certora cloud when preFlight.sh shows "All syntax checks passed!"
+5. **ERROR DEBUGGING**: If server reports syntax errors despite local preFlight success, check `certora/debugging/logOfFailures.md` for known issues
+6. When asked to "run formal verification" or "submit verification", this ALWAYS means running BOTH preflight AND verification in sequence
 
 **IMPORTANT SETUP NOTES**:
 - **Directory**: All formal verification commands must be run from the `certora/` directory

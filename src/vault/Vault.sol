@@ -277,26 +277,29 @@ contract Vault is Ownable, ReentrancyGuard {
         originalDeposits[msg.sender] -= rawAmountToWithdraw;
         totalDeposits -= rawAmountToWithdraw;
 
+        uint256 actualWithdrawn;
         if (received > amount) {
             surplusInputToken += received - amount;
             inputToken.safeTransfer(msg.sender, amount);
+            actualWithdrawn = amount;
         } else if (received < amount) {
             uint256 shortfall = amount - received;
             if (surplusInputToken >= shortfall) {
                 surplusInputToken -= shortfall;
                 inputToken.safeTransfer(msg.sender, amount);
+                actualWithdrawn = amount;
             } else if (protectLoss) {
                 revert("Shortfall exceeds surplus");
             } else {
                 inputToken.safeTransfer(msg.sender, received);
-                emit Withdrawn(msg.sender, received);
-                return;
+                actualWithdrawn = received;
             }
         } else {
             inputToken.safeTransfer(msg.sender, amount);
+            actualWithdrawn = amount;
         }
 
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn(msg.sender, actualWithdrawn);
     }
 
     /**

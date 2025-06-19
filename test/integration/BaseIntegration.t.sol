@@ -230,6 +230,30 @@ abstract contract BaseIntegration is Test {
         oracle.update(address(cvxToken), weth);
         oracle.update(address(inputToken), address(poolToken2)); // USDC/USDT pair
         
+        // Advance time and block to allow TWAP calculation
+        vm.warp(block.timestamp + 3600); // 1 hour
+        vm.roll(block.number + 1);
+        
+        // Update cumulative prices in pairs to simulate price movements over time
+        // The cumulative price increases should be proportional to the time elapsed
+        // For a 1:1 exchange rate over 1 hour (3600 seconds), cumulative price increases by 3600 * 2^112
+        uint256 cumulativeIncrease = 3600 * 2**112;
+        
+        MockUniswapV2Pair(flaxEthPair).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(inputToken), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(poolToken2), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(crvToken), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(cvxToken), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(inputToken), address(poolToken2))).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        
+        // Update pairs again to establish TWAP
+        oracle.update(address(flaxToken), weth);
+        oracle.update(address(inputToken), weth);
+        oracle.update(address(poolToken2), weth);
+        oracle.update(address(crvToken), weth);
+        oracle.update(address(cvxToken), weth);
+        oracle.update(address(inputToken), address(poolToken2));
+        
         // Register Flax/ETH pair in price tilter
         // Note: PriceTilter doesn't have registerPair, pairs are registered via oracle
         

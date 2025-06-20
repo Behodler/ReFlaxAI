@@ -1,141 +1,338 @@
-Failed on rebaseMultiplier():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+# Name Of Rule
+depositIncreasesEffectiveBalance
 
-Failed on setEmergencyState(bool):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+## Rule Violation details
+User effective deposit should increase - certora/specs/Vault.spec line 148
 
-Failed on surplusInputToken():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+## Call Trace Errors
 
-Failed on inputToken():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+Caller
+In  
+CALL TRACE
 
-Failed on sFlaxToken():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
 
-Failed on yieldSource():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.sol : Line 202
+                    
+oracle.update(address(flaxToken), address(0))
 
-Failed on totalDeposits():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+                
+Callee
 
-Failed on flaxToken():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+[?].[?]
+Summary
 
-Failed on owner():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+AUTO havoc
+Comments
 
-Failed on flaxPerSFlax():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
 
-Failed on priceTilter():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
 
-Failed on emergencyState():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.sol : Line 206
+                    
+oracle.update(address(inputToken), address(0))
 
-Failed on canWithdraw():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+                
+Callee
 
-Failed on renounceOwnership():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+[?].[?]
+Summary
 
-Failed on <receiveOrFallback>():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+AUTO havoc
+Comments
 
-Failed on getEffectiveTotalDeposits():
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
 
-Failed on emergencyWithdraw(address,address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
 
-Failed on originalDeposits(address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.sol : Line 212
+                    
+oracle.update(address(poolTokens[i]), address(0))
 
-Failed on getEffectiveDeposit(address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+                
+Callee
 
-Failed on transferOwnership(address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+[?].[?]
+Summary
 
-Failed on emergencyWithdrawETH(address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+AUTO havoc
+Comments
 
-Failed on claimRewards(uint256):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
 
-Failed on emergencyWithdrawFromYieldSource(address,address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
 
-Failed on emergencyWithdrawalDisablesVault:
-Assert message: Vault.rebaseMultiplier() == 0 - certora/specs/Vault.spec line 256
+CVX_CRV_YieldSource.sol : Line 219
+                    
+oracle.update(rewardTokens[i], address(0))
 
-Failed on sFlaxBurnBoostsRewards:
-Assert message: sFlaxAmount > 0 => flaxIncrease >= expec... - certora/specs/Vault.spec line 302
+                
+Callee
 
-Failed on userCannotDepositForOthers:
-Assert message: Vault.originalDeposits(otherUser) == oth... - certora/specs/Vault.spec line 358
+[?].[?]
+Summary
 
-Failed on withdrawalRespectsSurplus:
-Assert message: MockERC20.balanceOf(e, e.msg.sender) > u... - certora/specs/Vault.spec line 193
+AUTO havoc
+Comments
 
-Failed on deposit(uint256):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
 
-Failed on withdrawalDecreasesEffectiveBalance:
-Assert message: Vault.getEffectiveDeposit(user=e.msg.sen... - certora/specs/Vault.spec line 166
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
 
-Failed on depositIncreasesEffectiveBalance:
-Assert message: Vault.getEffectiveDeposit(user=e.msg.sen... - certora/specs/Vault.spec line 136
+SafeERC20.sol : Line 50
+                    
+assembly ("memory-safe") {let success := call(gas(), token, 0, add(data, 0x20), mload(data), 0, 0x20)// bubble errorsif iszero(success) {let ptr := mload(0x40)returndatacopy(ptr, 0, returndatasize())revert(ptr, returndatasize())}returnSize := returndatasize()returnValue := mload(0)}
 
-Failed on setFlaxPerSFlax(uint256):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+                
+Callee
 
-Failed on withdrawalCannotAffectOthers:
-Assert message: Vault.originalDeposits(otherUser) == oth... - certora/specs/Vault.spec line 382
+[?].[?]
+Summary
 
-Failed on withdraw(uint256,bool,uint256):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+AUTO havoc
+Comments
 
-Failed on migrateYieldSource(address):
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
 
-Failed on rebaseMultiplierIsValid:
-Assert message: multiplierAfter == 1000000000000000000 |... - certora/specs/Vault.spec line 76
-Violated for: 
-emergencyWithdrawETH(address),
-setFlaxPerSFlax(uint256),
-withdraw(uint256,bool,uint256),
-<receiveOrFallback>(),
-originalDeposits(address),
-claimRewards(uint256),
-flaxPerSFlax(),
-yieldSource(),
-canWithdraw(),
-priceTilter(),
-sFlaxToken(),
-flaxToken(),
-totalDeposits(),
-deposit(uint256),
-emergencyWithdraw(address,address),
-setEmergencyState(bool),
-getEffectiveTotalDeposits(),
-renounceOwnership(),
-getEffectiveDeposit(address),
-rebaseMultiplier(),
-owner(),
-emergencyState(),
-transferOwnership(address),
-inputToken(),
-surplusInputToken(),
-emergencyWithdrawFromYieldSource(address,address),
-migrateYieldSource(address)
-Failed on onlyOwnerCanMigrate:
-Assert message: !(lastReverted) && Vault.yieldSource() !... - certora/specs/Vault.spec line 115
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
 
-[ForkJoinPool-1-worker-30] WARN TREEVIEW_REPORTER - Could not find a tree view node for TREE_VIEW_ROOT_NODE - there is a call to addChildNode missing.
-Duration 239976, RuleCheckResultsStats: numTotal = 18; numVerified = 9; numViolated = 9; numTimeout = 0; numError = 0
-Ping 4m - Processed 19/19 (100%) rules. 128 tasks complete, 0 pending.
-Done 4m
-Done 4m
-Event repor
+CVX_CRV_YieldSource.sol : Line 253
+                    
+oracle.consult(address(inputToken), address(poolTokens[i]), allocatedAmount)
+
+                
+Callee
+
+[?].[?]
+Summary
+
+AUTO havoc
+Comments
+
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that only havocs the return value
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
+
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
+
+CVX_CRV_YieldSource.sol : Line 255
+                    
+IUniswapV3Router(uniswapV3Router).exactInputSingle(IUniswapV3Router.ExactInputSingleParams({tokenIn: address(inputToken),tokenOut: address(poolTokens[i]),fee: UNISWAP_FEE,recipient: address(this),amountIn: allocatedAmount,amountOutMinimum: minOut,sqrtPriceLimitX96: 0}))
+
+                
+Callee
+
+[?].[?]
+Summary
+
+AUTO havoc
+Comments
+
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
+
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
+
+CVX_CRV_YieldSource.sol : Line 504
+                    
+curvePool.call(data)
+
+                
+Callee
+
+[?].[?]
+Summary
+
+AUTO havoc
+Comments
+
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
+
+CVX_CRV_YieldSource.deposit(uint256)
+Call Site
+
+CVX_CRV_YieldSource.sol : Line 276
+                    
+IConvexBooster(convexBooster).deposit(poolId, lpAmount, true)
+
+                
+Callee
+
+[?].[?]
+Summary
+
+AUTO havoc
+Comments
+
+callee resolution
+both callee contract and sighash are unresolved
+havoc cause
+The Prover could not resolve the callee, thus, havoc'd the call
+havoc scope
+a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
+summary application reason
+chosen automatically by the Prover
+Caller
+In  
+CALL TRACE
+
+Vault.deposit(uint256)
+Call Site
+
+SafeERC20.sol : Line 50
+                    
+assembly ("memory-safe") {let success := call(gas(), token, 0, add(data, 0x20), mload(data), 0, 0x20)// bubble errorsif iszero(success) {let ptr := mload(0x40)returndatacopy(ptr, 0, returndatasize())revert(ptr, returndatasize())}returnSize := returndatasize()returnValue := mload(0)}
+
+                
+Callee
+
+[?].transferFrom(address, address, uint256)
+Summary
+
+DISPATCHER(optimistic = true)
+Comments
+
+callee resolution
+callee contract unresolved; callee sighash resolved
+resolved callees
+[MockERC20.transferFrom(address,address,uint256)]
+summary application reason
+declared at Vault.spec:30:68; applied to calls where no callee could be resolved
+Caller
+In  
+CALL TRACE
+
+Vault.deposit(uint256)
+Call Site
+
+Vault.sol : Line 232
+                    
+inputToken.approve(yieldSource, amount)
+
+                
+Callee
+
+[?].approve(address, uint256)
+Summary
+
+DISPATCHER(optimistic = true)
+Comments
+
+callee resolution
+callee contract unresolved; callee sighash resolved
+resolved callees
+[MockERC20.approve(address,uint256)]
+summary application reason
+declared at Vault.spec:32:54; applied to calls where no callee could be resolved
+Caller
+In  
+CALL TRACE
+
+Vault.deposit(uint256)
+Call Site
+
+Vault.sol : Line 233
+                    
+IYieldsSource(yieldSource).deposit(amount)
+
+                
+Callee
+
+[?].deposit(uint256)
+Summary
+
+DISPATCHER(optimistic = true)
+Comments
+
+callee resolution
+callee contract unresolved; callee sighash resolved
+callee resolution hint (1)
+To resolve the call, try '--link Vault:yieldSource=[CVX_CRV_YieldSource | Vault]'
+resolved callees
+[CVX_CRV_YieldSource.deposit(uint256) | Vault.deposit(uint256)]
+summary application reason
+declared at Vault.spec:35:45; applied to calls where no callee could be resolved
+
+

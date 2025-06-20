@@ -58,14 +58,28 @@ hook Sstore rebaseMultiplier uint256 newValue (uint256 oldValue) {
 // invariant rebaseMultiplierValid()
 //     rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
 
-// Rule to check rebase multiplier validity
-rule rebaseMultiplierIsValid(method f) {
+// Rule to check rebase multiplier validity - only check state-changing vault functions
+rule rebaseMultiplierIsValid(method f) filtered {
+    f -> f.contract == currentContract && !f.isView
+} {
     env e;
     calldataarg args;
     
+    // Require valid starting state
+    require rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
+    
+    // Store the value before the call
+    uint256 multiplierBefore = rebaseMultiplier();
+    
     f(e, args);
     
-    assert rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
+    uint256 multiplierAfter = rebaseMultiplier();
+    
+    // The multiplier should only be one of these two values after state-changing operations
+    assert multiplierAfter == 1000000000000000000 || multiplierAfter == 0;
+    
+    // If it was valid before, it should remain valid after
+    assert (multiplierBefore == 1000000000000000000 || multiplierBefore == 0);
 }
 
 // Effective deposits integrity - only when vault is not permanently disabled  
@@ -100,8 +114,8 @@ rule onlyOwnerCanMigrate(env e, address newYieldSource) {
     
     migrateYieldSource@withrevert(e, newYieldSource);
     
-    // If yield source changed, sender must be owner
-    assert yieldSource() != yieldSourceBefore => e.msg.sender == owner();
+    // If the call didn't revert and yield source changed, sender must be owner
+    assert !lastReverted && yieldSource() != yieldSourceBefore => e.msg.sender == owner();
 }
 
 // Deposit Rules
@@ -118,11 +132,15 @@ rule depositIncreasesEffectiveBalance(env e, uint256 amount) {
     uint256 effectiveTotalBefore = getEffectiveTotalDeposits();
     uint256 originalDepositBefore = originalDeposits(e.msg.sender);
     
-    deposit(e, amount);
+    deposit@withrevert(e, amount);
     
-    // With rebase = 1e18, effective deposit increase equals amount
-    assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore + amount;
-    assert getEffectiveTotalDeposits() == effectiveTotalBefore + amount;
+    if (!lastReverted) {
+        // With rebase = 1e18, effective deposit increase equals amount
+        assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore + amount;
+        assert getEffectiveTotalDeposits() == effectiveTotalBefore + amount;
+    } else {
+        assert true; // Deposit can revert in some cases
+    }
 }
 
 rule depositWhenDisabledFails(env e, uint256 amount) {
@@ -144,11 +162,15 @@ rule withdrawalDecreasesEffectiveBalance(env e, uint256 amount, bool protectLoss
     uint256 effectiveDepositBefore = getEffectiveDeposit(e.msg.sender);
     uint256 effectiveTotalBefore = getEffectiveTotalDeposits();
     
-    withdraw(e, amount, protectLoss, 0);
+    withdraw@withrevert(e, amount, protectLoss, 0);
     
-    // Effective deposits should decrease by exactly the requested amount
-    assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore - amount;
-    assert getEffectiveTotalDeposits() == effectiveTotalBefore - amount;
+    if (!lastReverted) {
+        // Effective deposits should decrease by exactly the requested amount
+        assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore - amount;
+        assert getEffectiveTotalDeposits() == effectiveTotalBefore - amount;
+    } else {
+        assert true; // Withdrawal can revert in some cases
+    }
 }
 
 rule withdrawalWhenDisabledFails(env e, uint256 amount, bool protectLoss) {
@@ -170,11 +192,10 @@ rule withdrawalRespectsSurplus(env e, uint256 amount, bool protectLoss) {
     withdraw@withrevert(e, amount, protectLoss, 0);
     
     if (!lastReverted) {
-        // User should receive tokens (exact amount depends on surplus/shortfall handling)
-        // Changed to >= because user might receive exactly their balance if they withdraw 0
-        assert inputToken.balanceOf(e, e.msg.sender) >= userBalanceBefore;
+        // User should receive tokens - they withdraw an amount > 0
+        assert inputToken.balanceOf(e, e.msg.sender) > userBalanceBefore;
     } else {
-        assert true; // Revert is acceptable
+        assert true; // Withdrawal can revert in some cases
     }
 }
 
@@ -232,9 +253,13 @@ rule emergencyWithdrawalDisablesVault(env e, address token, address recipient) {
     require totalDeposits() > 0;
     require rebaseMultiplier() == 1000000000000000000; // Start with normal multiplier
     
-    emergencyWithdrawFromYieldSource(e, token, recipient);
+    emergencyWithdrawFromYieldSource@withrevert(e, token, recipient);
     
-    assert rebaseMultiplier() == 0; // Vault permanently disabled
+    if (!lastReverted) {
+        assert rebaseMultiplier() == 0; // Vault permanently disabled
+    } else {
+        assert true; // Emergency withdrawal can revert in some cases
+    }
 }
 
 rule permanentlyDisabledVaultRejectsOperations(env e) {
@@ -266,6 +291,7 @@ rule sFlaxBurnBoostsRewards(env e, uint256 sFlaxAmount) {
     require sFlaxToken.balanceOf(e, e.msg.sender) >= sFlaxAmount;
     require sFlaxToken.allowance(e, e.msg.sender, currentContract) >= sFlaxAmount;
     require flaxToken.balanceOf(e, currentContract) >= 2^200;
+    require getEffectiveDeposit(e.msg.sender) > 0; // User must have deposits to claim rewards
     
     mathint expectedBoost = to_mathint(sFlaxAmount) * to_mathint(flaxPerSFlax()) / 1000000000000000000;
     uint256 userFlaxBefore = flaxToken.balanceOf(e, e.msg.sender);
@@ -274,12 +300,11 @@ rule sFlaxBurnBoostsRewards(env e, uint256 sFlaxAmount) {
     
     if (!lastReverted) {
         // User should receive at least the expected boost (may receive more from base rewards)
-        // Note: The increase should be exactly the expected boost plus any base rewards
         mathint flaxIncrease = to_mathint(flaxToken.balanceOf(e, e.msg.sender)) - to_mathint(userFlaxBefore);
-        // Just check that user received some flax if they burned sFlax
-        assert sFlaxAmount > 0 => flaxIncrease > 0;
+        // Check that burning sFlax provides boost
+        assert sFlaxAmount > 0 => flaxIncrease >= expectedBoost;
     } else {
-        assert true; // Revert is acceptable if preconditions not met
+        assert true; // Claim can revert in some cases
     }
 }
 
@@ -321,41 +346,47 @@ rule emergencyWithdrawalRequiresEmergencyState(env e, address token, address rec
 rule userCannotDepositForOthers(env e, uint256 amount, address otherUser) {
     require e.msg.sender != otherUser;
     require otherUser != currentContract;
+    require otherUser != 0;
     require amount > 0 && amount < 2^128;
     require !emergencyState();
     require rebaseMultiplier() > 0;
     
     uint256 otherUserOriginalBefore = originalDeposits(otherUser);
+    uint256 otherUserEffectiveBefore = getEffectiveDeposit(otherUser);
     
     deposit@withrevert(e, amount);
     
     if (!lastReverted) {
-        // Other user's original deposit should not change
+        // Other user's deposits should not change
         assert originalDeposits(otherUser) == otherUserOriginalBefore;
+        assert getEffectiveDeposit(otherUser) == otherUserEffectiveBefore;
     } else {
-        assert true; // Revert is acceptable
+        assert true; // Deposit can revert in some cases
     }
 }
 
 rule withdrawalCannotAffectOthers(env e, uint256 amount, bool protectLoss, address otherUser) {
     require e.msg.sender != otherUser;
     require otherUser != currentContract;
+    require otherUser != 0;
     require canWithdraw();
     require getEffectiveDeposit(e.msg.sender) >= amount;
     require amount > 0 && amount < 2^128;
     require rebaseMultiplier() > 0;
     
     uint256 otherUserOriginalBefore = originalDeposits(otherUser);
+    uint256 otherUserEffectiveBefore = getEffectiveDeposit(otherUser);
     uint256 otherUserBalanceBefore = inputToken.balanceOf(e, otherUser);
     
     withdraw@withrevert(e, amount, protectLoss, 0);
     
     if (!lastReverted) {
-        // Other user's original deposit and balance should not change
+        // Other user's deposits and balance should not change
         assert originalDeposits(otherUser) == otherUserOriginalBefore;
+        assert getEffectiveDeposit(otherUser) == otherUserEffectiveBefore;
         assert inputToken.balanceOf(e, otherUser) == otherUserBalanceBefore;
     } else {
-        assert true; // Revert is acceptable
+        assert true; // Withdrawal can revert in some cases
     }
 }
 

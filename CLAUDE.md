@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Response Format
+- Begin every response with "**ReFlax:** " to identify the project context
+
 ## Workflow Rules
 - For feature development workflow rules, see `context/feature/WorkflowRules.md`
 - For unit testing guidelines, see `context/unit-test/`

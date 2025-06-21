@@ -139,7 +139,12 @@ We will use Certora Prover to:
 
 ## Status
 
-Formal verification setup is in progress. The Certora CLI has been installed and a pre-flight syntax checking script has been created.
+Formal verification is actively underway:
+- ✅ Vault contract verification complete (20/24 rules passing)
+- ✅ TWAPOracle contract verification complete (10/14 rules passing)
+- 🔄 YieldSource and PriceTilter verification pending
+
+**Current Tasks**: See `FormalVerificationBacklog.md` for the complete TODO list and priorities.
 
 ## Project Structure
 

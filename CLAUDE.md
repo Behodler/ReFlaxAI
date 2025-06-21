@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - For unit testing guidelines, see `context/unit-test/`
 - For integration testing guidelines, see `context/integration-test/`
 - For formal verification workflow rules, see `context/formal-verification/WorkflowRules.md`
+- For formal verification backlog and TODOs, see `context/formal-verification/FormalVerificationBacklog.md`
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 
 ## Conventions

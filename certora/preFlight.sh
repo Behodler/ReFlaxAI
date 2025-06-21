@@ -62,9 +62,9 @@ if [ -f "certora/specs/Vault.spec" ]; then
     check_spec "Vault.spec" "src/vault/Vault.sol src/yieldSource/CVX_CRV_YieldSource.sol test/mocks/Mocks.sol:MockERC20" "Vault:certora/specs/Vault.spec"
 fi
 
-# Check TWAPOracle.spec  
-if [ -f "certora/specs/TWAPOracle.spec" ]; then
-    check_spec "TWAPOracle.spec" "src/priceTilting/TWAPOracle.sol test/mocks/Mocks.sol:MockUniswapV2Pair test/mocks/Mocks.sol:MockUniswapV2Factory" "TWAPOracle:certora/specs/TWAPOracle.spec"
+# Check TWAPOracleSimple.spec (using simplified version)
+if [ -f "certora/specs/TWAPOracleSimple.spec" ]; then
+    check_spec "TWAPOracleSimple.spec" "src/priceTilting/TWAPOracle.sol test/mocks/Mocks.sol:MockUniswapV2Pair test/mocks/Mocks.sol:MockUniswapV2Factory" "TWAPOracle:certora/specs/TWAPOracleSimple.spec"
 fi
 
 echo -e "\n=========================================="

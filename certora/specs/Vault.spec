@@ -27,6 +27,9 @@ methods {
     function _.balanceOf(address) external => DISPATCHER(true);
     function _.totalSupply() external => DISPATCHER(true);
     function _.allowance(address, address) external => DISPATCHER(true);
+    function _.transferFrom(address, address, uint256) external => DISPATCHER(true);
+    function _.transfer(address, uint256) external => DISPATCHER(true);
+    function _.approve(address, uint256) external => DISPATCHER(true);
     
     // YieldSource methods - use wildcard to avoid recursion issues
     function _.deposit(uint256) external => DISPATCHER(true);
@@ -54,33 +57,39 @@ hook Sstore rebaseMultiplier uint256 newValue (uint256 oldValue) {
 // Core Invariants
 
 // Rebase multiplier is either 1e18 (normal) or 0 (permanently disabled)
-// Use a rule instead of invariant to have better control
-// invariant rebaseMultiplierValid()
-//     rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
+// Use an invariant to ensure this property holds at all times
+invariant rebaseMultiplierValid()
+    rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
 
-// Rule to check rebase multiplier validity - only check state-changing vault functions
-rule rebaseMultiplierIsValid(method f) filtered {
-    f -> f.contract == currentContract && !f.isView
-} {
-    env e;
-    calldataarg args;
-    
-    // Require valid starting state
-    require rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
-    
-    // Store the value before the call
-    uint256 multiplierBefore = rebaseMultiplier();
-    
-    f(e, args);
-    
-    uint256 multiplierAfter = rebaseMultiplier();
-    
-    // The multiplier should only be one of these two values after state-changing operations
-    assert multiplierAfter == 1000000000000000000 || multiplierAfter == 0;
-    
-    // If it was valid before, it should remain valid after
-    assert (multiplierBefore == 1000000000000000000 || multiplierBefore == 0);
-}
+// Rule to check rebase multiplier validity - only emergencyWithdrawFromYieldSource can change it
+// Now replaced by the invariant above
+// rule rebaseMultiplierIsValid(method f) filtered {
+//     f -> f.contract == currentContract && !f.isView
+// } {
+//     env e;
+//     calldataarg args;
+//     
+//     // Require valid starting state
+//     require rebaseMultiplier() == 1000000000000000000 || rebaseMultiplier() == 0;
+//     
+//     // Store the value before the call
+//     uint256 multiplierBefore = rebaseMultiplier();
+//     
+//     f(e, args);
+//     
+//     uint256 multiplierAfter = rebaseMultiplier();
+//     
+//     // The multiplier should only be one of these two values
+//     assert multiplierAfter == 1000000000000000000 || multiplierAfter == 0;
+//     
+//     // Only emergencyWithdrawFromYieldSource can change the multiplier from 1e18 to 0
+//     // All other functions should preserve the multiplier
+//     if (f.selector != sig:emergencyWithdrawFromYieldSource(address,address).selector) {
+//         assert multiplierAfter == multiplierBefore;
+//     } else {
+//         assert true; // emergencyWithdrawFromYieldSource can change the multiplier
+//     }
+// }
 
 // Effective deposits integrity - only when vault is not permanently disabled  
 // (Commented out due to CVL sum syntax complexity - verified via rules instead)
@@ -121,23 +130,47 @@ rule onlyOwnerCanMigrate(env e, address newYieldSource) {
 // Deposit Rules
 
 rule depositIncreasesEffectiveBalance(env e, uint256 amount) {
-    require amount > 0 && amount < 2^128;
-    require !emergencyState();
-    require rebaseMultiplier() == 1000000000000000000; // Assume normal rebase for this rule
-    require inputToken.balanceOf(e, e.msg.sender) >= amount;
-    require inputToken.allowance(e, e.msg.sender, currentContract) >= amount;
-    require e.msg.sender != currentContract;
+    require amount > 0 && amount < 2^128, "Amount must be positive and reasonable";
+    require !emergencyState(), "Cannot deposit in emergency state";
+    require rebaseMultiplier() == 1000000000000000000, "Assume normal rebase for this rule";
+    require inputToken.balanceOf(e, e.msg.sender) >= amount, "User must have sufficient balance";
+    require inputToken.allowance(e, e.msg.sender, currentContract) >= amount, "User must have approved sufficient allowance";
+    require e.msg.sender != currentContract, "Sender cannot be the vault contract";
+    require e.msg.sender != yieldSource(), "Sender cannot be the yield source";
     
+    // Ensure no overflow issues - constrain the starting state
+    require originalDeposits(e.msg.sender) < 2^128, "User deposits must be reasonable";
+    require totalDeposits() < 2^128, "Total deposits must be reasonable";
+    require originalDeposits(e.msg.sender) + amount < 2^128, "No overflow in user deposits";
+    require totalDeposits() + amount < 2^128, "No overflow in total deposits";
+    
+    // Assume the yield source is properly configured
+    require yieldSource() != 0, "Yield source must be set";
+    require yieldSource() != currentContract, "Yield source cannot be the vault";
+    
+    // Ensure the effective calculations don't overflow
+    require getEffectiveDeposit(e.msg.sender) < 2^128, "Effective deposit must be reasonable";
+    require getEffectiveTotalDeposits() < 2^128, "Effective total must be reasonable";
+    
+    uint256 userOriginalBefore = originalDeposits(e.msg.sender);
+    uint256 totalOriginalBefore = totalDeposits();
     uint256 effectiveDepositBefore = getEffectiveDeposit(e.msg.sender);
     uint256 effectiveTotalBefore = getEffectiveTotalDeposits();
-    uint256 originalDepositBefore = originalDeposits(e.msg.sender);
+    uint256 vaultBalanceBefore = inputToken.balanceOf(e, currentContract);
     
     deposit@withrevert(e, amount);
     
     if (!lastReverted) {
-        // With rebase = 1e18, effective deposit increase equals amount
-        assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore + amount;
-        assert getEffectiveTotalDeposits() == effectiveTotalBefore + amount;
+        // Check raw deposits increased correctly
+        assert originalDeposits(e.msg.sender) == userOriginalBefore + amount, "User original deposits should increase";
+        assert totalDeposits() == totalOriginalBefore + amount, "Total original deposits should increase";
+        
+        // With rebase = 1e18, effective deposit increase should equal amount
+        assert getEffectiveDeposit(e.msg.sender) == effectiveDepositBefore + amount, "User effective deposit should increase by exact amount";
+        assert getEffectiveTotalDeposits() == effectiveTotalBefore + amount, "Total effective deposits should increase by exact amount";
+        
+        // Verify the tokens were transferred from user and forwarded to yield source
+        assert inputToken.balanceOf(e, currentContract) == vaultBalanceBefore, "Vault should not hold deposited tokens";
     } else {
         assert true; // Deposit can revert in some cases
     }

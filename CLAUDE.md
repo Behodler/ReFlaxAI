@@ -42,30 +42,69 @@ Tests are organized into unit tests and integration tests that can be run indepe
 No specific linting commands found. Solidity compilation errors will be caught by `forge build`.
 
 ### Formal Verification
+
+**PRIMARY WORKFLOW - Local Verification**:
+```bash
+# 1. Always run preflight checks first from certora directory
+cd certora && ./preFlight.sh
+
+# 2. Run local verification using the automated script
+./run_local_verification.sh
+```
+
+**MANUAL WORKFLOW** (if needed):
+```bash
+# 1. Set up local Certora environment (from project root)
+source /home/justin/code/CertoraProverLocal/.venv/bin/activate
+export CERTORA="$HOME/certora-build" && export PATH="$CERTORA:$PATH"
+
+# 2. Clean old reports (optional but recommended)
+cd certora && rm -rf reports/emv-* 2>/dev/null || true && cd ..
+
+# 3. Run local verification
+python $CERTORA/certoraRun.py \
+    src/vault/Vault.sol \
+    src/yieldSource/CVX_CRV_YieldSource.sol \
+    test/mocks/Mocks.sol:MockERC20 \
+    --verify Vault:certora/specs/Vault.spec \
+    --solc ~/.solc-select/artifacts/solc-0.8.20/solc-0.8.20 \
+    --solc_via_ir \
+    --solc_optimize 200 \
+    --optimistic_loop \
+    --loop_iter 2 \
+    --optimistic_summary_recursion \
+    --summary_recursion_limit 2 \
+    --optimistic_contract_recursion \
+    --contract_recursion_limit 2 \
+    --packages @oz_reflax=lib/oz_reflax \
+    --packages @uniswap_reflax/core=lib/UniswapReFlax/core \
+    --packages @uniswap_reflax/periphery=lib/UniswapReFlax/periphery \
+    --packages forge-std=lib/forge-std/src \
+    --packages interfaces=src/interfaces \
+    --smt_timeout 3600 \
+    --msg "Local verification run"
+```
+
+**CLOUD VERIFICATION** (only when explicitly requested):
 ```bash
 cd certora
-# ALWAYS run preflight checks first to catch syntax errors
-./preFlight.sh
-# Only run verification if preflight passes - must export CERTORAKEY if not in environment
 export CERTORAKEY=<your_key> && ./run_verification.sh
 ```
+
 **CRITICAL WORKFLOW**: 
-1. **MANDATORY**: Always run `./preFlight.sh` BEFORE `./run_verification.sh` to catch CVL syntax errors locally
-2. **NEVER** skip the preflight check - it saves time and cloud resources  
-3. **ALWAYS** fix all syntax errors identified by preflight before proceeding
-4. **VERIFICATION REQUIREMENT**: Only submit to Certora cloud when preFlight.sh shows "All syntax checks passed!"
-5. **ERROR DEBUGGING**: If server reports syntax errors despite local preFlight success, check `certora/debugging/logOfFailures.md` for known issues
-6. When asked to "run formal verification" or "submit verification", this ALWAYS means running BOTH preflight AND verification in sequence
+1. **MANDATORY**: Always run `./preFlight.sh` BEFORE any verification to catch CVL syntax errors
+2. **PRIMARY**: Use local verification for faster feedback and debugging
+3. **REPORTS**: All local reports are saved in `certora/reports/` (gitignored)
+4. **MAINTENANCE**: Clean old reports regularly - keep only recent 3-5 runs
+5. **ERROR DEBUGGING**: Check `certora/debugging/logOfFailures.md` for tracking issues
+6. When asked to "run formal verification" this means: preflight → fix errors → run LOCAL verification
 
-**IMPORTANT SETUP NOTES**:
-- **Directory**: All formal verification commands must be run from the `certora/` directory
-- **Environment Variables**: Ensure CERTORAKEY is set. If .envrc exists with the key, use `source ../.envrc` or export directly
-- **Common Issues**: 
-  - Running from wrong directory will cause "file not found" errors
-  - Missing CERTORAKEY will cause "does not contain a Certora key" error
-  - Use `export CERTORAKEY=<key> && ./run_verification.sh` if environment variables aren't accessible
+**IMPORTANT NOTES**:
+- **Local Benefits**: Faster feedback, no cloud costs, detailed error messages
+- **Report Location**: `certora/reports/emv-*/Reports/FinalResults.html`
+- **Cloud Use Cases**: External sharing, final verification, or when explicitly requested
 
-Note: Certora CLI requires Python virtual environment setup and a Certora key. See `certora/` directory for setup scripts.
+See `context/formal-verification/CLAUDE.md` for complete workflow details.
 
 ## Architecture Overview
 

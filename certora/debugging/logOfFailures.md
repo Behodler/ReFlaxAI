@@ -2,38 +2,20 @@
 depositIncreasesEffectiveBalance
 
 ## Rule Violation details
-User effective deposit should increase - certora/specs/Vault.spec line 148
+User original deposits should increase - certora/specs/Vault.spec line 164
 
-## Call Trace Errors
+## Analysis Summary
 
-Caller
-In  
-CALL TRACE
+### Local verification results:
+- Fixed ERC20 method havoc issues by adding transferFrom, transfer, approve to methods block
+- Still failing with message "User original deposits should increase"
+- The invariant rebaseMultiplierValid is being violated by YieldSource functions
+- Need to constrain the invariant to only apply to Vault contract
 
-CVX_CRV_YieldSource.deposit(uint256)
-Call Site
-
-CVX_CRV_YieldSource.sol : Line 202
-                    
-oracle.update(address(flaxToken), address(0))
-
-                
-Callee
-
-[?].[?]
-Summary
-
-AUTO havoc
-Comments
-
-callee resolution
-both callee contract and sighash are unresolved
-havoc cause
-The Prover could not resolve the callee, thus, havoc'd the call
-havoc scope
-a havoc that havocs all contracts except CVX_CRV_YieldSource (ce4604a000000000000000000000001a)
-summary application reason
-chosen automatically by the Prover
+### Key findings:
+1. External protocol calls (Oracle, Uniswap, Convex) are being havoc'd as expected
+2. The depositIncreasesEffectiveBalance rule is now failing on a different assertion
+3. The rebaseMultiplierValid invariant needs to be scoped to Vault only
 Caller
 In  
 CALL TRACE

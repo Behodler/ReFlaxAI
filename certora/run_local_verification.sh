@@ -59,6 +59,7 @@ python $CERTORA/certoraRun.py \
     --packages forge-std=lib/forge-std/src \
     --packages interfaces=src/interfaces \
     --smt_timeout 3600 \
+    --output certora/reports \
     --msg "Local verification run - $(date '+%Y-%m-%d %H:%M:%S')"
 
 # Find the most recent report directory

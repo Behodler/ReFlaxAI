@@ -207,7 +207,7 @@ require(vault.canWithdraw(user), "Withdrawal restricted");
 
 #### **Tools and Techniques**
 - **Certora Prover**: Industry-leading formal verification platform
-- **CVL Specifications**: 200+ rules across 4 core contracts
+- **CVL Specifications**: 67 rules across 4 core contracts
 - **Mathematical Proofs**: Each rule backed by automated theorem proving
 - **Comprehensive Coverage**: Access control, state integrity, economic properties
 

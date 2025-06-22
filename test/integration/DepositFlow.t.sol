@@ -81,6 +81,11 @@ contract DepositFlowTest is BaseIntegration {
             initialVaultDeposits + 5_000e6,
             "Vault totalDeposits should increase by deposit amount"
         );
+        assertEq(
+            vault.getEffectiveTotalDeposits(),
+            initialVaultDeposits + 5_000e6,
+            "Vault effective total deposits should increase by deposit amount"
+        );
         assertUserDeposit(alice, 5_000e6, "Alice's deposit should be tracked");
         
         // 3. Tokens transferred through the system

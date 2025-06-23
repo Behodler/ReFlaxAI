@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - For integration testing guidelines, see `context/integration-test/`
 - For formal verification workflow rules, see `context/formal-verification/WorkflowRules.md`
 - For formal verification backlog and TODOs, see `context/formal-verification/FormalVerificationBacklog.md`
+- For mutation testing guidelines, see `context/mutation-test/CLAUDE.md`
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 
 ## Conventions
@@ -37,6 +38,7 @@ Tests are organized into unit tests and integration tests that can be run indepe
 
 - **Unit Tests**: See `context/unit-test/UnitTestCommands.md` for commands and guidelines
 - **Integration Tests**: See `context/integration-test/IntegrationTestCommands.md` for setup and commands
+- **Mutation Tests**: See `context/mutation-test/MutationTestCommands.md` for Gambit setup and commands
 - **Test Results**: All test results are tracked in `context/TestLog.md`
 
 ### Linting/Type Checking
@@ -107,6 +109,32 @@ export CERTORAKEY=<your_key> && ./run_verification.sh
 - **Cloud Use Cases**: External sharing, final verification, or when explicitly requested
 
 See `context/formal-verification/CLAUDE.md` for complete workflow details.
+
+### Mutation Testing
+
+**SETUP**: Uses Gambit mutation testing tool with Solidity 0.8.13
+```bash
+# 1. Install Gambit (Python package)
+pip install gambit-tools==0.4.0
+
+# 2. Run mutation testing on core contracts
+gambit mutate --contract src/vault/Vault.sol
+gambit test --test-command "forge test"
+```
+
+**WORKFLOW**:
+1. **READY FOR MUTATION TESTING**: Vault.sol, YieldSource contracts, PriceTilterTWAP.sol
+2. **TARGET SCORES**: Critical contracts >90%, High priority >85%, Medium >75%
+3. **CONFIGURATION**: See `context/mutation-test/MutationConfig.md` for .gambit.yml setup
+4. **RESULTS TRACKING**: All mutation test results tracked in `context/mutation-test/MutationTestResults.md`
+
+**IMPORTANT NOTES**:
+- **Solidity Version**: Project uses 0.8.13 for mutation testing (downgraded from 0.8.20)
+- **Core Contracts Ready**: All critical contracts have 100% test pass rates post-downgrade
+- **Performance**: Use parallel execution with 4 threads for optimal speed
+- **Integration**: Mutation testing complements formal verification by finding test gaps
+
+See `context/mutation-test/CLAUDE.md` for complete workflow details.
 
 ## Architecture Overview
 

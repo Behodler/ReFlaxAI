@@ -26,3 +26,9 @@ certora/reports
 
 src_flat*
 certora/temp_*.sol
+
+# Mutation testing artifacts
+.gambit/
+.gambit_cache/
+mutation-reports/
+mutation-test-*.txt

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.13;
 
 import "@oz_reflax/access/Ownable.sol";
 import "@oz_reflax/token/ERC20/IERC20.sol";

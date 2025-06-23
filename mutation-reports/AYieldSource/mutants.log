@@ -1,0 +1,72 @@
+1,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,91:9,"require(whitelistedVaults[msg.sender], ""Not whitelisted vault"")",assert(true)
+2,RequireMutation,src/yieldSource/AYieldSource.sol,91:17,whitelistedVaults[msg.sender],true
+3,RequireMutation,src/yieldSource/AYieldSource.sol,91:17,whitelistedVaults[msg.sender],false
+4,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,114:9,lpTokenName = _lpTokenName,assert(true)
+5,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,115:9,minSlippageBps = 50,assert(true)
+6,AssignmentMutation,src/yieldSource/AYieldSource.sol,115:26,50,0
+7,AssignmentMutation,src/yieldSource/AYieldSource.sol,115:26,50,1
+8,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,125:9,whitelistedVaults[vault] = whitelisted,assert(true)
+9,AssignmentMutation,src/yieldSource/AYieldSource.sol,125:36,whitelisted,true
+10,AssignmentMutation,src/yieldSource/AYieldSource.sol,125:36,whitelisted,false
+11,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,135:9,"require(newSlippageBps <= 10000, ""Slippage too high"")",assert(true)
+12,RequireMutation,src/yieldSource/AYieldSource.sol,135:17,newSlippageBps <= 10000,true
+13,RequireMutation,src/yieldSource/AYieldSource.sol,135:17,newSlippageBps <= 10000,false
+14,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,135:17,newSlippageBps <= 10000,10000 <= newSlippageBps
+15,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,136:9,minSlippageBps = newSlippageBps,assert(true)
+16,AssignmentMutation,src/yieldSource/AYieldSource.sol,136:26,newSlippageBps,0
+17,AssignmentMutation,src/yieldSource/AYieldSource.sol,136:26,newSlippageBps,1
+18,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,146:9,lpTokenName = newName,assert(true)
+19,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,166:9,_updateOracle(),assert(true)
+20,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,167:9,"inputToken.safeTransferFrom(msg.sender, address(this), amount)",assert(true)
+21,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,169:9,totalDeposited += received,assert(true)
+22,AssignmentMutation,src/yieldSource/AYieldSource.sol,169:27,received,0
+23,AssignmentMutation,src/yieldSource/AYieldSource.sol,169:27,received,1
+24,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,181:9,_updateOracle(),assert(true)
+25,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,182:9,"(inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount)",assert(true)
+26,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,183:9,"inputToken.safeTransfer(msg.sender, inputTokenAmount)",assert(true)
+27,BinaryOpMutation,src/yieldSource/AYieldSource.sol,187:43, * ,+
+28,BinaryOpMutation,src/yieldSource/AYieldSource.sol,187:43, * ,-
+29,BinaryOpMutation,src/yieldSource/AYieldSource.sol,187:43, * ,/
+30,BinaryOpMutation,src/yieldSource/AYieldSource.sol,187:43, * ,%
+31,BinaryOpMutation,src/yieldSource/AYieldSource.sol,187:43, * ,**
+32,IfStatementMutation,src/yieldSource/AYieldSource.sol,188:13,lpAmountWithdrawn > totalDeposited,true
+33,IfStatementMutation,src/yieldSource/AYieldSource.sol,188:13,lpAmountWithdrawn > totalDeposited,false
+34,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,188:13,lpAmountWithdrawn > totalDeposited,totalDeposited > lpAmountWithdrawn
+35,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,189:13,lpAmountWithdrawn = totalDeposited,assert(true)
+36,AssignmentMutation,src/yieldSource/AYieldSource.sol,189:33,totalDeposited,0
+37,AssignmentMutation,src/yieldSource/AYieldSource.sol,189:33,totalDeposited,1
+38,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,191:9,totalDeposited -= lpAmountWithdrawn,assert(true)
+39,AssignmentMutation,src/yieldSource/AYieldSource.sol,191:27,lpAmountWithdrawn,0
+40,AssignmentMutation,src/yieldSource/AYieldSource.sol,191:27,lpAmountWithdrawn,1
+41,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,200:9,_updateOracle(),assert(true)
+42,IfStatementMutation,src/yieldSource/AYieldSource.sol,205:17,amount > 0,true
+43,IfStatementMutation,src/yieldSource/AYieldSource.sol,205:17,amount > 0,false
+44,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,205:17,amount > 0,0 > amount
+45,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,207:17,"ethAmount += _sellRewardToken(token, amount)",assert(true)
+46,AssignmentMutation,src/yieldSource/AYieldSource.sol,207:30,"_sellRewardToken(token, amount)",0
+47,AssignmentMutation,src/yieldSource/AYieldSource.sol,207:30,"_sellRewardToken(token, amount)",1
+48,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,202:29,i < rewardTokens.length,rewardTokens.length < i
+49,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,202:54,i++,assert(true)
+50,UnaryOperatorMutation,src/yieldSource/AYieldSource.sol,202:55,++,--
+51,IfStatementMutation,src/yieldSource/AYieldSource.sol,211:13,ethAmount > 0,true
+52,IfStatementMutation,src/yieldSource/AYieldSource.sol,211:13,ethAmount > 0,false
+53,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,211:13,ethAmount > 0,0 > ethAmount
+54,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,212:13,flaxValue = _getFlaxValue(ethAmount),assert(true)
+55,AssignmentMutation,src/yieldSource/AYieldSource.sol,212:25,_getFlaxValue(ethAmount),0
+56,AssignmentMutation,src/yieldSource/AYieldSource.sol,212:25,_getFlaxValue(ethAmount),1
+57,IfStatementMutation,src/yieldSource/AYieldSource.sol,227:17,amount > 0,true
+58,IfStatementMutation,src/yieldSource/AYieldSource.sol,227:17,amount > 0,false
+59,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,227:17,amount > 0,0 > amount
+60,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,229:17,"ethAmount += _sellRewardToken(token, amount)",assert(true)
+61,AssignmentMutation,src/yieldSource/AYieldSource.sol,229:30,"_sellRewardToken(token, amount)",0
+62,AssignmentMutation,src/yieldSource/AYieldSource.sol,229:30,"_sellRewardToken(token, amount)",1
+63,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,224:29,i < rewardTokens.length,rewardTokens.length < i
+64,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,224:54,i++,assert(true)
+65,UnaryOperatorMutation,src/yieldSource/AYieldSource.sol,224:55,++,--
+66,IfStatementMutation,src/yieldSource/AYieldSource.sol,233:13,ethAmount > 0,true
+67,IfStatementMutation,src/yieldSource/AYieldSource.sol,233:13,ethAmount > 0,false
+68,SwapArgumentsOperatorMutation,src/yieldSource/AYieldSource.sol,233:13,ethAmount > 0,0 > ethAmount
+69,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,234:13,inputTokenAmount = _sellEthForInputToken(ethAmount),assert(true)
+70,AssignmentMutation,src/yieldSource/AYieldSource.sol,234:32,_sellEthForInputToken(ethAmount),0
+71,AssignmentMutation,src/yieldSource/AYieldSource.sol,234:32,_sellEthForInputToken(ethAmount),1
+72,DeleteExpressionMutation,src/yieldSource/AYieldSource.sol,236:13,"inputToken.safeTransfer(msg.sender, inputTokenAmount)",assert(true)

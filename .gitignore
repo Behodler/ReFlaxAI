@@ -27,8 +27,15 @@ certora/reports
 src_flat*
 certora/temp_*.sol
 
-# Mutation testing artifacts
+# Mutation testing artifacts - selective ignore
 .gambit/
 .gambit_cache/
-mutation-reports/
-mutation-test-*.txt
+# Ignore bulky mutation artifacts but keep key results
+mutation-reports/*/mutants/
+mutation-reports/*/input_json/
+# Always track important mutation metadata (override above ignores)
+!mutation-reports/*/gambit_results.json
+!mutation-reports/*/mutants.log
+# Ignore baseline test output files  
+mutation-test-baseline-*.txt
+mutation-test-post-downgrade-*.txt

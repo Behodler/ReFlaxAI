@@ -1,0 +1,578 @@
+[
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -88,7 +88,8 @@\n      * @notice Restricts function access to whitelisted vaults only\n      */\n     modifier onlyWhitelistedVault() {\n-        require(whitelistedVaults[msg.sender], \"Not whitelisted vault\");\n+        /// DeleteExpressionMutation(`require(whitelistedVaults[msg.sender], \"Not whitelisted vault\")` |==> `assert(true)`) of: `require(whitelistedVaults[msg.sender], \"Not whitelisted vault\");`\n+        assert(true);\n         _;\n     }\n \n",
+    "id": "1",
+    "name": "mutants/1/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -88,7 +88,8 @@\n      * @notice Restricts function access to whitelisted vaults only\n      */\n     modifier onlyWhitelistedVault() {\n-        require(whitelistedVaults[msg.sender], \"Not whitelisted vault\");\n+        /// RequireMutation(`whitelistedVaults[msg.sender]` |==> `true`) of: `require(whitelistedVaults[msg.sender], \"Not whitelisted vault\");`\n+        require(true, \"Not whitelisted vault\");\n         _;\n     }\n \n",
+    "id": "2",
+    "name": "mutants/2/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -88,7 +88,8 @@\n      * @notice Restricts function access to whitelisted vaults only\n      */\n     modifier onlyWhitelistedVault() {\n-        require(whitelistedVaults[msg.sender], \"Not whitelisted vault\");\n+        /// RequireMutation(`whitelistedVaults[msg.sender]` |==> `false`) of: `require(whitelistedVaults[msg.sender], \"Not whitelisted vault\");`\n+        require(false, \"Not whitelisted vault\");\n         _;\n     }\n \n",
+    "id": "3",
+    "name": "mutants/3/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -111,7 +111,8 @@\n         flaxToken = IERC20(_flaxToken);\n         priceTilter = IPriceTilter(_priceTilter);\n         oracle = IOracle(_oracle);\n-        lpTokenName = _lpTokenName;\n+        /// DeleteExpressionMutation(`lpTokenName = _lpTokenName` |==> `assert(true)`) of: `lpTokenName = _lpTokenName;`\n+        assert(true);\n         minSlippageBps = 50; // Default: 0.5%\n     }\n \n",
+    "id": "4",
+    "name": "mutants/4/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -112,7 +112,8 @@\n         priceTilter = IPriceTilter(_priceTilter);\n         oracle = IOracle(_oracle);\n         lpTokenName = _lpTokenName;\n-        minSlippageBps = 50; // Default: 0.5%\n+        /// DeleteExpressionMutation(`minSlippageBps = 50` |==> `assert(true)`) of: `minSlippageBps = 50; // Default: 0.5%`\n+        assert(true); // Default: 0.5%\n     }\n \n     /**\n",
+    "id": "5",
+    "name": "mutants/5/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -112,7 +112,8 @@\n         priceTilter = IPriceTilter(_priceTilter);\n         oracle = IOracle(_oracle);\n         lpTokenName = _lpTokenName;\n-        minSlippageBps = 50; // Default: 0.5%\n+        /// AssignmentMutation(`50` |==> `0`) of: `minSlippageBps = 50; // Default: 0.5%`\n+        minSlippageBps = 0; // Default: 0.5%\n     }\n \n     /**\n",
+    "id": "6",
+    "name": "mutants/6/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -112,7 +112,8 @@\n         priceTilter = IPriceTilter(_priceTilter);\n         oracle = IOracle(_oracle);\n         lpTokenName = _lpTokenName;\n-        minSlippageBps = 50; // Default: 0.5%\n+        /// AssignmentMutation(`50` |==> `1`) of: `minSlippageBps = 50; // Default: 0.5%`\n+        minSlippageBps = 1; // Default: 0.5%\n     }\n \n     /**\n",
+    "id": "7",
+    "name": "mutants/7/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -122,7 +122,8 @@\n      * @dev Only callable by owner\n      */\n     function whitelistVault(address vault, bool whitelisted) external onlyOwner {\n-        whitelistedVaults[vault] = whitelisted;\n+        /// DeleteExpressionMutation(`whitelistedVaults[vault] = whitelisted` |==> `assert(true)`) of: `whitelistedVaults[vault] = whitelisted;`\n+        assert(true);\n         emit VaultWhitelisted(vault, whitelisted);\n     }\n \n",
+    "id": "8",
+    "name": "mutants/8/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -122,7 +122,8 @@\n      * @dev Only callable by owner\n      */\n     function whitelistVault(address vault, bool whitelisted) external onlyOwner {\n-        whitelistedVaults[vault] = whitelisted;\n+        /// AssignmentMutation(`whitelisted` |==> `true`) of: `whitelistedVaults[vault] = whitelisted;`\n+        whitelistedVaults[vault] = true;\n         emit VaultWhitelisted(vault, whitelisted);\n     }\n \n",
+    "id": "9",
+    "name": "mutants/9/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -122,7 +122,8 @@\n      * @dev Only callable by owner\n      */\n     function whitelistVault(address vault, bool whitelisted) external onlyOwner {\n-        whitelistedVaults[vault] = whitelisted;\n+        /// AssignmentMutation(`whitelisted` |==> `false`) of: `whitelistedVaults[vault] = whitelisted;`\n+        whitelistedVaults[vault] = false;\n         emit VaultWhitelisted(vault, whitelisted);\n     }\n \n",
+    "id": "10",
+    "name": "mutants/10/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -132,7 +132,8 @@\n      * @dev Only callable by owner\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n-        require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n+        /// DeleteExpressionMutation(`require(newSlippageBps <= 10000, \"Slippage too high\")` |==> `assert(true)`) of: `require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%`\n+        assert(true); // Max 100%\n         minSlippageBps = newSlippageBps;\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n",
+    "id": "11",
+    "name": "mutants/11/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -132,7 +132,8 @@\n      * @dev Only callable by owner\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n-        require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n+        /// RequireMutation(`newSlippageBps <= 10000` |==> `true`) of: `require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%`\n+        require(true, \"Slippage too high\"); // Max 100%\n         minSlippageBps = newSlippageBps;\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n",
+    "id": "12",
+    "name": "mutants/12/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -132,7 +132,8 @@\n      * @dev Only callable by owner\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n-        require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n+        /// RequireMutation(`newSlippageBps <= 10000` |==> `false`) of: `require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%`\n+        require(false, \"Slippage too high\"); // Max 100%\n         minSlippageBps = newSlippageBps;\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n",
+    "id": "13",
+    "name": "mutants/13/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -132,7 +132,8 @@\n      * @dev Only callable by owner\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n-        require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n+        /// SwapArgumentsOperatorMutation(`newSlippageBps <= 10000` |==> `10000 <= newSlippageBps`) of: `require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%`\n+        require(10000 <= newSlippageBps, \"Slippage too high\"); // Max 100%\n         minSlippageBps = newSlippageBps;\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n",
+    "id": "14",
+    "name": "mutants/14/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n         require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n-        minSlippageBps = newSlippageBps;\n+        /// DeleteExpressionMutation(`minSlippageBps = newSlippageBps` |==> `assert(true)`) of: `minSlippageBps = newSlippageBps;`\n+        assert(true);\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n \n",
+    "id": "15",
+    "name": "mutants/15/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n         require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n-        minSlippageBps = newSlippageBps;\n+        /// AssignmentMutation(`newSlippageBps` |==> `0`) of: `minSlippageBps = newSlippageBps;`\n+        minSlippageBps = 0;\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n \n",
+    "id": "16",
+    "name": "mutants/16/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n      */\n     function setMinSlippageBps(uint256 newSlippageBps) external onlyOwner {\n         require(newSlippageBps <= 10000, \"Slippage too high\"); // Max 100%\n-        minSlippageBps = newSlippageBps;\n+        /// AssignmentMutation(`newSlippageBps` |==> `1`) of: `minSlippageBps = newSlippageBps;`\n+        minSlippageBps = 1;\n         emit MinSlippageBpsUpdated(newSlippageBps);\n     }\n \n",
+    "id": "17",
+    "name": "mutants/17/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -143,7 +143,8 @@\n      * @dev Only callable by owner\n      */\n     function setLpTokenName(string memory newName) external onlyOwner {\n-        lpTokenName = newName;\n+        /// DeleteExpressionMutation(`lpTokenName = newName` |==> `assert(true)`) of: `lpTokenName = newName;`\n+        assert(true);\n         emit LpTokenNameUpdated(newName);\n     }\n \n",
+    "id": "18",
+    "name": "mutants/18/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -163,7 +163,8 @@\n      * @dev Updates oracle before deposit for accurate pricing\n      */\n     function deposit(uint256 amount) external virtual onlyWhitelistedVault returns (uint256) {\n-        _updateOracle();\n+        /// DeleteExpressionMutation(`_updateOracle()` |==> `assert(true)`) of: `_updateOracle();`\n+        assert(true);\n         inputToken.safeTransferFrom(msg.sender, address(this), amount);\n         uint256 received = _depositToProtocol(amount);\n         totalDeposited += received;\n",
+    "id": "19",
+    "name": "mutants/19/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -164,7 +164,8 @@\n      */\n     function deposit(uint256 amount) external virtual onlyWhitelistedVault returns (uint256) {\n         _updateOracle();\n-        inputToken.safeTransferFrom(msg.sender, address(this), amount);\n+        /// DeleteExpressionMutation(`inputToken.safeTransferFrom(msg.sender, address(this), amount)` |==> `assert(true)`) of: `inputToken.safeTransferFrom(msg.sender, address(this), amount);`\n+        assert(true);\n         uint256 received = _depositToProtocol(amount);\n         totalDeposited += received;\n         return received;\n",
+    "id": "20",
+    "name": "mutants/20/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -166,7 +166,8 @@\n         _updateOracle();\n         inputToken.safeTransferFrom(msg.sender, address(this), amount);\n         uint256 received = _depositToProtocol(amount);\n-        totalDeposited += received;\n+        /// DeleteExpressionMutation(`totalDeposited += received` |==> `assert(true)`) of: `totalDeposited += received;`\n+        assert(true);\n         return received;\n     }\n \n",
+    "id": "21",
+    "name": "mutants/21/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -166,7 +166,8 @@\n         _updateOracle();\n         inputToken.safeTransferFrom(msg.sender, address(this), amount);\n         uint256 received = _depositToProtocol(amount);\n-        totalDeposited += received;\n+        /// AssignmentMutation(`received` |==> `0`) of: `totalDeposited += received;`\n+        totalDeposited += 0;\n         return received;\n     }\n \n",
+    "id": "22",
+    "name": "mutants/22/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -166,7 +166,8 @@\n         _updateOracle();\n         inputToken.safeTransferFrom(msg.sender, address(this), amount);\n         uint256 received = _depositToProtocol(amount);\n-        totalDeposited += received;\n+        /// AssignmentMutation(`received` |==> `1`) of: `totalDeposited += received;`\n+        totalDeposited += 1;\n         return received;\n     }\n \n",
+    "id": "23",
+    "name": "mutants/23/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -178,7 +178,8 @@\n      * @dev Updates oracle before withdrawal for accurate pricing\n      */\n     function withdraw(uint256 amount) external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount, uint256 flaxValue) {\n-        _updateOracle();\n+        /// DeleteExpressionMutation(`_updateOracle()` |==> `assert(true)`) of: `_updateOracle();`\n+        assert(true);\n         (inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount);\n         inputToken.safeTransfer(msg.sender, inputTokenAmount);\n         \n",
+    "id": "24",
+    "name": "mutants/24/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -179,7 +179,8 @@\n      */\n     function withdraw(uint256 amount) external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount, uint256 flaxValue) {\n         _updateOracle();\n-        (inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount);\n+        /// DeleteExpressionMutation(`(inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount)` |==> `assert(true)`) of: `(inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount);`\n+        assert(true);\n         inputToken.safeTransfer(msg.sender, inputTokenAmount);\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n",
+    "id": "25",
+    "name": "mutants/25/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n     function withdraw(uint256 amount) external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount, uint256 flaxValue) {\n         _updateOracle();\n         (inputTokenAmount, flaxValue) = _withdrawFromProtocol(amount);\n-        inputToken.safeTransfer(msg.sender, inputTokenAmount);\n+        /// DeleteExpressionMutation(`inputToken.safeTransfer(msg.sender, inputTokenAmount)` |==> `assert(true)`) of: `inputToken.safeTransfer(msg.sender, inputTokenAmount);`\n+        assert(true);\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n",
+    "id": "26",
+    "name": "mutants/26/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -184,7 +184,8 @@\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n-        uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n+        /// BinaryOpMutation(`*` |==> `+`) of: `uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)`\n+        uint256 lpAmountWithdrawn = amount+1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n",
+    "id": "27",
+    "name": "mutants/27/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -184,7 +184,8 @@\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n-        uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n+        /// BinaryOpMutation(`*` |==> `-`) of: `uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)`\n+        uint256 lpAmountWithdrawn = amount-1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n",
+    "id": "28",
+    "name": "mutants/28/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -184,7 +184,8 @@\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n-        uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n+        /// BinaryOpMutation(`*` |==> `/`) of: `uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)`\n+        uint256 lpAmountWithdrawn = amount/1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n",
+    "id": "29",
+    "name": "mutants/29/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -184,7 +184,8 @@\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n-        uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n+        /// BinaryOpMutation(`*` |==> `%`) of: `uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)`\n+        uint256 lpAmountWithdrawn = amount%1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n",
+    "id": "30",
+    "name": "mutants/30/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -184,7 +184,8 @@\n         \n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n-        uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n+        /// BinaryOpMutation(`*` |==> `**`) of: `uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)`\n+        uint256 lpAmountWithdrawn = amount**1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n",
+    "id": "31",
+    "name": "mutants/31/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -185,7 +185,8 @@\n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n         uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n-        if (lpAmountWithdrawn > totalDeposited) {\n+        /// IfStatementMutation(`lpAmountWithdrawn > totalDeposited` |==> `true`) of: `if (lpAmountWithdrawn > totalDeposited) {`\n+        if (true) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n         totalDeposited -= lpAmountWithdrawn;\n",
+    "id": "32",
+    "name": "mutants/32/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -185,7 +185,8 @@\n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n         uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n-        if (lpAmountWithdrawn > totalDeposited) {\n+        /// IfStatementMutation(`lpAmountWithdrawn > totalDeposited` |==> `false`) of: `if (lpAmountWithdrawn > totalDeposited) {`\n+        if (false) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n         totalDeposited -= lpAmountWithdrawn;\n",
+    "id": "33",
+    "name": "mutants/33/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -185,7 +185,8 @@\n         // Calculate LP amount that was withdrawn (approximation for USDC pools)\n         // In production, this should be returned by _withdrawFromProtocol\n         uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n-        if (lpAmountWithdrawn > totalDeposited) {\n+        /// SwapArgumentsOperatorMutation(`lpAmountWithdrawn > totalDeposited` |==> `totalDeposited > lpAmountWithdrawn`) of: `if (lpAmountWithdrawn > totalDeposited) {`\n+        if (totalDeposited > lpAmountWithdrawn) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n         totalDeposited -= lpAmountWithdrawn;\n",
+    "id": "34",
+    "name": "mutants/34/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -186,7 +186,8 @@\n         // In production, this should be returned by _withdrawFromProtocol\n         uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n-            lpAmountWithdrawn = totalDeposited;\n+            /// DeleteExpressionMutation(`lpAmountWithdrawn = totalDeposited` |==> `assert(true)`) of: `lpAmountWithdrawn = totalDeposited;`\n+            assert(true);\n         }\n         totalDeposited -= lpAmountWithdrawn;\n     }\n",
+    "id": "35",
+    "name": "mutants/35/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -186,7 +186,8 @@\n         // In production, this should be returned by _withdrawFromProtocol\n         uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n-            lpAmountWithdrawn = totalDeposited;\n+            /// AssignmentMutation(`totalDeposited` |==> `0`) of: `lpAmountWithdrawn = totalDeposited;`\n+            lpAmountWithdrawn = 0;\n         }\n         totalDeposited -= lpAmountWithdrawn;\n     }\n",
+    "id": "36",
+    "name": "mutants/36/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -186,7 +186,8 @@\n         // In production, this should be returned by _withdrawFromProtocol\n         uint256 lpAmountWithdrawn = amount * 1e12; // Convert USDC (6 decimals) to LP equivalent (18 decimals)\n         if (lpAmountWithdrawn > totalDeposited) {\n-            lpAmountWithdrawn = totalDeposited;\n+            /// AssignmentMutation(`totalDeposited` |==> `1`) of: `lpAmountWithdrawn = totalDeposited;`\n+            lpAmountWithdrawn = 1;\n         }\n         totalDeposited -= lpAmountWithdrawn;\n     }\n",
+    "id": "37",
+    "name": "mutants/37/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -188,7 +188,8 @@\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n-        totalDeposited -= lpAmountWithdrawn;\n+        /// DeleteExpressionMutation(`totalDeposited -= lpAmountWithdrawn` |==> `assert(true)`) of: `totalDeposited -= lpAmountWithdrawn;`\n+        assert(true);\n     }\n \n     /**\n",
+    "id": "38",
+    "name": "mutants/38/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -188,7 +188,8 @@\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n-        totalDeposited -= lpAmountWithdrawn;\n+        /// AssignmentMutation(`lpAmountWithdrawn` |==> `0`) of: `totalDeposited -= lpAmountWithdrawn;`\n+        totalDeposited -= 0;\n     }\n \n     /**\n",
+    "id": "39",
+    "name": "mutants/39/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -188,7 +188,8 @@\n         if (lpAmountWithdrawn > totalDeposited) {\n             lpAmountWithdrawn = totalDeposited;\n         }\n-        totalDeposited -= lpAmountWithdrawn;\n+        /// AssignmentMutation(`lpAmountWithdrawn` |==> `1`) of: `totalDeposited -= lpAmountWithdrawn;`\n+        totalDeposited -= 1;\n     }\n \n     /**\n",
+    "id": "40",
+    "name": "mutants/40/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -197,7 +197,8 @@\n      * @dev Updates oracle, claims all reward tokens, sells for ETH, and converts to Flax value\n      */\n     function claimRewards() external virtual onlyWhitelistedVault returns (uint256 flaxValue) {\n-        _updateOracle();\n+        /// DeleteExpressionMutation(`_updateOracle()` |==> `assert(true)`) of: `_updateOracle();`\n+        assert(true);\n         uint256 ethAmount;\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n",
+    "id": "41",
+    "name": "mutants/41/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -202,7 +202,8 @@\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n-            if (amount > 0) {\n+            /// IfStatementMutation(`amount > 0` |==> `true`) of: `if (amount > 0) {`\n+            if (true) {\n                 emit RewardClaimed(token, amount);\n                 ethAmount += _sellRewardToken(token, amount);\n                 emit RewardSold(token, amount, ethAmount);\n",
+    "id": "42",
+    "name": "mutants/42/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -202,7 +202,8 @@\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n-            if (amount > 0) {\n+            /// IfStatementMutation(`amount > 0` |==> `false`) of: `if (amount > 0) {`\n+            if (false) {\n                 emit RewardClaimed(token, amount);\n                 ethAmount += _sellRewardToken(token, amount);\n                 emit RewardSold(token, amount, ethAmount);\n",
+    "id": "43",
+    "name": "mutants/43/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -202,7 +202,8 @@\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n-            if (amount > 0) {\n+            /// SwapArgumentsOperatorMutation(`amount > 0` |==> `0 > amount`) of: `if (amount > 0) {`\n+            if (0 > amount) {\n                 emit RewardClaimed(token, amount);\n                 ethAmount += _sellRewardToken(token, amount);\n                 emit RewardSold(token, amount, ethAmount);\n",
+    "id": "44",
+    "name": "mutants/44/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -204,7 +204,8 @@\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n                 emit RewardClaimed(token, amount);\n-                ethAmount += _sellRewardToken(token, amount);\n+                /// DeleteExpressionMutation(`ethAmount += _sellRewardToken(token, amount)` |==> `assert(true)`) of: `ethAmount += _sellRewardToken(token, amount);`\n+                assert(true);\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n",
+    "id": "45",
+    "name": "mutants/45/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -204,7 +204,8 @@\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n                 emit RewardClaimed(token, amount);\n-                ethAmount += _sellRewardToken(token, amount);\n+                /// AssignmentMutation(`_sellRewardToken(token, amount)` |==> `0`) of: `ethAmount += _sellRewardToken(token, amount);`\n+                ethAmount += 0;\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n",
+    "id": "46",
+    "name": "mutants/46/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -204,7 +204,8 @@\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n                 emit RewardClaimed(token, amount);\n-                ethAmount += _sellRewardToken(token, amount);\n+                /// AssignmentMutation(`_sellRewardToken(token, amount)` |==> `1`) of: `ethAmount += _sellRewardToken(token, amount);`\n+                ethAmount += 1;\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n",
+    "id": "47",
+    "name": "mutants/47/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -199,7 +199,8 @@\n     function claimRewards() external virtual onlyWhitelistedVault returns (uint256 flaxValue) {\n         _updateOracle();\n         uint256 ethAmount;\n-        for (uint256 i = 0; i < rewardTokens.length; i++) {\n+        /// SwapArgumentsOperatorMutation(`i < rewardTokens.length` |==> `rewardTokens.length < i`) of: `for (uint256 i = 0; i < rewardTokens.length; i++) {`\n+        for (uint256 i = 0; rewardTokens.length < i; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n",
+    "id": "48",
+    "name": "mutants/48/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -199,7 +199,8 @@\n     function claimRewards() external virtual onlyWhitelistedVault returns (uint256 flaxValue) {\n         _updateOracle();\n         uint256 ethAmount;\n-        for (uint256 i = 0; i < rewardTokens.length; i++) {\n+        /// DeleteExpressionMutation(`i++` |==> `assert(true)`) of: `for (uint256 i = 0; i < rewardTokens.length; i++) {`\n+        for (uint256 i = 0; i < rewardTokens.length; assert(true)) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n",
+    "id": "49",
+    "name": "mutants/49/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "UnaryOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -199,7 +199,8 @@\n     function claimRewards() external virtual onlyWhitelistedVault returns (uint256 flaxValue) {\n         _updateOracle();\n         uint256 ethAmount;\n-        for (uint256 i = 0; i < rewardTokens.length; i++) {\n+        /// UnaryOperatorMutation(`++` |==> `--`) of: `for (uint256 i = 0; i < rewardTokens.length; i++) {`\n+        for (uint256 i = 0; i < rewardTokens.length; i--) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n",
+    "id": "50",
+    "name": "mutants/50/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -208,7 +208,8 @@\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n-        if (ethAmount > 0) {\n+        /// IfStatementMutation(`ethAmount > 0` |==> `true`) of: `if (ethAmount > 0) {`\n+        if (true) {\n             flaxValue = _getFlaxValue(ethAmount);\n             emit FlaxValueCalculated(ethAmount, flaxValue);\n         }\n",
+    "id": "51",
+    "name": "mutants/51/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -208,7 +208,8 @@\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n-        if (ethAmount > 0) {\n+        /// IfStatementMutation(`ethAmount > 0` |==> `false`) of: `if (ethAmount > 0) {`\n+        if (false) {\n             flaxValue = _getFlaxValue(ethAmount);\n             emit FlaxValueCalculated(ethAmount, flaxValue);\n         }\n",
+    "id": "52",
+    "name": "mutants/52/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -208,7 +208,8 @@\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n-        if (ethAmount > 0) {\n+        /// SwapArgumentsOperatorMutation(`ethAmount > 0` |==> `0 > ethAmount`) of: `if (ethAmount > 0) {`\n+        if (0 > ethAmount) {\n             flaxValue = _getFlaxValue(ethAmount);\n             emit FlaxValueCalculated(ethAmount, flaxValue);\n         }\n",
+    "id": "53",
+    "name": "mutants/53/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -209,7 +209,8 @@\n             }\n         }\n         if (ethAmount > 0) {\n-            flaxValue = _getFlaxValue(ethAmount);\n+            /// DeleteExpressionMutation(`flaxValue = _getFlaxValue(ethAmount)` |==> `assert(true)`) of: `flaxValue = _getFlaxValue(ethAmount);`\n+            assert(true);\n             emit FlaxValueCalculated(ethAmount, flaxValue);\n         }\n     }\n",
+    "id": "54",
+    "name": "mutants/54/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -209,7 +209,8 @@\n             }\n         }\n         if (ethAmount > 0) {\n-            flaxValue = _getFlaxValue(ethAmount);\n+            /// AssignmentMutation(`_getFlaxValue(ethAmount)` |==> `0`) of: `flaxValue = _getFlaxValue(ethAmount);`\n+            flaxValue = 0;\n             emit FlaxValueCalculated(ethAmount, flaxValue);\n         }\n     }\n",
+    "id": "55",
+    "name": "mutants/55/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -209,7 +209,8 @@\n             }\n         }\n         if (ethAmount > 0) {\n-            flaxValue = _getFlaxValue(ethAmount);\n+            /// AssignmentMutation(`_getFlaxValue(ethAmount)` |==> `1`) of: `flaxValue = _getFlaxValue(ethAmount);`\n+            flaxValue = 1;\n             emit FlaxValueCalculated(ethAmount, flaxValue);\n         }\n     }\n",
+    "id": "56",
+    "name": "mutants/56/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -224,7 +224,8 @@\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n-            if (amount > 0) {\n+            /// IfStatementMutation(`amount > 0` |==> `true`) of: `if (amount > 0) {`\n+            if (true) {\n                 emit RewardClaimed(token, amount);\n                 ethAmount += _sellRewardToken(token, amount);\n                 emit RewardSold(token, amount, ethAmount);\n",
+    "id": "57",
+    "name": "mutants/57/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -224,7 +224,8 @@\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n-            if (amount > 0) {\n+            /// IfStatementMutation(`amount > 0` |==> `false`) of: `if (amount > 0) {`\n+            if (false) {\n                 emit RewardClaimed(token, amount);\n                 ethAmount += _sellRewardToken(token, amount);\n                 emit RewardSold(token, amount, ethAmount);\n",
+    "id": "58",
+    "name": "mutants/58/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -224,7 +224,8 @@\n         for (uint256 i = 0; i < rewardTokens.length; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n-            if (amount > 0) {\n+            /// SwapArgumentsOperatorMutation(`amount > 0` |==> `0 > amount`) of: `if (amount > 0) {`\n+            if (0 > amount) {\n                 emit RewardClaimed(token, amount);\n                 ethAmount += _sellRewardToken(token, amount);\n                 emit RewardSold(token, amount, ethAmount);\n",
+    "id": "59",
+    "name": "mutants/59/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -226,7 +226,8 @@\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n                 emit RewardClaimed(token, amount);\n-                ethAmount += _sellRewardToken(token, amount);\n+                /// DeleteExpressionMutation(`ethAmount += _sellRewardToken(token, amount)` |==> `assert(true)`) of: `ethAmount += _sellRewardToken(token, amount);`\n+                assert(true);\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n",
+    "id": "60",
+    "name": "mutants/60/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -226,7 +226,8 @@\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n                 emit RewardClaimed(token, amount);\n-                ethAmount += _sellRewardToken(token, amount);\n+                /// AssignmentMutation(`_sellRewardToken(token, amount)` |==> `0`) of: `ethAmount += _sellRewardToken(token, amount);`\n+                ethAmount += 0;\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n",
+    "id": "61",
+    "name": "mutants/61/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -226,7 +226,8 @@\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n                 emit RewardClaimed(token, amount);\n-                ethAmount += _sellRewardToken(token, amount);\n+                /// AssignmentMutation(`_sellRewardToken(token, amount)` |==> `1`) of: `ethAmount += _sellRewardToken(token, amount);`\n+                ethAmount += 1;\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n",
+    "id": "62",
+    "name": "mutants/62/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -221,7 +221,8 @@\n      */\n     function claimAndSellForInputToken() external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount) {\n         uint256 ethAmount;\n-        for (uint256 i = 0; i < rewardTokens.length; i++) {\n+        /// SwapArgumentsOperatorMutation(`i < rewardTokens.length` |==> `rewardTokens.length < i`) of: `for (uint256 i = 0; i < rewardTokens.length; i++) {`\n+        for (uint256 i = 0; rewardTokens.length < i; i++) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n",
+    "id": "63",
+    "name": "mutants/63/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -221,7 +221,8 @@\n      */\n     function claimAndSellForInputToken() external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount) {\n         uint256 ethAmount;\n-        for (uint256 i = 0; i < rewardTokens.length; i++) {\n+        /// DeleteExpressionMutation(`i++` |==> `assert(true)`) of: `for (uint256 i = 0; i < rewardTokens.length; i++) {`\n+        for (uint256 i = 0; i < rewardTokens.length; assert(true)) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n",
+    "id": "64",
+    "name": "mutants/64/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "UnaryOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -221,7 +221,8 @@\n      */\n     function claimAndSellForInputToken() external virtual onlyWhitelistedVault returns (uint256 inputTokenAmount) {\n         uint256 ethAmount;\n-        for (uint256 i = 0; i < rewardTokens.length; i++) {\n+        /// UnaryOperatorMutation(`++` |==> `--`) of: `for (uint256 i = 0; i < rewardTokens.length; i++) {`\n+        for (uint256 i = 0; i < rewardTokens.length; i--) {\n             address token = rewardTokens[i];\n             uint256 amount = _claimRewardToken(token);\n             if (amount > 0) {\n",
+    "id": "65",
+    "name": "mutants/65/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -230,7 +230,8 @@\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n-        if (ethAmount > 0) {\n+        /// IfStatementMutation(`ethAmount > 0` |==> `true`) of: `if (ethAmount > 0) {`\n+        if (true) {\n             inputTokenAmount = _sellEthForInputToken(ethAmount);\n             // Transfer the converted input tokens to the vault\n             inputToken.safeTransfer(msg.sender, inputTokenAmount);\n",
+    "id": "66",
+    "name": "mutants/66/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -230,7 +230,8 @@\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n-        if (ethAmount > 0) {\n+        /// IfStatementMutation(`ethAmount > 0` |==> `false`) of: `if (ethAmount > 0) {`\n+        if (false) {\n             inputTokenAmount = _sellEthForInputToken(ethAmount);\n             // Transfer the converted input tokens to the vault\n             inputToken.safeTransfer(msg.sender, inputTokenAmount);\n",
+    "id": "67",
+    "name": "mutants/67/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -230,7 +230,8 @@\n                 emit RewardSold(token, amount, ethAmount);\n             }\n         }\n-        if (ethAmount > 0) {\n+        /// SwapArgumentsOperatorMutation(`ethAmount > 0` |==> `0 > ethAmount`) of: `if (ethAmount > 0) {`\n+        if (0 > ethAmount) {\n             inputTokenAmount = _sellEthForInputToken(ethAmount);\n             // Transfer the converted input tokens to the vault\n             inputToken.safeTransfer(msg.sender, inputTokenAmount);\n",
+    "id": "68",
+    "name": "mutants/68/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -231,7 +231,8 @@\n             }\n         }\n         if (ethAmount > 0) {\n-            inputTokenAmount = _sellEthForInputToken(ethAmount);\n+            /// DeleteExpressionMutation(`inputTokenAmount = _sellEthForInputToken(ethAmount)` |==> `assert(true)`) of: `inputTokenAmount = _sellEthForInputToken(ethAmount);`\n+            assert(true);\n             // Transfer the converted input tokens to the vault\n             inputToken.safeTransfer(msg.sender, inputTokenAmount);\n         }\n",
+    "id": "69",
+    "name": "mutants/69/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -231,7 +231,8 @@\n             }\n         }\n         if (ethAmount > 0) {\n-            inputTokenAmount = _sellEthForInputToken(ethAmount);\n+            /// AssignmentMutation(`_sellEthForInputToken(ethAmount)` |==> `0`) of: `inputTokenAmount = _sellEthForInputToken(ethAmount);`\n+            inputTokenAmount = 0;\n             // Transfer the converted input tokens to the vault\n             inputToken.safeTransfer(msg.sender, inputTokenAmount);\n         }\n",
+    "id": "70",
+    "name": "mutants/70/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -231,7 +231,8 @@\n             }\n         }\n         if (ethAmount > 0) {\n-            inputTokenAmount = _sellEthForInputToken(ethAmount);\n+            /// AssignmentMutation(`_sellEthForInputToken(ethAmount)` |==> `1`) of: `inputTokenAmount = _sellEthForInputToken(ethAmount);`\n+            inputTokenAmount = 1;\n             // Transfer the converted input tokens to the vault\n             inputToken.safeTransfer(msg.sender, inputTokenAmount);\n         }\n",
+    "id": "71",
+    "name": "mutants/71/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -233,7 +233,8 @@\n         if (ethAmount > 0) {\n             inputTokenAmount = _sellEthForInputToken(ethAmount);\n             // Transfer the converted input tokens to the vault\n-            inputToken.safeTransfer(msg.sender, inputTokenAmount);\n+            /// DeleteExpressionMutation(`inputToken.safeTransfer(msg.sender, inputTokenAmount)` |==> `assert(true)`) of: `inputToken.safeTransfer(msg.sender, inputTokenAmount);`\n+            assert(true);\n         }\n     }\n \n",
+    "id": "72",
+    "name": "mutants/72/src/yieldSource/AYieldSource.sol",
+    "original": "src/yieldSource/AYieldSource.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  }
+]

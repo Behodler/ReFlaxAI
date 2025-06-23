@@ -1,0 +1,970 @@
+[
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -69,7 +69,8 @@\n         address _flaxToken,\n         address _oracle\n     ) Ownable(msg.sender) {\n-        require(_factory != address(0), \"Invalid factory address\");\n+        /// DeleteExpressionMutation(`require(_factory != address(0), \"Invalid factory address\")` |==> `assert(true)`) of: `require(_factory != address(0), \"Invalid factory address\");`\n+        assert(true);\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n",
+    "id": "1",
+    "name": "mutants/1/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -69,7 +69,8 @@\n         address _flaxToken,\n         address _oracle\n     ) Ownable(msg.sender) {\n-        require(_factory != address(0), \"Invalid factory address\");\n+        /// RequireMutation(`_factory != address(0)` |==> `true`) of: `require(_factory != address(0), \"Invalid factory address\");`\n+        require(true, \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n",
+    "id": "2",
+    "name": "mutants/2/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -69,7 +69,8 @@\n         address _flaxToken,\n         address _oracle\n     ) Ownable(msg.sender) {\n-        require(_factory != address(0), \"Invalid factory address\");\n+        /// RequireMutation(`_factory != address(0)` |==> `false`) of: `require(_factory != address(0), \"Invalid factory address\");`\n+        require(false, \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n",
+    "id": "3",
+    "name": "mutants/3/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -70,7 +70,8 @@\n         address _oracle\n     ) Ownable(msg.sender) {\n         require(_factory != address(0), \"Invalid factory address\");\n-        require(_router != address(0), \"Invalid router address\");\n+        /// DeleteExpressionMutation(`require(_router != address(0), \"Invalid router address\")` |==> `assert(true)`) of: `require(_router != address(0), \"Invalid router address\");`\n+        assert(true);\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n",
+    "id": "4",
+    "name": "mutants/4/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -70,7 +70,8 @@\n         address _oracle\n     ) Ownable(msg.sender) {\n         require(_factory != address(0), \"Invalid factory address\");\n-        require(_router != address(0), \"Invalid router address\");\n+        /// RequireMutation(`_router != address(0)` |==> `true`) of: `require(_router != address(0), \"Invalid router address\");`\n+        require(true, \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n",
+    "id": "5",
+    "name": "mutants/5/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -70,7 +70,8 @@\n         address _oracle\n     ) Ownable(msg.sender) {\n         require(_factory != address(0), \"Invalid factory address\");\n-        require(_router != address(0), \"Invalid router address\");\n+        /// RequireMutation(`_router != address(0)` |==> `false`) of: `require(_router != address(0), \"Invalid router address\");`\n+        require(false, \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n",
+    "id": "6",
+    "name": "mutants/6/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -71,7 +71,8 @@\n     ) Ownable(msg.sender) {\n         require(_factory != address(0), \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n-        require(_flaxToken != address(0), \"Invalid Flax token address\");\n+        /// DeleteExpressionMutation(`require(_flaxToken != address(0), \"Invalid Flax token address\")` |==> `assert(true)`) of: `require(_flaxToken != address(0), \"Invalid Flax token address\");`\n+        assert(true);\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n",
+    "id": "7",
+    "name": "mutants/7/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -71,7 +71,8 @@\n     ) Ownable(msg.sender) {\n         require(_factory != address(0), \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n-        require(_flaxToken != address(0), \"Invalid Flax token address\");\n+        /// RequireMutation(`_flaxToken != address(0)` |==> `true`) of: `require(_flaxToken != address(0), \"Invalid Flax token address\");`\n+        require(true, \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n",
+    "id": "8",
+    "name": "mutants/8/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -71,7 +71,8 @@\n     ) Ownable(msg.sender) {\n         require(_factory != address(0), \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n-        require(_flaxToken != address(0), \"Invalid Flax token address\");\n+        /// RequireMutation(`_flaxToken != address(0)` |==> `false`) of: `require(_flaxToken != address(0), \"Invalid Flax token address\");`\n+        require(false, \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n",
+    "id": "9",
+    "name": "mutants/9/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -72,7 +72,8 @@\n         require(_factory != address(0), \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n-        require(_oracle != address(0), \"Invalid oracle address\");\n+        /// DeleteExpressionMutation(`require(_oracle != address(0), \"Invalid oracle address\")` |==> `assert(true)`) of: `require(_oracle != address(0), \"Invalid oracle address\");`\n+        assert(true);\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n",
+    "id": "10",
+    "name": "mutants/10/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -72,7 +72,8 @@\n         require(_factory != address(0), \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n-        require(_oracle != address(0), \"Invalid oracle address\");\n+        /// RequireMutation(`_oracle != address(0)` |==> `true`) of: `require(_oracle != address(0), \"Invalid oracle address\");`\n+        require(true, \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n",
+    "id": "11",
+    "name": "mutants/11/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -72,7 +72,8 @@\n         require(_factory != address(0), \"Invalid factory address\");\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n-        require(_oracle != address(0), \"Invalid oracle address\");\n+        /// RequireMutation(`_oracle != address(0)` |==> `false`) of: `require(_oracle != address(0), \"Invalid oracle address\");`\n+        require(false, \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n",
+    "id": "12",
+    "name": "mutants/12/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -73,7 +73,8 @@\n         require(_router != address(0), \"Invalid router address\");\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n-        factory = IUniswapV2Factory(_factory);\n+        /// DeleteExpressionMutation(`factory = IUniswapV2Factory(_factory)` |==> `assert(true)`) of: `factory = IUniswapV2Factory(_factory);`\n+        assert(true);\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n         oracle = IOracle(_oracle);\n",
+    "id": "13",
+    "name": "mutants/13/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -74,7 +74,8 @@\n         require(_flaxToken != address(0), \"Invalid Flax token address\");\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n-        router = IUniswapV2Router02(_router);\n+        /// DeleteExpressionMutation(`router = IUniswapV2Router02(_router)` |==> `assert(true)`) of: `router = IUniswapV2Router02(_router);`\n+        assert(true);\n         flaxToken = IERC20(_flaxToken);\n         oracle = IOracle(_oracle);\n         priceTiltRatio = 8000; // Default: 80%\n",
+    "id": "14",
+    "name": "mutants/14/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -75,7 +75,8 @@\n         require(_oracle != address(0), \"Invalid oracle address\");\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n-        flaxToken = IERC20(_flaxToken);\n+        /// DeleteExpressionMutation(`flaxToken = IERC20(_flaxToken)` |==> `assert(true)`) of: `flaxToken = IERC20(_flaxToken);`\n+        assert(true);\n         oracle = IOracle(_oracle);\n         priceTiltRatio = 8000; // Default: 80%\n     }\n",
+    "id": "15",
+    "name": "mutants/15/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -76,7 +76,8 @@\n         factory = IUniswapV2Factory(_factory);\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n-        oracle = IOracle(_oracle);\n+        /// DeleteExpressionMutation(`oracle = IOracle(_oracle)` |==> `assert(true)`) of: `oracle = IOracle(_oracle);`\n+        assert(true);\n         priceTiltRatio = 8000; // Default: 80%\n     }\n \n",
+    "id": "16",
+    "name": "mutants/16/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -77,7 +77,8 @@\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n         oracle = IOracle(_oracle);\n-        priceTiltRatio = 8000; // Default: 80%\n+        /// DeleteExpressionMutation(`priceTiltRatio = 8000` |==> `assert(true)`) of: `priceTiltRatio = 8000; // Default: 80%`\n+        assert(true); // Default: 80%\n     }\n \n     /**\n",
+    "id": "17",
+    "name": "mutants/17/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -77,7 +77,8 @@\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n         oracle = IOracle(_oracle);\n-        priceTiltRatio = 8000; // Default: 80%\n+        /// AssignmentMutation(`8000` |==> `0`) of: `priceTiltRatio = 8000; // Default: 80%`\n+        priceTiltRatio = 0; // Default: 80%\n     }\n \n     /**\n",
+    "id": "18",
+    "name": "mutants/18/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -77,7 +77,8 @@\n         router = IUniswapV2Router02(_router);\n         flaxToken = IERC20(_flaxToken);\n         oracle = IOracle(_oracle);\n-        priceTiltRatio = 8000; // Default: 80%\n+        /// AssignmentMutation(`8000` |==> `1`) of: `priceTiltRatio = 8000; // Default: 80%`\n+        priceTiltRatio = 1; // Default: 80%\n     }\n \n     /**\n",
+    "id": "19",
+    "name": "mutants/19/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -86,7 +86,8 @@\n      * @dev Lower ratio means less Flax added, resulting in higher Flax price\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n-        require(newRatio <= 10000, \"Ratio exceeds 100%\");\n+        /// DeleteExpressionMutation(`require(newRatio <= 10000, \"Ratio exceeds 100%\")` |==> `assert(true)`) of: `require(newRatio <= 10000, \"Ratio exceeds 100%\");`\n+        assert(true);\n         priceTiltRatio = newRatio;\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n",
+    "id": "20",
+    "name": "mutants/20/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -86,7 +86,8 @@\n      * @dev Lower ratio means less Flax added, resulting in higher Flax price\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n-        require(newRatio <= 10000, \"Ratio exceeds 100%\");\n+        /// RequireMutation(`newRatio <= 10000` |==> `true`) of: `require(newRatio <= 10000, \"Ratio exceeds 100%\");`\n+        require(true, \"Ratio exceeds 100%\");\n         priceTiltRatio = newRatio;\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n",
+    "id": "21",
+    "name": "mutants/21/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -86,7 +86,8 @@\n      * @dev Lower ratio means less Flax added, resulting in higher Flax price\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n-        require(newRatio <= 10000, \"Ratio exceeds 100%\");\n+        /// RequireMutation(`newRatio <= 10000` |==> `false`) of: `require(newRatio <= 10000, \"Ratio exceeds 100%\");`\n+        require(false, \"Ratio exceeds 100%\");\n         priceTiltRatio = newRatio;\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n",
+    "id": "22",
+    "name": "mutants/22/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -86,7 +86,8 @@\n      * @dev Lower ratio means less Flax added, resulting in higher Flax price\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n-        require(newRatio <= 10000, \"Ratio exceeds 100%\");\n+        /// SwapArgumentsOperatorMutation(`newRatio <= 10000` |==> `10000 <= newRatio`) of: `require(newRatio <= 10000, \"Ratio exceeds 100%\");`\n+        require(10000 <= newRatio, \"Ratio exceeds 100%\");\n         priceTiltRatio = newRatio;\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n",
+    "id": "23",
+    "name": "mutants/23/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -87,7 +87,8 @@\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n         require(newRatio <= 10000, \"Ratio exceeds 100%\");\n-        priceTiltRatio = newRatio;\n+        /// DeleteExpressionMutation(`priceTiltRatio = newRatio` |==> `assert(true)`) of: `priceTiltRatio = newRatio;`\n+        assert(true);\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n \n",
+    "id": "24",
+    "name": "mutants/24/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -87,7 +87,8 @@\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n         require(newRatio <= 10000, \"Ratio exceeds 100%\");\n-        priceTiltRatio = newRatio;\n+        /// AssignmentMutation(`newRatio` |==> `0`) of: `priceTiltRatio = newRatio;`\n+        priceTiltRatio = 0;\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n \n",
+    "id": "25",
+    "name": "mutants/25/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -87,7 +87,8 @@\n      */\n     function setPriceTiltRatio(uint256 newRatio) external onlyOwner {\n         require(newRatio <= 10000, \"Ratio exceeds 100%\");\n-        priceTiltRatio = newRatio;\n+        /// AssignmentMutation(`newRatio` |==> `1`) of: `priceTiltRatio = newRatio;`\n+        priceTiltRatio = 1;\n         emit PriceTiltRatioUpdated(newRatio);\n     }\n \n",
+    "id": "26",
+    "name": "mutants/26/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -98,7 +98,8 @@\n      * @dev Only the Flax/ETH pair is used for price tilting\n      */\n     function registerPair(address tokenA, address tokenB) external onlyOwner {\n-        require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n+        /// DeleteExpressionMutation(`require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\")` |==> `assert(true)`) of: `require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");`\n+        assert(true);\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n",
+    "id": "27",
+    "name": "mutants/27/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -98,7 +98,8 @@\n      * @dev Only the Flax/ETH pair is used for price tilting\n      */\n     function registerPair(address tokenA, address tokenB) external onlyOwner {\n-        require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n+        /// RequireMutation(`tokenA != address(0) && tokenB != address(0)` |==> `true`) of: `require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");`\n+        require(true, \"Invalid token address\");\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n",
+    "id": "28",
+    "name": "mutants/28/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -98,7 +98,8 @@\n      * @dev Only the Flax/ETH pair is used for price tilting\n      */\n     function registerPair(address tokenA, address tokenB) external onlyOwner {\n-        require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n+        /// RequireMutation(`tokenA != address(0) && tokenB != address(0)` |==> `false`) of: `require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");`\n+        require(false, \"Invalid token address\");\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n",
+    "id": "29",
+    "name": "mutants/29/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -99,7 +99,8 @@\n      */\n     function registerPair(address tokenA, address tokenB) external onlyOwner {\n         require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n-        require(tokenA != tokenB, \"Tokens must be different\");\n+        /// DeleteExpressionMutation(`require(tokenA != tokenB, \"Tokens must be different\")` |==> `assert(true)`) of: `require(tokenA != tokenB, \"Tokens must be different\");`\n+        assert(true);\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n",
+    "id": "30",
+    "name": "mutants/30/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -99,7 +99,8 @@\n      */\n     function registerPair(address tokenA, address tokenB) external onlyOwner {\n         require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n-        require(tokenA != tokenB, \"Tokens must be different\");\n+        /// RequireMutation(`tokenA != tokenB` |==> `true`) of: `require(tokenA != tokenB, \"Tokens must be different\");`\n+        require(true, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n",
+    "id": "31",
+    "name": "mutants/31/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -99,7 +99,8 @@\n      */\n     function registerPair(address tokenA, address tokenB) external onlyOwner {\n         require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n-        require(tokenA != tokenB, \"Tokens must be different\");\n+        /// RequireMutation(`tokenA != tokenB` |==> `false`) of: `require(tokenA != tokenB, \"Tokens must be different\");`\n+        require(false, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n",
+    "id": "32",
+    "name": "mutants/32/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -101,7 +101,8 @@\n         require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n-        require(pair != address(0), \"Pair does not exist\");\n+        /// DeleteExpressionMutation(`require(pair != address(0), \"Pair does not exist\")` |==> `assert(true)`) of: `require(pair != address(0), \"Pair does not exist\");`\n+        assert(true);\n         require(!isPairRegistered[pair], \"Pair already registered\");\n \n         isPairRegistered[pair] = true;\n",
+    "id": "33",
+    "name": "mutants/33/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -101,7 +101,8 @@\n         require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n-        require(pair != address(0), \"Pair does not exist\");\n+        /// RequireMutation(`pair != address(0)` |==> `true`) of: `require(pair != address(0), \"Pair does not exist\");`\n+        require(true, \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n \n         isPairRegistered[pair] = true;\n",
+    "id": "34",
+    "name": "mutants/34/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -101,7 +101,8 @@\n         require(tokenA != address(0) && tokenB != address(0), \"Invalid token address\");\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n-        require(pair != address(0), \"Pair does not exist\");\n+        /// RequireMutation(`pair != address(0)` |==> `false`) of: `require(pair != address(0), \"Pair does not exist\");`\n+        require(false, \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n \n         isPairRegistered[pair] = true;\n",
+    "id": "35",
+    "name": "mutants/35/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -102,7 +102,8 @@\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n-        require(!isPairRegistered[pair], \"Pair already registered\");\n+        /// DeleteExpressionMutation(`require(!isPairRegistered[pair], \"Pair already registered\")` |==> `assert(true)`) of: `require(!isPairRegistered[pair], \"Pair already registered\");`\n+        assert(true);\n \n         isPairRegistered[pair] = true;\n         oracle.update(tokenA, tokenB);\n",
+    "id": "36",
+    "name": "mutants/36/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -102,7 +102,8 @@\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n-        require(!isPairRegistered[pair], \"Pair already registered\");\n+        /// RequireMutation(`!isPairRegistered[pair]` |==> `true`) of: `require(!isPairRegistered[pair], \"Pair already registered\");`\n+        require(true, \"Pair already registered\");\n \n         isPairRegistered[pair] = true;\n         oracle.update(tokenA, tokenB);\n",
+    "id": "37",
+    "name": "mutants/37/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -102,7 +102,8 @@\n         require(tokenA != tokenB, \"Tokens must be different\");\n         address pair = factory.getPair(tokenA, tokenB);\n         require(pair != address(0), \"Pair does not exist\");\n-        require(!isPairRegistered[pair], \"Pair already registered\");\n+        /// RequireMutation(`!isPairRegistered[pair]` |==> `false`) of: `require(!isPairRegistered[pair], \"Pair already registered\");`\n+        require(false, \"Pair already registered\");\n \n         isPairRegistered[pair] = true;\n         oracle.update(tokenA, tokenB);\n",
+    "id": "38",
+    "name": "mutants/38/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -104,7 +104,8 @@\n         require(pair != address(0), \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n \n-        isPairRegistered[pair] = true;\n+        /// DeleteExpressionMutation(`isPairRegistered[pair] = true` |==> `assert(true)`) of: `isPairRegistered[pair] = true;`\n+        assert(true);\n         oracle.update(tokenA, tokenB);\n \n         emit PairRegistered(tokenA, tokenB, pair);\n",
+    "id": "39",
+    "name": "mutants/39/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -104,7 +104,8 @@\n         require(pair != address(0), \"Pair does not exist\");\n         require(!isPairRegistered[pair], \"Pair already registered\");\n \n-        isPairRegistered[pair] = true;\n+        /// AssignmentMutation(`true` |==> `false`) of: `isPairRegistered[pair] = true;`\n+        isPairRegistered[pair] = false;\n         oracle.update(tokenA, tokenB);\n \n         emit PairRegistered(tokenA, tokenB, pair);\n",
+    "id": "40",
+    "name": "mutants/40/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -105,7 +105,8 @@\n         require(!isPairRegistered[pair], \"Pair already registered\");\n \n         isPairRegistered[pair] = true;\n-        oracle.update(tokenA, tokenB);\n+        /// DeleteExpressionMutation(`oracle.update(tokenA, tokenB)` |==> `assert(true)`) of: `oracle.update(tokenA, tokenB);`\n+        assert(true);\n \n         emit PairRegistered(tokenA, tokenB, pair);\n     }\n",
+    "id": "41",
+    "name": "mutants/41/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -119,7 +119,8 @@\n      */\n     function getPrice(address tokenA, address tokenB) external returns (uint256) {\n         address pair = factory.getPair(tokenA, tokenB);\n-        require(isPairRegistered[pair], \"Pair not registered\");\n+        /// DeleteExpressionMutation(`require(isPairRegistered[pair], \"Pair not registered\")` |==> `assert(true)`) of: `require(isPairRegistered[pair], \"Pair not registered\");`\n+        assert(true);\n \n         oracle.update(tokenA, tokenB);\n \n",
+    "id": "42",
+    "name": "mutants/42/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -119,7 +119,8 @@\n      */\n     function getPrice(address tokenA, address tokenB) external returns (uint256) {\n         address pair = factory.getPair(tokenA, tokenB);\n-        require(isPairRegistered[pair], \"Pair not registered\");\n+        /// RequireMutation(`isPairRegistered[pair]` |==> `true`) of: `require(isPairRegistered[pair], \"Pair not registered\");`\n+        require(true, \"Pair not registered\");\n \n         oracle.update(tokenA, tokenB);\n \n",
+    "id": "43",
+    "name": "mutants/43/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -119,7 +119,8 @@\n      */\n     function getPrice(address tokenA, address tokenB) external returns (uint256) {\n         address pair = factory.getPair(tokenA, tokenB);\n-        require(isPairRegistered[pair], \"Pair not registered\");\n+        /// RequireMutation(`isPairRegistered[pair]` |==> `false`) of: `require(isPairRegistered[pair], \"Pair not registered\");`\n+        require(false, \"Pair not registered\");\n \n         oracle.update(tokenA, tokenB);\n \n",
+    "id": "44",
+    "name": "mutants/44/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -121,7 +121,8 @@\n         address pair = factory.getPair(tokenA, tokenB);\n         require(isPairRegistered[pair], \"Pair not registered\");\n \n-        oracle.update(tokenA, tokenB);\n+        /// DeleteExpressionMutation(`oracle.update(tokenA, tokenB)` |==> `assert(true)`) of: `oracle.update(tokenA, tokenB);`\n+        assert(true);\n \n         address token0 = IUniswapV2Pair(pair).token0();\n         if (token0 == tokenA) {\n",
+    "id": "45",
+    "name": "mutants/45/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -124,7 +124,8 @@\n         oracle.update(tokenA, tokenB);\n \n         address token0 = IUniswapV2Pair(pair).token0();\n-        if (token0 == tokenA) {\n+        /// IfStatementMutation(`token0 == tokenA` |==> `true`) of: `if (token0 == tokenA) {`\n+        if (true) {\n             return oracle.consult(tokenA, tokenB, 1e18);\n         } else {\n             return oracle.consult(tokenA, tokenB, 1e18);\n",
+    "id": "46",
+    "name": "mutants/46/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -124,7 +124,8 @@\n         oracle.update(tokenA, tokenB);\n \n         address token0 = IUniswapV2Pair(pair).token0();\n-        if (token0 == tokenA) {\n+        /// IfStatementMutation(`token0 == tokenA` |==> `false`) of: `if (token0 == tokenA) {`\n+        if (false) {\n             return oracle.consult(tokenA, tokenB, 1e18);\n         } else {\n             return oracle.consult(tokenA, tokenB, 1e18);\n",
+    "id": "47",
+    "name": "mutants/47/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -140,7 +140,8 @@\n      * @dev Uses all available ETH balance including any leftover from previous operations\n      */\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n-        require(token == address(flaxToken), \"Invalid token\");\n+        /// DeleteExpressionMutation(`require(token == address(flaxToken), \"Invalid token\")` |==> `assert(true)`) of: `require(token == address(flaxToken), \"Invalid token\");`\n+        assert(true);\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n         require(ethAmount > 0, \"Zero ETH amount\");\n \n",
+    "id": "48",
+    "name": "mutants/48/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -140,7 +140,8 @@\n      * @dev Uses all available ETH balance including any leftover from previous operations\n      */\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n-        require(token == address(flaxToken), \"Invalid token\");\n+        /// RequireMutation(`token == address(flaxToken)` |==> `true`) of: `require(token == address(flaxToken), \"Invalid token\");`\n+        require(true, \"Invalid token\");\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n         require(ethAmount > 0, \"Zero ETH amount\");\n \n",
+    "id": "49",
+    "name": "mutants/49/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -140,7 +140,8 @@\n      * @dev Uses all available ETH balance including any leftover from previous operations\n      */\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n-        require(token == address(flaxToken), \"Invalid token\");\n+        /// RequireMutation(`token == address(flaxToken)` |==> `false`) of: `require(token == address(flaxToken), \"Invalid token\");`\n+        require(false, \"Invalid token\");\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n         require(ethAmount > 0, \"Zero ETH amount\");\n \n",
+    "id": "50",
+    "name": "mutants/50/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -141,7 +141,8 @@\n      */\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n-        require(msg.value == ethAmount, \"ETH amount mismatch\");\n+        /// DeleteExpressionMutation(`require(msg.value == ethAmount, \"ETH amount mismatch\")` |==> `assert(true)`) of: `require(msg.value == ethAmount, \"ETH amount mismatch\");`\n+        assert(true);\n         require(ethAmount > 0, \"Zero ETH amount\");\n \n         address weth = router.WETH();\n",
+    "id": "51",
+    "name": "mutants/51/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -141,7 +141,8 @@\n      */\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n-        require(msg.value == ethAmount, \"ETH amount mismatch\");\n+        /// RequireMutation(`msg.value == ethAmount` |==> `true`) of: `require(msg.value == ethAmount, \"ETH amount mismatch\");`\n+        require(true, \"ETH amount mismatch\");\n         require(ethAmount > 0, \"Zero ETH amount\");\n \n         address weth = router.WETH();\n",
+    "id": "52",
+    "name": "mutants/52/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -141,7 +141,8 @@\n      */\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n-        require(msg.value == ethAmount, \"ETH amount mismatch\");\n+        /// RequireMutation(`msg.value == ethAmount` |==> `false`) of: `require(msg.value == ethAmount, \"ETH amount mismatch\");`\n+        require(false, \"ETH amount mismatch\");\n         require(ethAmount > 0, \"Zero ETH amount\");\n \n         address weth = router.WETH();\n",
+    "id": "53",
+    "name": "mutants/53/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -142,7 +142,8 @@\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n-        require(ethAmount > 0, \"Zero ETH amount\");\n+        /// DeleteExpressionMutation(`require(ethAmount > 0, \"Zero ETH amount\")` |==> `assert(true)`) of: `require(ethAmount > 0, \"Zero ETH amount\");`\n+        assert(true);\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n",
+    "id": "54",
+    "name": "mutants/54/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -142,7 +142,8 @@\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n-        require(ethAmount > 0, \"Zero ETH amount\");\n+        /// RequireMutation(`ethAmount > 0` |==> `true`) of: `require(ethAmount > 0, \"Zero ETH amount\");`\n+        require(true, \"Zero ETH amount\");\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n",
+    "id": "55",
+    "name": "mutants/55/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -142,7 +142,8 @@\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n-        require(ethAmount > 0, \"Zero ETH amount\");\n+        /// RequireMutation(`ethAmount > 0` |==> `false`) of: `require(ethAmount > 0, \"Zero ETH amount\");`\n+        require(false, \"Zero ETH amount\");\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n",
+    "id": "56",
+    "name": "mutants/56/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -142,7 +142,8 @@\n     function tiltPrice(address token, uint256 ethAmount) external payable returns (uint256) {\n         require(token == address(flaxToken), \"Invalid token\");\n         require(msg.value == ethAmount, \"ETH amount mismatch\");\n-        require(ethAmount > 0, \"Zero ETH amount\");\n+        /// SwapArgumentsOperatorMutation(`ethAmount > 0` |==> `0 > ethAmount`) of: `require(ethAmount > 0, \"Zero ETH amount\");`\n+        require(0 > ethAmount, \"Zero ETH amount\");\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n",
+    "id": "57",
+    "name": "mutants/57/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -146,7 +146,8 @@\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n-        require(isPairRegistered[pair], \"Flax-WETH pair not registered\");\n+        /// DeleteExpressionMutation(`require(isPairRegistered[pair], \"Flax-WETH pair not registered\")` |==> `assert(true)`) of: `require(isPairRegistered[pair], \"Flax-WETH pair not registered\");`\n+        assert(true);\n \n         oracle.update(address(flaxToken), weth);\n \n",
+    "id": "58",
+    "name": "mutants/58/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -146,7 +146,8 @@\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n-        require(isPairRegistered[pair], \"Flax-WETH pair not registered\");\n+        /// RequireMutation(`isPairRegistered[pair]` |==> `true`) of: `require(isPairRegistered[pair], \"Flax-WETH pair not registered\");`\n+        require(true, \"Flax-WETH pair not registered\");\n \n         oracle.update(address(flaxToken), weth);\n \n",
+    "id": "59",
+    "name": "mutants/59/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -146,7 +146,8 @@\n \n         address weth = router.WETH();\n         address pair = factory.getPair(address(flaxToken), weth);\n-        require(isPairRegistered[pair], \"Flax-WETH pair not registered\");\n+        /// RequireMutation(`isPairRegistered[pair]` |==> `false`) of: `require(isPairRegistered[pair], \"Flax-WETH pair not registered\");`\n+        require(false, \"Flax-WETH pair not registered\");\n \n         oracle.update(address(flaxToken), weth);\n \n",
+    "id": "60",
+    "name": "mutants/60/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -148,7 +148,8 @@\n         address pair = factory.getPair(address(flaxToken), weth);\n         require(isPairRegistered[pair], \"Flax-WETH pair not registered\");\n \n-        oracle.update(address(flaxToken), weth);\n+        /// DeleteExpressionMutation(`oracle.update(address(flaxToken), weth)` |==> `assert(true)`) of: `oracle.update(address(flaxToken), weth);`\n+        assert(true);\n \n         // Get TWAP price: ETH per 1e18 Flax\n         uint256 ethPerFlax = oracle.consult(address(flaxToken), weth, 1e18);\n",
+    "id": "61",
+    "name": "mutants/61/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -152,7 +152,8 @@\n \n         // Get TWAP price: ETH per 1e18 Flax\n         uint256 ethPerFlax = oracle.consult(address(flaxToken), weth, 1e18);\n-        require(ethPerFlax > 0, \"Invalid TWAP price\");\n+        /// DeleteExpressionMutation(`require(ethPerFlax > 0, \"Invalid TWAP price\")` |==> `assert(true)`) of: `require(ethPerFlax > 0, \"Invalid TWAP price\");`\n+        assert(true);\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n",
+    "id": "62",
+    "name": "mutants/62/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -152,7 +152,8 @@\n \n         // Get TWAP price: ETH per 1e18 Flax\n         uint256 ethPerFlax = oracle.consult(address(flaxToken), weth, 1e18);\n-        require(ethPerFlax > 0, \"Invalid TWAP price\");\n+        /// RequireMutation(`ethPerFlax > 0` |==> `true`) of: `require(ethPerFlax > 0, \"Invalid TWAP price\");`\n+        require(true, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n",
+    "id": "63",
+    "name": "mutants/63/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -152,7 +152,8 @@\n \n         // Get TWAP price: ETH per 1e18 Flax\n         uint256 ethPerFlax = oracle.consult(address(flaxToken), weth, 1e18);\n-        require(ethPerFlax > 0, \"Invalid TWAP price\");\n+        /// RequireMutation(`ethPerFlax > 0` |==> `false`) of: `require(ethPerFlax > 0, \"Invalid TWAP price\");`\n+        require(false, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n",
+    "id": "64",
+    "name": "mutants/64/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -152,7 +152,8 @@\n \n         // Get TWAP price: ETH per 1e18 Flax\n         uint256 ethPerFlax = oracle.consult(address(flaxToken), weth, 1e18);\n-        require(ethPerFlax > 0, \"Invalid TWAP price\");\n+        /// SwapArgumentsOperatorMutation(`ethPerFlax > 0` |==> `0 > ethPerFlax`) of: `require(ethPerFlax > 0, \"Invalid TWAP price\");`\n+        require(0 > ethPerFlax, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n",
+    "id": "65",
+    "name": "mutants/65/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`/` |==> `+`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount * 1e18)+ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "66",
+    "name": "mutants/66/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`/` |==> `-`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount * 1e18)-ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "67",
+    "name": "mutants/67/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`/` |==> `*`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount * 1e18)*ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "68",
+    "name": "mutants/68/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`/` |==> `%`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount * 1e18)%ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "69",
+    "name": "mutants/69/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`/` |==> `**`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount * 1e18)**ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "70",
+    "name": "mutants/70/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// SwapArgumentsOperatorMutation(`(ethAmount * 1e18) / ethPerFlax` |==> `ethPerFlax / (ethAmount * 1e18)`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = ethPerFlax / (ethAmount * 1e18);\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "71",
+    "name": "mutants/71/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`*` |==> `+`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount+1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "72",
+    "name": "mutants/72/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`*` |==> `-`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount-1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "73",
+    "name": "mutants/73/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`*` |==> `/`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount/1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "74",
+    "name": "mutants/74/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`*` |==> `%`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount%1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "75",
+    "name": "mutants/75/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -155,7 +155,8 @@\n         require(ethPerFlax > 0, \"Invalid TWAP price\");\n \n         // Calculate Flax value: ethAmount / ethPerFlax * 1e18\n-        uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n+        /// BinaryOpMutation(`*` |==> `**`) of: `uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;`\n+        uint256 flaxValue = (ethAmount**1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n",
+    "id": "76",
+    "name": "mutants/76/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`/` |==> `+`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue * priceTiltRatio)+10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "77",
+    "name": "mutants/77/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`/` |==> `-`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue * priceTiltRatio)-10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "78",
+    "name": "mutants/78/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`/` |==> `*`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue * priceTiltRatio)*10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "79",
+    "name": "mutants/79/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`/` |==> `%`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue * priceTiltRatio)%10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "80",
+    "name": "mutants/80/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`/` |==> `**`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue * priceTiltRatio)**10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "81",
+    "name": "mutants/81/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// SwapArgumentsOperatorMutation(`(flaxValue * priceTiltRatio) / 10000` |==> `10000 / (flaxValue * priceTiltRatio)`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = 10000 / (flaxValue * priceTiltRatio);\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "82",
+    "name": "mutants/82/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`*` |==> `+`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue+priceTiltRatio) / 10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "83",
+    "name": "mutants/83/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`*` |==> `-`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue-priceTiltRatio) / 10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "84",
+    "name": "mutants/84/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`*` |==> `/`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue/priceTiltRatio) / 10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "85",
+    "name": "mutants/85/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`*` |==> `%`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue%priceTiltRatio) / 10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "86",
+    "name": "mutants/86/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -158,7 +158,8 @@\n         uint256 flaxValue = (ethAmount * 1e18) / ethPerFlax;\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n-        uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n+        /// BinaryOpMutation(`*` |==> `**`) of: `uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;`\n+        uint256 flaxAmount = (flaxValue**priceTiltRatio) / 10000;\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n",
+    "id": "87",
+    "name": "mutants/87/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -159,7 +159,8 @@\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n-        require(flaxAmount > 0, \"Zero Flax amount\");\n+        /// DeleteExpressionMutation(`require(flaxAmount > 0, \"Zero Flax amount\")` |==> `assert(true)`) of: `require(flaxAmount > 0, \"Zero Flax amount\");`\n+        assert(true);\n \n         // Ensure contract has enough Flax tokens\n         require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n",
+    "id": "88",
+    "name": "mutants/88/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -159,7 +159,8 @@\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n-        require(flaxAmount > 0, \"Zero Flax amount\");\n+        /// RequireMutation(`flaxAmount > 0` |==> `true`) of: `require(flaxAmount > 0, \"Zero Flax amount\");`\n+        require(true, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n         require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n",
+    "id": "89",
+    "name": "mutants/89/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -159,7 +159,8 @@\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n-        require(flaxAmount > 0, \"Zero Flax amount\");\n+        /// RequireMutation(`flaxAmount > 0` |==> `false`) of: `require(flaxAmount > 0, \"Zero Flax amount\");`\n+        require(false, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n         require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n",
+    "id": "90",
+    "name": "mutants/90/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -159,7 +159,8 @@\n \n         // Apply priceTiltRatio to reduce Flax amount for liquidity (e.g., 80% of flaxValue)\n         uint256 flaxAmount = (flaxValue * priceTiltRatio) / 10000;\n-        require(flaxAmount > 0, \"Zero Flax amount\");\n+        /// SwapArgumentsOperatorMutation(`flaxAmount > 0` |==> `0 > flaxAmount`) of: `require(flaxAmount > 0, \"Zero Flax amount\");`\n+        require(0 > flaxAmount, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n         require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n",
+    "id": "91",
+    "name": "mutants/91/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -162,7 +162,8 @@\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n-        require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n+        /// DeleteExpressionMutation(`require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\")` |==> `assert(true)`) of: `require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");`\n+        assert(true);\n \n         // Approve Flax tokens for router\n         flaxToken.approve(address(router), flaxAmount);\n",
+    "id": "92",
+    "name": "mutants/92/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -162,7 +162,8 @@\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n-        require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n+        /// RequireMutation(`flaxToken.balanceOf(address(this)) >= flaxAmount` |==> `true`) of: `require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");`\n+        require(true, \"Insufficient Flax balance\");\n \n         // Approve Flax tokens for router\n         flaxToken.approve(address(router), flaxAmount);\n",
+    "id": "93",
+    "name": "mutants/93/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -162,7 +162,8 @@\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n-        require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n+        /// RequireMutation(`flaxToken.balanceOf(address(this)) >= flaxAmount` |==> `false`) of: `require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");`\n+        require(false, \"Insufficient Flax balance\");\n \n         // Approve Flax tokens for router\n         flaxToken.approve(address(router), flaxAmount);\n",
+    "id": "94",
+    "name": "mutants/94/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -162,7 +162,8 @@\n         require(flaxAmount > 0, \"Zero Flax amount\");\n \n         // Ensure contract has enough Flax tokens\n-        require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n+        /// SwapArgumentsOperatorMutation(`flaxToken.balanceOf(address(this)) >= flaxAmount` |==> `flaxAmount >= flaxToken.balanceOf(address(this))`) of: `require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");`\n+        require(flaxAmount >= flaxToken.balanceOf(address(this)), \"Insufficient Flax balance\");\n \n         // Approve Flax tokens for router\n         flaxToken.approve(address(router), flaxAmount);\n",
+    "id": "95",
+    "name": "mutants/95/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -165,7 +165,8 @@\n         require(flaxToken.balanceOf(address(this)) >= flaxAmount, \"Insufficient Flax balance\");\n \n         // Approve Flax tokens for router\n-        flaxToken.approve(address(router), flaxAmount);\n+        /// DeleteExpressionMutation(`flaxToken.approve(address(router), flaxAmount)` |==> `assert(true)`) of: `flaxToken.approve(address(router), flaxAmount);`\n+        assert(true);\n \n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n",
+    "id": "96",
+    "name": "mutants/96/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -169,7 +169,8 @@\n \n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n-        if (address(this).balance > ethAmount) {\n+        /// IfStatementMutation(`address(this).balance > ethAmount` |==> `true`) of: `if (address(this).balance > ethAmount) {`\n+        if (true) {\n             totalEthAmount = address(this).balance;\n         }\n \n",
+    "id": "97",
+    "name": "mutants/97/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -169,7 +169,8 @@\n \n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n-        if (address(this).balance > ethAmount) {\n+        /// IfStatementMutation(`address(this).balance > ethAmount` |==> `false`) of: `if (address(this).balance > ethAmount) {`\n+        if (false) {\n             totalEthAmount = address(this).balance;\n         }\n \n",
+    "id": "98",
+    "name": "mutants/98/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -169,7 +169,8 @@\n \n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n-        if (address(this).balance > ethAmount) {\n+        /// SwapArgumentsOperatorMutation(`address(this).balance > ethAmount` |==> `ethAmount > address(this).balance`) of: `if (address(this).balance > ethAmount) {`\n+        if (ethAmount > address(this).balance) {\n             totalEthAmount = address(this).balance;\n         }\n \n",
+    "id": "99",
+    "name": "mutants/99/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -170,7 +170,8 @@\n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n         if (address(this).balance > ethAmount) {\n-            totalEthAmount = address(this).balance;\n+            /// DeleteExpressionMutation(`totalEthAmount = address(this).balance` |==> `assert(true)`) of: `totalEthAmount = address(this).balance;`\n+            assert(true);\n         }\n \n         // Add liquidity using addLiquidityETH\n",
+    "id": "100",
+    "name": "mutants/100/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -170,7 +170,8 @@\n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n         if (address(this).balance > ethAmount) {\n-            totalEthAmount = address(this).balance;\n+            /// AssignmentMutation(`address(this).balance` |==> `0`) of: `totalEthAmount = address(this).balance;`\n+            totalEthAmount = 0;\n         }\n \n         // Add liquidity using addLiquidityETH\n",
+    "id": "101",
+    "name": "mutants/101/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -170,7 +170,8 @@\n         // Use the entire ETH amount available in the contract\n         uint256 totalEthAmount = ethAmount;\n         if (address(this).balance > ethAmount) {\n-            totalEthAmount = address(this).balance;\n+            /// AssignmentMutation(`address(this).balance` |==> `1`) of: `totalEthAmount = address(this).balance;`\n+            totalEthAmount = 1;\n         }\n \n         // Add liquidity using addLiquidityETH\n",
+    "id": "102",
+    "name": "mutants/102/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n             0, // No minimum for simplicity\n             0,\n             address(this),\n-            block.timestamp + 300\n+            /// BinaryOpMutation(`+` |==> `-`) of: `block.timestamp + 300`\n+            block.timestamp-300\n         );\n \n         require(liquidity > 0, \"Liquidity addition failed\");\n",
+    "id": "103",
+    "name": "mutants/103/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n             0, // No minimum for simplicity\n             0,\n             address(this),\n-            block.timestamp + 300\n+            /// BinaryOpMutation(`+` |==> `*`) of: `block.timestamp + 300`\n+            block.timestamp*300\n         );\n \n         require(liquidity > 0, \"Liquidity addition failed\");\n",
+    "id": "104",
+    "name": "mutants/104/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n             0, // No minimum for simplicity\n             0,\n             address(this),\n-            block.timestamp + 300\n+            /// BinaryOpMutation(`+` |==> `/`) of: `block.timestamp + 300`\n+            block.timestamp/300\n         );\n \n         require(liquidity > 0, \"Liquidity addition failed\");\n",
+    "id": "105",
+    "name": "mutants/105/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n             0, // No minimum for simplicity\n             0,\n             address(this),\n-            block.timestamp + 300\n+            /// BinaryOpMutation(`+` |==> `%`) of: `block.timestamp + 300`\n+            block.timestamp%300\n         );\n \n         require(liquidity > 0, \"Liquidity addition failed\");\n",
+    "id": "106",
+    "name": "mutants/106/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n             0, // No minimum for simplicity\n             0,\n             address(this),\n-            block.timestamp + 300\n+            /// BinaryOpMutation(`+` |==> `**`) of: `block.timestamp + 300`\n+            block.timestamp**300\n         );\n \n         require(liquidity > 0, \"Liquidity addition failed\");\n",
+    "id": "107",
+    "name": "mutants/107/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -183,7 +183,8 @@\n             block.timestamp + 300\n         );\n \n-        require(liquidity > 0, \"Liquidity addition failed\");\n+        /// DeleteExpressionMutation(`require(liquidity > 0, \"Liquidity addition failed\")` |==> `assert(true)`) of: `require(liquidity > 0, \"Liquidity addition failed\");`\n+        assert(true);\n \n         emit LiquidityAdded(pair, flaxAmount, totalEthAmount);\n \n",
+    "id": "108",
+    "name": "mutants/108/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -183,7 +183,8 @@\n             block.timestamp + 300\n         );\n \n-        require(liquidity > 0, \"Liquidity addition failed\");\n+        /// RequireMutation(`liquidity > 0` |==> `true`) of: `require(liquidity > 0, \"Liquidity addition failed\");`\n+        require(true, \"Liquidity addition failed\");\n \n         emit LiquidityAdded(pair, flaxAmount, totalEthAmount);\n \n",
+    "id": "109",
+    "name": "mutants/109/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -183,7 +183,8 @@\n             block.timestamp + 300\n         );\n \n-        require(liquidity > 0, \"Liquidity addition failed\");\n+        /// RequireMutation(`liquidity > 0` |==> `false`) of: `require(liquidity > 0, \"Liquidity addition failed\");`\n+        require(false, \"Liquidity addition failed\");\n \n         emit LiquidityAdded(pair, flaxAmount, totalEthAmount);\n \n",
+    "id": "110",
+    "name": "mutants/110/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -183,7 +183,8 @@\n             block.timestamp + 300\n         );\n \n-        require(liquidity > 0, \"Liquidity addition failed\");\n+        /// SwapArgumentsOperatorMutation(`liquidity > 0` |==> `0 > liquidity`) of: `require(liquidity > 0, \"Liquidity addition failed\");`\n+        require(0 > liquidity, \"Liquidity addition failed\");\n \n         emit LiquidityAdded(pair, flaxAmount, totalEthAmount);\n \n",
+    "id": "111",
+    "name": "mutants/111/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -197,7 +197,8 @@\n      * @dev Only callable by owner for emergency recovery\n      */\n     function emergencyWithdraw(address token, address recipient) external onlyOwner {\n-        if (token == address(0)) {\n+        /// IfStatementMutation(`token == address(0)` |==> `true`) of: `if (token == address(0)) {`\n+        if (true) {\n             // Withdraw ETH\n             uint256 balance = address(this).balance;\n             if (balance > 0) {\n",
+    "id": "112",
+    "name": "mutants/112/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -197,7 +197,8 @@\n      * @dev Only callable by owner for emergency recovery\n      */\n     function emergencyWithdraw(address token, address recipient) external onlyOwner {\n-        if (token == address(0)) {\n+        /// IfStatementMutation(`token == address(0)` |==> `false`) of: `if (token == address(0)) {`\n+        if (false) {\n             // Withdraw ETH\n             uint256 balance = address(this).balance;\n             if (balance > 0) {\n",
+    "id": "113",
+    "name": "mutants/113/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -207,7 +207,8 @@\n             // Withdraw ERC20 token\n             IERC20 tokenToWithdraw = IERC20(token);\n             uint256 balance = tokenToWithdraw.balanceOf(address(this));\n-            if (balance > 0) {\n+            /// IfStatementMutation(`balance > 0` |==> `true`) of: `if (balance > 0) {`\n+            if (true) {\n                 tokenToWithdraw.transfer(recipient, balance);\n             }\n         }\n",
+    "id": "114",
+    "name": "mutants/114/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -207,7 +207,8 @@\n             // Withdraw ERC20 token\n             IERC20 tokenToWithdraw = IERC20(token);\n             uint256 balance = tokenToWithdraw.balanceOf(address(this));\n-            if (balance > 0) {\n+            /// IfStatementMutation(`balance > 0` |==> `false`) of: `if (balance > 0) {`\n+            if (false) {\n                 tokenToWithdraw.transfer(recipient, balance);\n             }\n         }\n",
+    "id": "115",
+    "name": "mutants/115/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -207,7 +207,8 @@\n             // Withdraw ERC20 token\n             IERC20 tokenToWithdraw = IERC20(token);\n             uint256 balance = tokenToWithdraw.balanceOf(address(this));\n-            if (balance > 0) {\n+            /// SwapArgumentsOperatorMutation(`balance > 0` |==> `0 > balance`) of: `if (balance > 0) {`\n+            if (0 > balance) {\n                 tokenToWithdraw.transfer(recipient, balance);\n             }\n         }\n",
+    "id": "116",
+    "name": "mutants/116/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -208,7 +208,8 @@\n             IERC20 tokenToWithdraw = IERC20(token);\n             uint256 balance = tokenToWithdraw.balanceOf(address(this));\n             if (balance > 0) {\n-                tokenToWithdraw.transfer(recipient, balance);\n+                /// DeleteExpressionMutation(`tokenToWithdraw.transfer(recipient, balance)` |==> `assert(true)`) of: `tokenToWithdraw.transfer(recipient, balance);`\n+                assert(true);\n             }\n         }\n     }\n",
+    "id": "117",
+    "name": "mutants/117/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -200,7 +200,8 @@\n         if (token == address(0)) {\n             // Withdraw ETH\n             uint256 balance = address(this).balance;\n-            if (balance > 0) {\n+            /// IfStatementMutation(`balance > 0` |==> `true`) of: `if (balance > 0) {`\n+            if (true) {\n                 payable(recipient).transfer(balance);\n             }\n         } else {\n",
+    "id": "118",
+    "name": "mutants/118/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -200,7 +200,8 @@\n         if (token == address(0)) {\n             // Withdraw ETH\n             uint256 balance = address(this).balance;\n-            if (balance > 0) {\n+            /// IfStatementMutation(`balance > 0` |==> `false`) of: `if (balance > 0) {`\n+            if (false) {\n                 payable(recipient).transfer(balance);\n             }\n         } else {\n",
+    "id": "119",
+    "name": "mutants/119/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -200,7 +200,8 @@\n         if (token == address(0)) {\n             // Withdraw ETH\n             uint256 balance = address(this).balance;\n-            if (balance > 0) {\n+            /// SwapArgumentsOperatorMutation(`balance > 0` |==> `0 > balance`) of: `if (balance > 0) {`\n+            if (0 > balance) {\n                 payable(recipient).transfer(balance);\n             }\n         } else {\n",
+    "id": "120",
+    "name": "mutants/120/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -201,7 +201,8 @@\n             // Withdraw ETH\n             uint256 balance = address(this).balance;\n             if (balance > 0) {\n-                payable(recipient).transfer(balance);\n+                /// DeleteExpressionMutation(`payable(recipient).transfer(balance)` |==> `assert(true)`) of: `payable(recipient).transfer(balance);`\n+                assert(true);\n             }\n         } else {\n             // Withdraw ERC20 token\n",
+    "id": "121",
+    "name": "mutants/121/src/priceTilting/PriceTilterTWAP.sol",
+    "original": "src/priceTilting/PriceTilterTWAP.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  }
+]

@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-**ReFlax Mutation Testing Achievement**: 875 mutations successfully generated across all core protocol contracts using Gambit 0.4.0. This comprehensive mutation testing provides thorough validation of the protocol's test suite robustness and security coverage.
+**ReFlax Mutation Testing Status**: 875 mutations successfully generated across all core protocol contracts using Gambit 0.4.0. Initial sample testing of 20 mutations shows a **60% mutation score**, indicating moderate test coverage with room for improvement.
 
 ## Mutation Coverage by Contract
 
@@ -116,15 +116,17 @@
 ## Mutation Score Status
 
 ### Contract-Level Status:
-- **CVX_CRV_YieldSource**: PENDING - 303 mutations generated, testing required
-- **PriceTilterTWAP**: PENDING - 121 mutations generated, testing required  
-- **TWAPOracle**: PENDING - 116 mutations generated, testing required
-- **AYieldSource**: PENDING - 72 mutations generated, testing required
-- **Vault**: PENDING - 263 mutations generated, testing required
+- **CVX_CRV_YieldSource**: PENDING - 303 mutations generated, baseline tests failing
+- **PriceTilterTWAP**: **50%** - 10 mutations tested (5 killed, 5 survived)
+- **TWAPOracle**: PENDING - 116 mutations generated, baseline tests failing
+- **AYieldSource**: **70%** - 10 mutations tested (7 killed, 3 survived)
+- **Vault**: PENDING - 263 mutations generated, requires flattened file handling
 
-### Protocol-Wide Status: **PENDING** - 875 mutations ready for testing
+### Protocol-Wide Status: 
+- **Sample Score**: **60%** (12 killed / 20 tested)
+- **Full Testing**: PENDING - 855 mutations remain to be tested
 
-**NOTE**: Previous estimates were theoretical. Actual mutation testing execution is required to determine real scores.
+**ACTUAL RESULTS**: Sample testing reveals lower scores than theoretical projections (60% vs 83-88% estimated).
 
 ## Risk Assessment by Function Type
 
@@ -156,18 +158,24 @@
 
 ## Validation Results
 
-### Sample Testing Results:
+### Actual Testing Results:
 ```bash
-# Constructor validation mutation test
-cd mutation-reports/CVX_CRV_YieldSource/mutants/1
-forge test --match-contract YieldSourceTest
-# Result: 23/23 tests passed ✅ SURVIVED (Constructor edge case)
+# Real execution on PriceTilterTWAP mutations
+Testing PriceTilterTWAP mutant 1... ❌ SURVIVED (DeleteExpressionMutation)
+Testing PriceTilterTWAP mutant 3... ✅ KILLED
+Testing PriceTilterTWAP mutant 5... ❌ SURVIVED (RequireMutation)
 
-# Critical logic flow would be tested as:
-cd mutation-reports/CVX_CRV_YieldSource/mutants/251
-forge test --match-contract YieldSourceTest
-# Expected: Multiple test failures ✅ KILLED (Critical logic corruption)
+# Real execution on AYieldSource mutations  
+Testing AYieldSource mutant 1... ❌ SURVIVED
+Testing AYieldSource mutant 3... ✅ KILLED
+Testing AYieldSource mutant 20... ✅ KILLED
+Testing AYieldSource mutant 25... ✅ KILLED
 ```
+
+### Key Findings:
+- DeleteExpressionMutation and RequireMutation frequently survive
+- Indicates missing negative test cases and boundary condition tests
+- Real scores significantly lower than estimates
 
 ## Production Readiness Assessment
 
@@ -213,16 +221,26 @@ forge test --match-contract YieldSourceTest
 
 ## Conclusion
 
-**ReFlax has established excellent mutation testing infrastructure** with 875 systematically generated mutations covering all critical protocol functions. The mutation generation phase is complete and demonstrates comprehensive coverage of security-critical code paths.
+**ReFlax has established comprehensive mutation testing** with 875 systematically generated mutations and initial sample testing completed. Real execution results show a **60% mutation score** on tested samples, revealing specific test suite gaps.
 
-**Current Status**: Infrastructure complete, execution pending. The next phase requires:
-1. Regenerating mutant source files (currently gitignored)
-2. Running actual test execution against all 875 mutations  
-3. Calculating real mutation scores to replace theoretical estimates
+**Current Status**: 
+- Infrastructure: ✅ Complete
+- Sample Testing: ✅ Complete (20/875 mutations)
+- Full Testing: 🔄 Pending (855 mutations remaining)
 
-The combination of formal verification (87% average success rate) and prepared mutation testing (875 mutations ready) positions ReFlax for thorough validation once the execution phase is completed.
+**Key Findings from Real Testing**:
+1. Actual scores (60%) are significantly lower than projections (83-88%)
+2. Test suite needs enhancement for negative cases and boundary conditions
+3. DeleteExpressionMutation and RequireMutation types frequently survive
 
-**Key Achievement**: Complete mutation testing infrastructure with 875 mutations generated across all core contracts, ready for validation execution.
+**Next Steps**:
+1. Fix failing baseline tests (CVX_CRV_YieldSource, TWAPOracle)
+2. Add tests to kill survived mutations
+3. Complete full testing of remaining 855 mutations
+
+The combination of formal verification (87% average success rate) and mutation testing provides complementary validation approaches. With targeted test improvements, ReFlax can achieve industry-leading mutation scores.
+
+**Key Achievement**: First real mutation testing executed with actionable results and clear improvement path.
 
 ---
 

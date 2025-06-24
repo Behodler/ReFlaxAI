@@ -12,7 +12,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - For formal verification workflow rules, see `context/formal-verification/WorkflowRules.md`
 - For formal verification backlog and TODOs, see `context/formal-verification/FormalVerificationBacklog.md`
 - For mutation testing guidelines, see `context/mutation-test/CLAUDE.md`
+- **For comprehensive project TODOs, see `context/GLOBAL_TODOS.md`** - contains detailed tasks with context for fresh agents
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
+
+## Global TODO Management
+- **Active TODOs**: Maintained in `context/GLOBAL_TODOS.md` with detailed context for each task
+- **Update Process**: When completing any TODO item, mark it as COMPLETED and update the status
+- **Completion**: When ALL items in GLOBAL_TODOS.md are completed:
+  1. Move the file to `context/archive/GLOBAL_TODOS_completed_YYYY-MM-DD.md`
+  2. Create a new GLOBAL_TODOS.md for future work if needed
+- **Fresh Agent Support**: Each TODO includes sufficient context, prerequisites, and action steps for new agents to pick up and execute
 
 ## Conventions
 - When asked to look at a markdown file, if someone says "do" or "execute" an item on a list, it means do the programming task it describes
@@ -135,6 +144,14 @@ gambit test --test-command "forge test"
 - **Integration**: Mutation testing complements formal verification by finding test gaps
 
 See `context/mutation-test/CLAUDE.md` for complete workflow details.
+
+## Git Commit Policy
+**NEVER commit changes unless the user explicitly asks you to commit**. This means:
+- Do NOT commit after completing tasks
+- Do NOT commit when you think work is done
+- Do NOT commit as part of a workflow
+- ONLY commit when the user explicitly says something like "commit", "please commit", "commit these changes", etc.
+- It is VERY IMPORTANT to only commit when explicitly asked, otherwise the user will feel that you are being too proactive
 
 ## Architecture Overview
 

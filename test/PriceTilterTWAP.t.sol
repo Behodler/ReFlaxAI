@@ -247,4 +247,52 @@ contract PriceTilterTWAPTest is Test {
         emptyPriceTilter.tiltPrice{value: 1 ether}(address(flaxToken), 1 ether);
         vm.stopPrank();
     }
+    
+    // Negative tests for constructor validation (kills mutations 1, 2, 4, 5, 7, 8, 10, 11)
+    function testConstructorRevertsOnZeroFactory() public {
+        vm.expectRevert("Invalid factory address");
+        new PriceTilterTWAP(
+            address(0), // zero factory
+            address(router),
+            address(flaxToken),
+            address(oracle)
+        );
+    }
+    
+    function testConstructorRevertsOnZeroRouter() public {
+        vm.expectRevert("Invalid router address");
+        new PriceTilterTWAP(
+            address(factory),
+            address(0), // zero router
+            address(flaxToken),
+            address(oracle)
+        );
+    }
+    
+    function testConstructorRevertsOnZeroFlaxToken() public {
+        vm.expectRevert("Invalid Flax token address");
+        new PriceTilterTWAP(
+            address(factory),
+            address(router),
+            address(0), // zero flax token
+            address(oracle)
+        );
+    }
+    
+    function testConstructorRevertsOnZeroOracle() public {
+        vm.expectRevert("Invalid oracle address");
+        new PriceTilterTWAP(
+            address(factory),
+            address(router),
+            address(flaxToken),
+            address(0) // zero oracle
+        );
+    }
+    
+    // Negative test for setPriceTiltRatio validation (kills mutation 20)
+    function testSetPriceTiltRatioRevertsOnExcessiveRatio() public {
+        vm.prank(priceTilter.owner());
+        vm.expectRevert("Ratio exceeds 100%");
+        priceTilter.setPriceTiltRatio(10001); // > 10000 (100%)
+    }
 } 

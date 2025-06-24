@@ -36,7 +36,7 @@ test_mutant() {
     cp "$mutant_file" "$original_file"
     
     # Run tests and capture result
-    if forge test --no-match-test "integration" >/dev/null 2>&1; then
+    if forge test --no-match-contract "EmergencyRebaseIntegrationTest" >/dev/null 2>&1; then
         echo "SURVIVED,$mutant_id" >> "context/mutation-test/results/execution/${contract_dir}_results.csv"
         return 1  # Survived
     else
@@ -149,7 +149,7 @@ cd /home/justin/code/BehodlerReborn/Grok/reflax
 
 # Run baseline test first
 echo "🧪 Running baseline tests..."
-if ! forge test --no-match-test "integration" >/dev/null 2>&1; then
+if ! forge test --no-match-contract "EmergencyRebaseIntegrationTest" >/dev/null 2>&1; then
     echo "❌ Baseline tests failed! Fix tests before running mutation testing."
     exit 1
 fi

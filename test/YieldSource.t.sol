@@ -742,4 +742,17 @@ contract YieldSourceTest is Test {
         uint256 inputTokenAmount = noRewardYieldSource.claimAndSellForInputToken();
         assertEq(inputTokenAmount, 0, "Should return 0 input tokens with no rewards");
     }
+    
+    // Constructor state verification tests (kills mutations 9, 10, 14)
+    function testConstructorSetsPoolIdCorrectly() public {
+        // Verify that poolId is set to the constructor parameter (kills mutations 9, 10)
+        assertEq(yieldSource.poolId(), 123, "Pool ID should be set to constructor parameter");
+    }
+    
+    function testConstructorSetsPoolTokenSymbolsCorrectly() public {
+        // Verify that poolTokenSymbols array is populated correctly (kills mutation 14)
+        assertEq(yieldSource.poolTokenSymbols(0), "USDC", "First pool token symbol should be USDC");
+        assertEq(yieldSource.poolTokenSymbols(1), "USDT", "Second pool token symbol should be USDT");
+        assertEq(yieldSource.numPoolTokens(), 2, "Should have 2 pool tokens");
+    }
 }

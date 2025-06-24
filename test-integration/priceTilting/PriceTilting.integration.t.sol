@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.13;
 
 import "../../test-integration/base/IntegrationTest.sol";
 import "../../src/priceTilting/PriceTilterTWAP.sol";
@@ -376,7 +376,7 @@ contract PriceTiltingIntegrationTest is IntegrationTest {
         );
         
         address token;
-        bytes32 saltValue = keccak256(abi.encodePacked(block.timestamp, block.prevrandao));
+        bytes32 saltValue = keccak256(abi.encodePacked(block.timestamp, block.difficulty));
         assembly {
             token := create2(0, add(bytecode, 0x20), mload(bytecode), saltValue)
         }

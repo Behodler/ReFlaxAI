@@ -267,8 +267,14 @@ abstract contract BaseIntegration is Test {
         yieldSource.setUnderlyingWeights(address(curvePool), weights);
         
         // Configure Uniswap V3 router prices using specific return amounts
+        // Based on oracle rates: USDC -> USDT should use 1.5:1 ratio (oracle returns 3750000000 for 2500000000 input)
         uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken1), 1e6, 1e6); // 1:1
-        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 1e6, 1e6); // 1:1
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 1e6, 1.5e6); // 1:1.5 (USDC to USDT)
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 5e5, 7.5e5); // 500k USDC -> 750k USDT
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 2.5e9, 3.75e9); // Larger amounts: 2.5B USDC -> 3.75B USDT
+        // Add more common amounts used in tests
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 5e9, 7.5e9); // 5B USDC -> 7.5B USDT (multiple users test)
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 3.75e9, 5.625e9); // 3.75B USDC -> 5.625B USDT
         uniswapV3Router.setSpecificReturnAmount(address(crvToken), address(0), 1e18, 0.0005 ether); // 1 CRV = 0.0005 ETH
         uniswapV3Router.setSpecificReturnAmount(address(cvxToken), address(0), 1e18, 0.0003 ether); // 1 CVX = 0.0003 ETH
     }

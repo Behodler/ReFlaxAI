@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.13;
 
 import {IntegrationTest} from "../base/IntegrationTest.sol";
 import {TWAPOracle} from "../../src/priceTilting/TWAPOracle.sol";
@@ -836,7 +836,7 @@ contract TWAPOracleIntegrationTest is IntegrationTest {
         );
         
         address token;
-        bytes32 saltValue = keccak256(abi.encodePacked(block.timestamp, block.prevrandao));
+        bytes32 saltValue = keccak256(abi.encodePacked(block.timestamp, block.difficulty));
         assembly {
             token := create2(0, add(bytecode, 0x20), mload(bytecode), saltValue)
         }
@@ -877,7 +877,7 @@ contract TWAPOracleIntegrationTest is IntegrationTest {
         );
         
         address token;
-        bytes32 saltValue = keccak256(abi.encodePacked(block.timestamp, block.prevrandao, "token2"));
+        bytes32 saltValue = keccak256(abi.encodePacked(block.timestamp, block.difficulty, "token2"));
         assembly {
             token := create2(0, add(bytecode, 0x20), mload(bytecode), saltValue)
         }

@@ -1,235 +1,303 @@
-1,DeleteExpressionMutation,src/vault/Vault.sol,185:9,yieldSource = _yieldSource,assert(true)
-2,DeleteExpressionMutation,src/vault/Vault.sol,187:9,emergencyState = false,assert(true)
-3,AssignmentMutation,src/vault/Vault.sol,187:26,false,true
-4,DeleteExpressionMutation,src/vault/Vault.sol,188:9,rebaseMultiplier = 1e18,assert(true)
-5,AssignmentMutation,src/vault/Vault.sol,188:28,1e18,0
-6,AssignmentMutation,src/vault/Vault.sol,188:28,1e18,1
-7,DeleteExpressionMutation,src/vault/Vault.sol,195:9,"require(!emergencyState, ""Contract is in emergency state"")",assert(true)
-8,RequireMutation,src/vault/Vault.sol,195:17,!emergencyState,true
-9,RequireMutation,src/vault/Vault.sol,195:17,!emergencyState,false
-10,DeleteExpressionMutation,src/vault/Vault.sol,203:9,"require(rebaseMultiplier > 0, ""Vault permanently disabled"")",assert(true)
-11,RequireMutation,src/vault/Vault.sol,203:17,rebaseMultiplier > 0,true
-12,RequireMutation,src/vault/Vault.sol,203:17,rebaseMultiplier > 0,false
-13,SwapArgumentsOperatorMutation,src/vault/Vault.sol,203:17,rebaseMultiplier > 0,0 > rebaseMultiplier
-14,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,+
-15,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,-
-16,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,*
-17,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,%
-18,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,**
-19,SwapArgumentsOperatorMutation,src/vault/Vault.sol,213:16,(originalDeposits[user] * rebaseMultiplier) / 1e18,1e18 / (originalDeposits[user] * rebaseMultiplier)
-20,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,+
-21,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,-
-22,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,/
-23,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,%
-24,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,**
-25,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,+
-26,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,-
-27,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,*
-28,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,%
-29,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,**
-30,SwapArgumentsOperatorMutation,src/vault/Vault.sol,221:16,(totalDeposits * rebaseMultiplier) / 1e18,1e18 / (totalDeposits * rebaseMultiplier)
-31,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,+
-32,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,-
-33,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,/
-34,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,%
-35,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,**
-36,DeleteExpressionMutation,src/vault/Vault.sol,230:9,"require(amount > 0, ""Deposit amount must be greater than 0"")",assert(true)
-37,RequireMutation,src/vault/Vault.sol,230:17,amount > 0,true
-38,RequireMutation,src/vault/Vault.sol,230:17,amount > 0,false
-39,SwapArgumentsOperatorMutation,src/vault/Vault.sol,230:17,amount > 0,0 > amount
-40,DeleteExpressionMutation,src/vault/Vault.sol,231:9,"inputToken.safeTransferFrom(msg.sender, address(this), amount)",assert(true)
-41,DeleteExpressionMutation,src/vault/Vault.sol,232:9,"inputToken.approve(yieldSource, amount)",assert(true)
-42,DeleteExpressionMutation,src/vault/Vault.sol,234:9,originalDeposits[msg.sender] += amount,assert(true)
-43,AssignmentMutation,src/vault/Vault.sol,234:41,amount,0
-44,AssignmentMutation,src/vault/Vault.sol,234:41,amount,1
-45,DeleteExpressionMutation,src/vault/Vault.sol,235:9,totalDeposits += amount,assert(true)
-46,AssignmentMutation,src/vault/Vault.sol,235:26,amount,0
-47,AssignmentMutation,src/vault/Vault.sol,235:26,amount,1
-48,DeleteExpressionMutation,src/vault/Vault.sol,247:9,"require(canWithdraw(), ""Withdrawal not allowed"")",assert(true)
-49,RequireMutation,src/vault/Vault.sol,247:17,canWithdraw(),true
-50,RequireMutation,src/vault/Vault.sol,247:17,canWithdraw(),false
-51,DeleteExpressionMutation,src/vault/Vault.sol,248:9,"require(getEffectiveDeposit(msg.sender) >= amount, ""Insufficient effective deposit"")",assert(true)
-52,RequireMutation,src/vault/Vault.sol,248:17,getEffectiveDeposit(msg.sender) >= amount,true
-53,RequireMutation,src/vault/Vault.sol,248:17,getEffectiveDeposit(msg.sender) >= amount,false
-54,SwapArgumentsOperatorMutation,src/vault/Vault.sol,248:17,getEffectiveDeposit(msg.sender) >= amount,amount >= getEffectiveDeposit(msg.sender)
-55,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,+
-56,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,-
-57,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,*
-58,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,%
-59,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,**
-60,SwapArgumentsOperatorMutation,src/vault/Vault.sol,253:39,(amount * 1e18) / rebaseMultiplier,rebaseMultiplier / (amount * 1e18)
-61,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,+
-62,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,-
-63,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,/
-64,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,%
-65,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,**
-66,DeleteExpressionMutation,src/vault/Vault.sol,254:9,"require(originalDeposits[msg.sender] >= rawAmountToWithdraw, ""Insufficient raw deposit"")",assert(true)
-67,RequireMutation,src/vault/Vault.sol,254:17,originalDeposits[msg.sender] >= rawAmountToWithdraw,true
-68,RequireMutation,src/vault/Vault.sol,254:17,originalDeposits[msg.sender] >= rawAmountToWithdraw,false
-69,SwapArgumentsOperatorMutation,src/vault/Vault.sol,254:17,originalDeposits[msg.sender] >= rawAmountToWithdraw,rawAmountToWithdraw >= originalDeposits[msg.sender]
-70,DeleteExpressionMutation,src/vault/Vault.sol,259:9,"require(balanceAfter >= balanceBefore + received, ""Balance mismatch"")",assert(true)
-71,RequireMutation,src/vault/Vault.sol,259:17,balanceAfter >= balanceBefore + received,true
-72,RequireMutation,src/vault/Vault.sol,259:17,balanceAfter >= balanceBefore + received,false
-73,SwapArgumentsOperatorMutation,src/vault/Vault.sol,259:17,balanceAfter >= balanceBefore + received,balanceBefore + received >= balanceAfter
-74,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,-
-75,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,*
-76,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,/
-77,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,%
-78,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,**
-79,IfStatementMutation,src/vault/Vault.sol,263:13,sFlaxAmount > 0 && flaxPerSFlax > 0,true
-80,IfStatementMutation,src/vault/Vault.sol,263:13,sFlaxAmount > 0 && flaxPerSFlax > 0,false
-81,SwapArgumentsOperatorMutation,src/vault/Vault.sol,263:13,sFlaxAmount > 0,0 > sFlaxAmount
-82,SwapArgumentsOperatorMutation,src/vault/Vault.sol,263:32,flaxPerSFlax > 0,0 > flaxPerSFlax
-83,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,+
-84,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,-
-85,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,*
-86,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,%
-87,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,**
-88,SwapArgumentsOperatorMutation,src/vault/Vault.sol,264:33,(sFlaxAmount * flaxPerSFlax) / 1e18,1e18 / (sFlaxAmount * flaxPerSFlax)
-89,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,+
-90,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,-
-91,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,/
-92,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,%
-93,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,**
-94,DeleteExpressionMutation,src/vault/Vault.sol,265:13,"sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount)",assert(true)
-95,DeleteExpressionMutation,src/vault/Vault.sol,266:13,IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount),assert(true)
-96,DeleteExpressionMutation,src/vault/Vault.sol,267:13,totalFlax += flaxBoost,assert(true)
-97,AssignmentMutation,src/vault/Vault.sol,267:26,flaxBoost,0
-98,AssignmentMutation,src/vault/Vault.sol,267:26,flaxBoost,1
-99,IfStatementMutation,src/vault/Vault.sol,271:13,totalFlax > 0,true
-100,IfStatementMutation,src/vault/Vault.sol,271:13,totalFlax > 0,false
-101,SwapArgumentsOperatorMutation,src/vault/Vault.sol,271:13,totalFlax > 0,0 > totalFlax
-102,DeleteExpressionMutation,src/vault/Vault.sol,272:13,"flaxToken.safeTransfer(msg.sender, totalFlax)",assert(true)
-103,DeleteExpressionMutation,src/vault/Vault.sol,277:9,originalDeposits[msg.sender] -= rawAmountToWithdraw,assert(true)
-104,AssignmentMutation,src/vault/Vault.sol,277:41,rawAmountToWithdraw,0
-105,AssignmentMutation,src/vault/Vault.sol,277:41,rawAmountToWithdraw,1
-106,DeleteExpressionMutation,src/vault/Vault.sol,278:9,totalDeposits -= rawAmountToWithdraw,assert(true)
-107,AssignmentMutation,src/vault/Vault.sol,278:26,rawAmountToWithdraw,0
-108,AssignmentMutation,src/vault/Vault.sol,278:26,rawAmountToWithdraw,1
-109,IfStatementMutation,src/vault/Vault.sol,281:13,received > amount,true
-110,IfStatementMutation,src/vault/Vault.sol,281:13,received > amount,false
-111,SwapArgumentsOperatorMutation,src/vault/Vault.sol,281:13,received > amount,amount > received
-112,IfStatementMutation,src/vault/Vault.sol,285:20,received < amount,true
-113,IfStatementMutation,src/vault/Vault.sol,285:20,received < amount,false
-114,SwapArgumentsOperatorMutation,src/vault/Vault.sol,285:20,received < amount,amount < received
-115,DeleteExpressionMutation,src/vault/Vault.sol,298:13,"inputToken.safeTransfer(msg.sender, amount)",assert(true)
-116,DeleteExpressionMutation,src/vault/Vault.sol,299:13,actualWithdrawn = amount,assert(true)
-117,AssignmentMutation,src/vault/Vault.sol,299:31,amount,0
-118,AssignmentMutation,src/vault/Vault.sol,299:31,amount,1
-119,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,+
-120,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,*
-121,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,/
-122,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,%
-123,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,**
-124,SwapArgumentsOperatorMutation,src/vault/Vault.sol,286:33,amount - received,received - amount
-125,IfStatementMutation,src/vault/Vault.sol,287:17,surplusInputToken >= shortfall,true
-126,IfStatementMutation,src/vault/Vault.sol,287:17,surplusInputToken >= shortfall,false
-127,SwapArgumentsOperatorMutation,src/vault/Vault.sol,287:17,surplusInputToken >= shortfall,shortfall >= surplusInputToken
-128,IfStatementMutation,src/vault/Vault.sol,291:24,protectLoss,true
-129,IfStatementMutation,src/vault/Vault.sol,291:24,protectLoss,false
-130,DeleteExpressionMutation,src/vault/Vault.sol,294:17,"inputToken.safeTransfer(msg.sender, received)",assert(true)
-131,DeleteExpressionMutation,src/vault/Vault.sol,295:17,actualWithdrawn = received,assert(true)
-132,AssignmentMutation,src/vault/Vault.sol,295:35,received,0
-133,AssignmentMutation,src/vault/Vault.sol,295:35,received,1
-134,DeleteExpressionMutation,src/vault/Vault.sol,292:17,"revert(""Shortfall exceeds surplus"")",assert(true)
-135,DeleteExpressionMutation,src/vault/Vault.sol,288:17,surplusInputToken -= shortfall,assert(true)
-136,AssignmentMutation,src/vault/Vault.sol,288:38,shortfall,0
-137,AssignmentMutation,src/vault/Vault.sol,288:38,shortfall,1
-138,DeleteExpressionMutation,src/vault/Vault.sol,289:17,"inputToken.safeTransfer(msg.sender, amount)",assert(true)
-139,DeleteExpressionMutation,src/vault/Vault.sol,290:17,actualWithdrawn = amount,assert(true)
-140,AssignmentMutation,src/vault/Vault.sol,290:35,amount,0
-141,AssignmentMutation,src/vault/Vault.sol,290:35,amount,1
-142,DeleteExpressionMutation,src/vault/Vault.sol,282:13,surplusInputToken += received - amount,assert(true)
-143,AssignmentMutation,src/vault/Vault.sol,282:34,received - amount,0
-144,AssignmentMutation,src/vault/Vault.sol,282:34,received - amount,1
-145,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,+
-146,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,*
-147,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,/
-148,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,%
-149,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,**
-150,SwapArgumentsOperatorMutation,src/vault/Vault.sol,282:34,received - amount,amount - received
-151,DeleteExpressionMutation,src/vault/Vault.sol,283:13,"inputToken.safeTransfer(msg.sender, amount)",assert(true)
-152,DeleteExpressionMutation,src/vault/Vault.sol,284:13,actualWithdrawn = amount,assert(true)
-153,AssignmentMutation,src/vault/Vault.sol,284:31,amount,0
-154,AssignmentMutation,src/vault/Vault.sol,284:31,amount,1
-155,IfStatementMutation,src/vault/Vault.sol,314:13,sFlaxAmount > 0 && flaxPerSFlax > 0,true
-156,IfStatementMutation,src/vault/Vault.sol,314:13,sFlaxAmount > 0 && flaxPerSFlax > 0,false
-157,SwapArgumentsOperatorMutation,src/vault/Vault.sol,314:13,sFlaxAmount > 0,0 > sFlaxAmount
-158,SwapArgumentsOperatorMutation,src/vault/Vault.sol,314:32,flaxPerSFlax > 0,0 > flaxPerSFlax
-159,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,+
-160,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,-
-161,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,*
-162,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,%
-163,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,**
-164,SwapArgumentsOperatorMutation,src/vault/Vault.sol,315:33,(sFlaxAmount * flaxPerSFlax) / 1e18,1e18 / (sFlaxAmount * flaxPerSFlax)
-165,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,+
-166,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,-
-167,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,/
-168,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,%
-169,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,**
-170,DeleteExpressionMutation,src/vault/Vault.sol,316:13,"sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount)",assert(true)
-171,DeleteExpressionMutation,src/vault/Vault.sol,317:13,IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount),assert(true)
-172,DeleteExpressionMutation,src/vault/Vault.sol,318:13,totalFlax += flaxBoost,assert(true)
-173,AssignmentMutation,src/vault/Vault.sol,318:26,flaxBoost,0
-174,AssignmentMutation,src/vault/Vault.sol,318:26,flaxBoost,1
-175,IfStatementMutation,src/vault/Vault.sol,322:13,totalFlax > 0,true
-176,IfStatementMutation,src/vault/Vault.sol,322:13,totalFlax > 0,false
-177,SwapArgumentsOperatorMutation,src/vault/Vault.sol,322:13,totalFlax > 0,0 > totalFlax
-178,DeleteExpressionMutation,src/vault/Vault.sol,323:13,"flaxToken.safeTransfer(msg.sender, totalFlax)",assert(true)
-179,DeleteExpressionMutation,src/vault/Vault.sol,334:9,flaxPerSFlax = _flaxPerSFlax,assert(true)
-180,AssignmentMutation,src/vault/Vault.sol,334:24,_flaxPerSFlax,0
-181,AssignmentMutation,src/vault/Vault.sol,334:24,_flaxPerSFlax,1
-182,IfStatementMutation,src/vault/Vault.sol,349:13,inputTokenAmount > 0,true
-183,IfStatementMutation,src/vault/Vault.sol,349:13,inputTokenAmount > 0,false
-184,SwapArgumentsOperatorMutation,src/vault/Vault.sol,349:13,inputTokenAmount > 0,0 > inputTokenAmount
-185,DeleteExpressionMutation,src/vault/Vault.sol,350:13,surplusInputToken += inputTokenAmount,assert(true)
-186,AssignmentMutation,src/vault/Vault.sol,350:34,inputTokenAmount,0
-187,AssignmentMutation,src/vault/Vault.sol,350:34,inputTokenAmount,1
-188,IfStatementMutation,src/vault/Vault.sol,355:13,amount > 0,true
-189,IfStatementMutation,src/vault/Vault.sol,355:13,amount > 0,false
-190,SwapArgumentsOperatorMutation,src/vault/Vault.sol,355:13,amount > 0,0 > amount
-191,DeleteExpressionMutation,src/vault/Vault.sol,357:13,totalDeposits = 0,assert(true)
-192,AssignmentMutation,src/vault/Vault.sol,357:29,0,1
-193,DeleteExpressionMutation,src/vault/Vault.sol,358:13,surplusInputToken += received,assert(true)
-194,AssignmentMutation,src/vault/Vault.sol,358:34,received,0
-195,AssignmentMutation,src/vault/Vault.sol,358:34,received,1
-196,IfStatementMutation,src/vault/Vault.sol,362:13,surplusInputToken > 0,true
-197,IfStatementMutation,src/vault/Vault.sol,362:13,surplusInputToken > 0,false
-198,SwapArgumentsOperatorMutation,src/vault/Vault.sol,362:13,surplusInputToken > 0,0 > surplusInputToken
-199,DeleteExpressionMutation,src/vault/Vault.sol,363:13,"inputToken.approve(newYieldSource, surplusInputToken)",assert(true)
-200,DeleteExpressionMutation,src/vault/Vault.sol,365:13,IYieldsSource(newYieldSource).deposit(surplusInputToken),assert(true)
-201,DeleteExpressionMutation,src/vault/Vault.sol,366:13,totalDeposits = deposited,assert(true)
-202,AssignmentMutation,src/vault/Vault.sol,366:29,deposited,0
-203,AssignmentMutation,src/vault/Vault.sol,366:29,deposited,1
-204,DeleteExpressionMutation,src/vault/Vault.sol,367:13,surplusInputToken = 0,assert(true)
-205,AssignmentMutation,src/vault/Vault.sol,367:33,0,1
-206,DeleteExpressionMutation,src/vault/Vault.sol,370:9,yieldSource = newYieldSource,assert(true)
-207,DeleteExpressionMutation,src/vault/Vault.sol,389:9,emergencyState = state,assert(true)
-208,AssignmentMutation,src/vault/Vault.sol,389:26,state,true
-209,AssignmentMutation,src/vault/Vault.sol,389:26,state,false
-210,DeleteExpressionMutation,src/vault/Vault.sol,400:9,"require(token != address(0), ""Invalid token address"")",assert(true)
-211,RequireMutation,src/vault/Vault.sol,400:17,token != address(0),true
-212,RequireMutation,src/vault/Vault.sol,400:17,token != address(0),false
-213,IfStatementMutation,src/vault/Vault.sol,405:13,balance > 0,true
-214,IfStatementMutation,src/vault/Vault.sol,405:13,balance > 0,false
-215,SwapArgumentsOperatorMutation,src/vault/Vault.sol,405:13,balance > 0,0 > balance
-216,DeleteExpressionMutation,src/vault/Vault.sol,406:13,"tokenContract.safeTransfer(recipient, balance)",assert(true)
-217,IfStatementMutation,src/vault/Vault.sol,419:13,balance > 0,true
-218,IfStatementMutation,src/vault/Vault.sol,419:13,balance > 0,false
-219,SwapArgumentsOperatorMutation,src/vault/Vault.sol,419:13,balance > 0,0 > balance
-220,DeleteExpressionMutation,src/vault/Vault.sol,420:13,recipient.transfer(balance),assert(true)
-221,DeleteExpressionMutation,src/vault/Vault.sol,433:9,"require(emergencyState, ""Not in emergency state"")",assert(true)
-222,RequireMutation,src/vault/Vault.sol,433:17,emergencyState,true
-223,RequireMutation,src/vault/Vault.sol,433:17,emergencyState,false
-224,IfStatementMutation,src/vault/Vault.sol,436:13,token == address(inputToken) && totalDeposits > 0,true
-225,IfStatementMutation,src/vault/Vault.sol,436:13,token == address(inputToken) && totalDeposits > 0,false
-226,SwapArgumentsOperatorMutation,src/vault/Vault.sol,436:45,totalDeposits > 0,0 > totalDeposits
-227,DeleteExpressionMutation,src/vault/Vault.sol,441:13,rebaseMultiplier = 0,assert(true)
-228,AssignmentMutation,src/vault/Vault.sol,441:32,0,1
-229,DeleteExpressionMutation,src/vault/Vault.sol,443:13,surplusInputToken += received,assert(true)
-230,AssignmentMutation,src/vault/Vault.sol,443:34,received,0
-231,AssignmentMutation,src/vault/Vault.sol,443:34,received,1
-232,IfStatementMutation,src/vault/Vault.sol,453:13,balance > 0,true
-233,IfStatementMutation,src/vault/Vault.sol,453:13,balance > 0,false
-234,SwapArgumentsOperatorMutation,src/vault/Vault.sol,453:13,balance > 0,0 > balance
-235,DeleteExpressionMutation,src/vault/Vault.sol,454:13,"tokenContract.safeTransfer(recipient, balance)",assert(true)
+1,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,149:9,"require(_poolTokens.length >= 2 && _poolTokens.length <= 4, ""Invalid pool token count"")",assert(true)
+2,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,149:17,_poolTokens.length >= 2 && _poolTokens.length <= 4,true
+3,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,149:17,_poolTokens.length >= 2 && _poolTokens.length <= 4,false
+4,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,149:17,_poolTokens.length >= 2,2 >= _poolTokens.length
+5,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,149:44,_poolTokens.length <= 4,4 <= _poolTokens.length
+6,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,150:9,"require(_poolTokens.length == _poolTokenSymbols.length, ""Mismatched symbols"")",assert(true)
+7,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,150:17,_poolTokens.length == _poolTokenSymbols.length,true
+8,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,150:17,_poolTokens.length == _poolTokenSymbols.length,false
+9,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,156:18,_poolId,0
+10,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,156:18,_poolId,1
+11,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,158:25,_poolTokens.length,0
+12,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,158:25,_poolTokens.length,1
+13,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,162:13,poolTokens.push(IERC20(_poolTokens[i])),assert(true)
+14,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,163:13,poolTokenSymbols.push(_poolTokenSymbols[i]),assert(true)
+15,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,164:13,"IERC20(_poolTokens[i]).approve(_curvePool, type(uint256).max)",assert(true)
+16,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,161:29,i < _poolTokens.length,_poolTokens.length < i
+17,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,161:53,i++,assert(true)
+18,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,161:54,++,--
+19,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,169:13,rewardTokens.push(_rewardTokens[i]),assert(true)
+20,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,168:29,i < _rewardTokens.length,_rewardTokens.length < i
+21,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,168:55,i++,assert(true)
+22,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,168:56,++,--
+23,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,173:9,"inputToken.approve(_uniswapV3Router, type(uint256).max)",assert(true)
+24,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,174:9,"crvLpToken.approve(_convexBooster, type(uint256).max)",assert(true)
+25,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,184:9,"require(pool == curvePool, ""Invalid pool"")",assert(true)
+26,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,184:17,pool == curvePool,true
+27,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,184:17,pool == curvePool,false
+28,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,185:9,"require(weights.length == poolTokens.length, ""Mismatched weights"")",assert(true)
+29,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,185:17,weights.length == poolTokens.length,true
+30,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,185:17,weights.length == poolTokens.length,false
+31,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,188:13,total += weights[i],assert(true)
+32,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,188:22,weights[i],0
+33,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,188:22,weights[i],1
+34,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,187:29,i < weights.length,weights.length < i
+35,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,187:49,i++,assert(true)
+36,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,187:50,++,--
+37,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,190:9,"require(total == 10000, ""Weights must sum to 100%"")",assert(true)
+38,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,190:17,total == 10000,true
+39,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,190:17,total == 10000,false
+40,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,191:9,underlyingWeights[pool] = weights,assert(true)
+41,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,202:9,"oracle.update(address(flaxToken), address(0))",assert(true)
+42,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,205:13,address(inputToken) != address(0),true
+43,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,205:13,address(inputToken) != address(0),false
+44,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,206:13,"oracle.update(address(inputToken), address(0))",assert(true)
+45,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,211:17,address(poolTokens[i]) != address(inputToken) && address(poolTokens[i]) != address(0),true
+46,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,211:17,address(poolTokens[i]) != address(inputToken) && address(poolTokens[i]) != address(0),false
+47,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,212:17,"oracle.update(address(poolTokens[i]), address(0))",assert(true)
+48,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,210:29,i < poolTokens.length,poolTokens.length < i
+49,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,210:52,i++,assert(true)
+50,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,210:53,++,--
+51,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,218:17,rewardTokens[i] != address(0) && rewardTokens[i] != address(flaxToken),true
+52,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,218:17,rewardTokens[i] != address(0) && rewardTokens[i] != address(flaxToken),false
+53,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,219:17,"oracle.update(rewardTokens[i], address(0))",assert(true)
+54,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,217:29,i < rewardTokens.length,rewardTokens.length < i
+55,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,217:54,i++,assert(true)
+56,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,217:55,++,--
+57,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,235:13,weights.length == 0,true
+58,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,235:13,weights.length == 0,false
+59,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,236:13,weights = new uint256[](poolTokens.length),assert(true)
+60,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:17,weights[i] = 10000 / poolTokens.length,assert(true)
+61,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:30,10000 / poolTokens.length,0
+62,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:30,10000 / poolTokens.length,1
+63,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:35, / ,+
+64,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:35, / ,-
+65,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:35, / ,*
+66,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:35, / ,%
+67,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:35, / ,**
+68,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:30,10000 / poolTokens.length,poolTokens.length / 10000
+69,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,237:33,i < poolTokens.length,poolTokens.length < i
+70,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,237:56,i++,assert(true)
+71,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,237:57,++,--
+72,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:60, / ,+
+73,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:60, / ,-
+74,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:60, / ,*
+75,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:60, / ,%
+76,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:60, / ,**
+77,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:39,(amount * weights[i]) / 10000,10000 / (amount * weights[i])
+78,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:46, * ,+
+79,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:46, * ,-
+80,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:46, * ,/
+81,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:46, * ,%
+82,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:46, * ,**
+83,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,249:17,address(poolTokens[i]) == address(inputToken),true
+84,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,249:17,address(poolTokens[i]) == address(inputToken),false
+85,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,251:24,allocatedAmount > 0,true
+86,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,251:24,allocatedAmount > 0,false
+87,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,251:24,allocatedAmount > 0,0 > allocatedAmount
+88,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,268:17,amounts[i] = 0,assert(true)
+89,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,268:30,0,1
+90,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:17,minOut = (minOut * (10000 - minSlippageBps)) / 10000,assert(true)
+91,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:26,(minOut * (10000 - minSlippageBps)) / 10000,0
+92,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:26,(minOut * (10000 - minSlippageBps)) / 10000,1
+93,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:61, / ,+
+94,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:61, / ,-
+95,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:61, / ,*
+96,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:61, / ,%
+97,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:61, / ,**
+98,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:26,(minOut * (10000 - minSlippageBps)) / 10000,10000 / (minOut * (10000 - minSlippageBps))
+99,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:33, * ,+
+100,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:33, * ,-
+101,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:33, * ,/
+102,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:33, * ,%
+103,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:33, * ,**
+104,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:42, - ,+
+105,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:42, - ,*
+106,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:42, - ,/
+107,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:42, - ,%
+108,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:42, - ,**
+109,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:37,10000 - minSlippageBps,minSlippageBps - 10000
+110,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,250:17,amounts[i] = allocatedAmount,assert(true)
+111,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,250:30,allocatedAmount,0
+112,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,250:30,allocatedAmount,1
+113,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,245:29,i < poolTokens.length,poolTokens.length < i
+114,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,245:52,i++,assert(true)
+115,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,245:53,++,--
+116,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,276:9,"IConvexBooster(convexBooster).deposit(poolId, lpAmount, true)",assert(true)
+117,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,299:13,totalDeposited > 0,true
+118,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,299:13,totalDeposited > 0,false
+119,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,299:13,totalDeposited > 0,0 > totalDeposited
+120,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,309:13,lpAmountToWithdraw = 0,assert(true)
+121,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,309:34,0,1
+122,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:13,lpAmountToWithdraw = amount * 1e12,assert(true)
+123,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:34,amount * 1e12,0
+124,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:34,amount * 1e12,1
+125,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:40, * ,+
+126,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:40, * ,-
+127,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:40, * ,/
+128,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:40, * ,%
+129,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,302:40, * ,**
+130,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,305:17,lpAmountToWithdraw > totalDeposited,true
+131,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,305:17,lpAmountToWithdraw > totalDeposited,false
+132,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,305:17,lpAmountToWithdraw > totalDeposited,totalDeposited > lpAmountToWithdraw
+133,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,306:17,lpAmountToWithdraw = totalDeposited,assert(true)
+134,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,306:38,totalDeposited,0
+135,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,306:38,totalDeposited,1
+136,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,312:13,lpAmountToWithdraw > 0,true
+137,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,312:13,lpAmountToWithdraw > 0,false
+138,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,312:13,lpAmountToWithdraw > 0,0 > lpAmountToWithdraw
+139,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,314:13,"IConvexBooster(convexBooster).withdraw(poolId, lpAmountToWithdraw)",assert(true)
+140,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,319:21,address(poolTokens[i]) == address(inputToken),true
+141,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,319:21,address(poolTokens[i]) == address(inputToken),false
+142,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,320:21,inputTokenIndex = i,assert(true)
+143,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,320:39,i,0
+144,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,320:39,i,1
+145,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,318:33,i < poolTokens.length,poolTokens.length < i
+146,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,318:56,i++,assert(true)
+147,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,318:57,++,--
+148,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,326:17,inputTokenIndex != type(uint256).max,true
+149,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,326:17,inputTokenIndex != type(uint256).max,false
+150,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,333:21,token0Amount > 0,true
+151,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,333:21,token0Amount > 0,false
+152,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,333:21,token0Amount > 0,0 > token0Amount
+153,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,351:21,inputTokenAmount = 0,assert(true)
+154,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,351:40,0,1
+155,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:21,minOut = (minOut * (10000 - minSlippageBps)) / 10000,assert(true)
+156,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:30,(minOut * (10000 - minSlippageBps)) / 10000,0
+157,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:30,(minOut * (10000 - minSlippageBps)) / 10000,1
+158,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:65, / ,+
+159,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:65, / ,-
+160,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:65, / ,*
+161,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:65, / ,%
+162,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:65, / ,**
+163,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:30,(minOut * (10000 - minSlippageBps)) / 10000,10000 / (minOut * (10000 - minSlippageBps))
+164,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:37, * ,+
+165,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:37, * ,-
+166,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:37, * ,/
+167,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:37, * ,%
+168,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:37, * ,**
+169,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:46, - ,+
+170,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:46, - ,*
+171,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:46, - ,/
+172,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:46, - ,%
+173,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:46, - ,**
+174,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:41,10000 - minSlippageBps,minSlippageBps - 10000
+175,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,338:21,"poolTokens[0].approve(uniswapV3Router, token0Amount)",assert(true)
+176,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,327:17,"inputTokenAmount = ICurvePool(curvePool).remove_liquidity_one_coin(lpAmountToWithdraw, int128(int256(inputTokenIndex)), 0)",assert(true)
+177,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,327:36,"ICurvePool(curvePool).remove_liquidity_one_coin(lpAmountToWithdraw, int128(int256(inputTokenIndex)), 0)",0
+178,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,327:36,"ICurvePool(curvePool).remove_liquidity_one_coin(lpAmountToWithdraw, int128(int256(inputTokenIndex)), 0)",1
+179,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,357:9,flaxValue = _claimAndSellRewards(),assert(true)
+180,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,357:21,_claimAndSellRewards(),0
+181,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,357:21,_claimAndSellRewards(),1
+182,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,373:13,token == rewardTokens[0],true
+183,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,373:13,token == rewardTokens[0],false
+184,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,374:13,IConvexRewardPool(convexRewardPool).getReward(),assert(true)
+185,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,388:13,amount == 0,true
+186,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,388:13,amount == 0,false
+187,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:9,minEthOut = (minEthOut * (10000 - minSlippageBps)) / 10000,assert(true)
+188,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:21,(minEthOut * (10000 - minSlippageBps)) / 10000,0
+189,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:21,(minEthOut * (10000 - minSlippageBps)) / 10000,1
+190,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:59, / ,+
+191,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:59, / ,-
+192,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:59, / ,*
+193,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:59, / ,%
+194,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:59, / ,**
+195,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:21,(minEthOut * (10000 - minSlippageBps)) / 10000,10000 / (minEthOut * (10000 - minSlippageBps))
+196,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:31, * ,+
+197,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:31, * ,-
+198,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:31, * ,/
+199,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:31, * ,%
+200,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:31, * ,**
+201,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:40, - ,+
+202,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:40, - ,*
+203,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:40, - ,/
+204,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:40, - ,%
+205,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:40, - ,**
+206,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:35,10000 - minSlippageBps,minSlippageBps - 10000
+207,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,393:9,"IERC20(token).approve(uniswapV3Router, amount)",assert(true)
+208,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,415:13,ethAmount == 0,true
+209,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,415:13,ethAmount == 0,false
+210,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:9,minInputOut = (minInputOut * (10000 - minSlippageBps)) / 10000,assert(true)
+211,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:23,(minInputOut * (10000 - minSlippageBps)) / 10000,0
+212,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:23,(minInputOut * (10000 - minSlippageBps)) / 10000,1
+213,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:63, / ,+
+214,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:63, / ,-
+215,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:63, / ,*
+216,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:63, / ,%
+217,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:63, / ,**
+218,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:23,(minInputOut * (10000 - minSlippageBps)) / 10000,10000 / (minInputOut * (10000 - minSlippageBps))
+219,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:35, * ,+
+220,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:35, * ,-
+221,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:35, * ,/
+222,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:35, * ,%
+223,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:35, * ,**
+224,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:44, - ,+
+225,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:44, - ,*
+226,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:44, - ,/
+227,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:44, - ,%
+228,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:44, - ,**
+229,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:39,10000 - minSlippageBps,minSlippageBps - 10000
+230,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,443:9,"require(success, ""Price tilt failed"")",assert(true)
+231,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,443:17,success,true
+232,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,443:17,success,false
+233,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,444:9,"flaxAmount = abi.decode(data, (uint256))",assert(true)
+234,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,444:22,"abi.decode(data, (uint256))",0
+235,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,444:22,"abi.decode(data, (uint256))",1
+236,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,459:17,amount > 0,true
+237,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,459:17,amount > 0,false
+238,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,459:17,amount > 0,0 > amount
+239,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,461:17,"ethAmount += _sellRewardToken(token, amount)",assert(true)
+240,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,461:30,"_sellRewardToken(token, amount)",0
+241,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,461:30,"_sellRewardToken(token, amount)",1
+242,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,456:29,i < rewardTokens.length,rewardTokens.length < i
+243,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,456:54,i++,assert(true)
+244,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,456:55,++,--
+245,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,465:13,ethAmount > 0,true
+246,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,465:13,ethAmount > 0,false
+247,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,465:13,ethAmount > 0,0 > ethAmount
+248,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,466:13,flaxValue = _getFlaxValue(ethAmount),assert(true)
+249,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,466:25,_getFlaxValue(ethAmount),0
+250,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,466:25,_getFlaxValue(ethAmount),1
+251,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,482:13,numPoolTokens == 2,true
+252,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,482:13,numPoolTokens == 2,false
+253,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,487:20,numPoolTokens == 3,true
+254,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,487:20,numPoolTokens == 3,false
+255,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,493:20,numPoolTokens == 4,true
+256,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,493:20,numPoolTokens == 4,false
+257,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,501:13,"revert(""Unsupported pool size"")",assert(true)
+258,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,495:13,amounts4[0] = amounts[0],assert(true)
+259,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,495:27,amounts[0],0
+260,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,495:27,amounts[0],1
+261,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,496:13,amounts4[1] = amounts[1],assert(true)
+262,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,496:27,amounts[1],0
+263,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,496:27,amounts[1],1
+264,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,497:13,amounts4[2] = amounts[2],assert(true)
+265,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,497:27,amounts[2],0
+266,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,497:27,amounts[2],1
+267,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,498:13,amounts4[3] = amounts[3],assert(true)
+268,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,498:27,amounts[3],0
+269,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,498:27,amounts[3],1
+270,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,499:13,"data = abi.encodeWithSignature(""add_liquidity(uint256[4],uint256)"", amounts4, 0)",assert(true)
+271,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,489:13,amounts3[0] = amounts[0],assert(true)
+272,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,489:27,amounts[0],0
+273,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,489:27,amounts[0],1
+274,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,490:13,amounts3[1] = amounts[1],assert(true)
+275,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,490:27,amounts[1],0
+276,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,490:27,amounts[1],1
+277,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,491:13,amounts3[2] = amounts[2],assert(true)
+278,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,491:27,amounts[2],0
+279,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,491:27,amounts[2],1
+280,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,492:13,"data = abi.encodeWithSignature(""add_liquidity(uint256[3],uint256)"", amounts3, 0)",assert(true)
+281,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,484:13,amounts2[0] = amounts[0],assert(true)
+282,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,484:27,amounts[0],0
+283,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,484:27,amounts[0],1
+284,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,485:13,amounts2[1] = amounts[1],assert(true)
+285,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,485:27,amounts[1],0
+286,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,485:27,amounts[1],1
+287,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,486:13,"data = abi.encodeWithSignature(""add_liquidity(uint256[2],uint256)"", amounts2, 0)",assert(true)
+288,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,505:9,"require(success, ""add_liquidity failed"")",assert(true)
+289,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,505:17,success,true
+290,RequireMutation,src/yieldSource/CVX_CRV_YieldSource.sol,505:17,success,false
+291,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,506:9,"lpAmount = abi.decode(result, (uint256))",assert(true)
+292,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,506:20,"abi.decode(result, (uint256))",0
+293,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,506:20,"abi.decode(result, (uint256))",1
+294,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,521:13,token == address(0),true
+295,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,521:13,token == address(0),false
+296,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,531:17,balance > 0,true
+297,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,531:17,balance > 0,false
+298,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,531:17,balance > 0,0 > balance
+299,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,532:17,"erc20.safeTransfer(recipient, balance)",assert(true)
+300,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,524:17,balance > 0,true
+301,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,524:17,balance > 0,false
+302,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,524:17,balance > 0,0 > balance
+303,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,525:17,payable(recipient).transfer(balance),assert(true)

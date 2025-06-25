@@ -1,0 +1,54 @@
+13,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,162:13,poolTokens.push(IERC20(_poolTokens[i])),assert(true)
+14,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,163:13,poolTokenSymbols.push(_poolTokenSymbols[i]),assert(true)
+15,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,164:13,"IERC20(_poolTokens[i]).approve(_curvePool, type(uint256).max)",assert(true)
+16,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,161:29,i < _poolTokens.length,_poolTokens.length < i
+17,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,161:53,i++,assert(true)
+18,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,161:54,++,--
+19,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,169:13,rewardTokens.push(_rewardTokens[i]),assert(true)
+20,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,168:29,i < _rewardTokens.length,_rewardTokens.length < i
+21,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,168:55,i++,assert(true)
+22,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,168:56,++,--
+23,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,173:9,"inputToken.approve(_uniswapV3Router, type(uint256).max)",assert(true)
+24,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,174:9,"crvLpToken.approve(_convexBooster, type(uint256).max)",assert(true)
+32,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,188:22,weights[i],0
+33,AssignmentMutation,src/yieldSource/CVX_CRV_YieldSource.sol,188:22,weights[i],1
+34,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,187:29,i < weights.length,weights.length < i
+35,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,187:49,i++,assert(true)
+36,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,187:50,++,--
+40,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,191:9,underlyingWeights[pool] = weights,assert(true)
+41,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,202:9,"oracle.update(address(flaxToken), address(0))",assert(true)
+42,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,205:13,address(inputToken) != address(0),true
+43,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,205:13,address(inputToken) != address(0),false
+44,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,206:13,"oracle.update(address(inputToken), address(0))",assert(true)
+45,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,211:17,address(poolTokens[i]) != address(inputToken) && address(poolTokens[i]) != address(0),true
+46,IfStatementMutation,src/yieldSource/CVX_CRV_YieldSource.sol,211:17,address(poolTokens[i]) != address(inputToken) && address(poolTokens[i]) != address(0),false
+47,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,212:17,"oracle.update(address(poolTokens[i]), address(0))",assert(true)
+48,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,210:29,i < poolTokens.length,poolTokens.length < i
+49,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,210:52,i++,assert(true)
+50,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,210:53,++,--
+53,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,219:17,"oracle.update(rewardTokens[i], address(0))",assert(true)
+54,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,217:29,i < rewardTokens.length,rewardTokens.length < i
+55,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,217:54,i++,assert(true)
+56,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,217:55,++,--
+67,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:35, / ,**
+68,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,238:30,10000 / poolTokens.length,poolTokens.length / 10000
+69,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,237:33,i < poolTokens.length,poolTokens.length < i
+70,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,237:56,i++,assert(true)
+71,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,237:57,++,--
+76,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,246:60, / ,**
+87,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,251:24,allocatedAmount > 0,0 > allocatedAmount
+97,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,254:61, / ,**
+113,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,245:29,i < poolTokens.length,poolTokens.length < i
+114,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,245:52,i++,assert(true)
+115,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,245:53,++,--
+145,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,318:33,i < poolTokens.length,poolTokens.length < i
+146,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,318:56,i++,assert(true)
+147,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,318:57,++,--
+162,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,336:65, / ,**
+175,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,338:21,"poolTokens[0].approve(uniswapV3Router, token0Amount)",assert(true)
+194,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,391:59, / ,**
+207,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,393:9,"IERC20(token).approve(uniswapV3Router, amount)",assert(true)
+217,BinaryOpMutation,src/yieldSource/CVX_CRV_YieldSource.sol,418:63, / ,**
+242,SwapArgumentsOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,456:29,i < rewardTokens.length,rewardTokens.length < i
+243,DeleteExpressionMutation,src/yieldSource/CVX_CRV_YieldSource.sol,456:54,i++,assert(true)
+244,UnaryOperatorMutation,src/yieldSource/CVX_CRV_YieldSource.sol,456:55,++,--

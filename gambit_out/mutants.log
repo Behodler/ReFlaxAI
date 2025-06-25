@@ -1,0 +1,235 @@
+1,DeleteExpressionMutation,src/vault/Vault.sol,185:9,yieldSource = _yieldSource,assert(true)
+2,DeleteExpressionMutation,src/vault/Vault.sol,187:9,emergencyState = false,assert(true)
+3,AssignmentMutation,src/vault/Vault.sol,187:26,false,true
+4,DeleteExpressionMutation,src/vault/Vault.sol,188:9,rebaseMultiplier = 1e18,assert(true)
+5,AssignmentMutation,src/vault/Vault.sol,188:28,1e18,0
+6,AssignmentMutation,src/vault/Vault.sol,188:28,1e18,1
+7,DeleteExpressionMutation,src/vault/Vault.sol,195:9,"require(!emergencyState, ""Contract is in emergency state"")",assert(true)
+8,RequireMutation,src/vault/Vault.sol,195:17,!emergencyState,true
+9,RequireMutation,src/vault/Vault.sol,195:17,!emergencyState,false
+10,DeleteExpressionMutation,src/vault/Vault.sol,203:9,"require(rebaseMultiplier > 0, ""Vault permanently disabled"")",assert(true)
+11,RequireMutation,src/vault/Vault.sol,203:17,rebaseMultiplier > 0,true
+12,RequireMutation,src/vault/Vault.sol,203:17,rebaseMultiplier > 0,false
+13,SwapArgumentsOperatorMutation,src/vault/Vault.sol,203:17,rebaseMultiplier > 0,0 > rebaseMultiplier
+14,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,+
+15,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,-
+16,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,*
+17,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,%
+18,BinaryOpMutation,src/vault/Vault.sol,213:59, / ,**
+19,SwapArgumentsOperatorMutation,src/vault/Vault.sol,213:16,(originalDeposits[user] * rebaseMultiplier) / 1e18,1e18 / (originalDeposits[user] * rebaseMultiplier)
+20,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,+
+21,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,-
+22,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,/
+23,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,%
+24,BinaryOpMutation,src/vault/Vault.sol,213:39, * ,**
+25,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,+
+26,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,-
+27,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,*
+28,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,%
+29,BinaryOpMutation,src/vault/Vault.sol,221:50, / ,**
+30,SwapArgumentsOperatorMutation,src/vault/Vault.sol,221:16,(totalDeposits * rebaseMultiplier) / 1e18,1e18 / (totalDeposits * rebaseMultiplier)
+31,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,+
+32,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,-
+33,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,/
+34,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,%
+35,BinaryOpMutation,src/vault/Vault.sol,221:30, * ,**
+36,DeleteExpressionMutation,src/vault/Vault.sol,230:9,"require(amount > 0, ""Deposit amount must be greater than 0"")",assert(true)
+37,RequireMutation,src/vault/Vault.sol,230:17,amount > 0,true
+38,RequireMutation,src/vault/Vault.sol,230:17,amount > 0,false
+39,SwapArgumentsOperatorMutation,src/vault/Vault.sol,230:17,amount > 0,0 > amount
+40,DeleteExpressionMutation,src/vault/Vault.sol,231:9,"inputToken.safeTransferFrom(msg.sender, address(this), amount)",assert(true)
+41,DeleteExpressionMutation,src/vault/Vault.sol,232:9,"inputToken.approve(yieldSource, amount)",assert(true)
+42,DeleteExpressionMutation,src/vault/Vault.sol,234:9,originalDeposits[msg.sender] += amount,assert(true)
+43,AssignmentMutation,src/vault/Vault.sol,234:41,amount,0
+44,AssignmentMutation,src/vault/Vault.sol,234:41,amount,1
+45,DeleteExpressionMutation,src/vault/Vault.sol,235:9,totalDeposits += amount,assert(true)
+46,AssignmentMutation,src/vault/Vault.sol,235:26,amount,0
+47,AssignmentMutation,src/vault/Vault.sol,235:26,amount,1
+48,DeleteExpressionMutation,src/vault/Vault.sol,247:9,"require(canWithdraw(), ""Withdrawal not allowed"")",assert(true)
+49,RequireMutation,src/vault/Vault.sol,247:17,canWithdraw(),true
+50,RequireMutation,src/vault/Vault.sol,247:17,canWithdraw(),false
+51,DeleteExpressionMutation,src/vault/Vault.sol,248:9,"require(getEffectiveDeposit(msg.sender) >= amount, ""Insufficient effective deposit"")",assert(true)
+52,RequireMutation,src/vault/Vault.sol,248:17,getEffectiveDeposit(msg.sender) >= amount,true
+53,RequireMutation,src/vault/Vault.sol,248:17,getEffectiveDeposit(msg.sender) >= amount,false
+54,SwapArgumentsOperatorMutation,src/vault/Vault.sol,248:17,getEffectiveDeposit(msg.sender) >= amount,amount >= getEffectiveDeposit(msg.sender)
+55,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,+
+56,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,-
+57,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,*
+58,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,%
+59,BinaryOpMutation,src/vault/Vault.sol,253:54, / ,**
+60,SwapArgumentsOperatorMutation,src/vault/Vault.sol,253:39,(amount * 1e18) / rebaseMultiplier,rebaseMultiplier / (amount * 1e18)
+61,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,+
+62,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,-
+63,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,/
+64,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,%
+65,BinaryOpMutation,src/vault/Vault.sol,253:46, * ,**
+66,DeleteExpressionMutation,src/vault/Vault.sol,254:9,"require(originalDeposits[msg.sender] >= rawAmountToWithdraw, ""Insufficient raw deposit"")",assert(true)
+67,RequireMutation,src/vault/Vault.sol,254:17,originalDeposits[msg.sender] >= rawAmountToWithdraw,true
+68,RequireMutation,src/vault/Vault.sol,254:17,originalDeposits[msg.sender] >= rawAmountToWithdraw,false
+69,SwapArgumentsOperatorMutation,src/vault/Vault.sol,254:17,originalDeposits[msg.sender] >= rawAmountToWithdraw,rawAmountToWithdraw >= originalDeposits[msg.sender]
+70,DeleteExpressionMutation,src/vault/Vault.sol,259:9,"require(balanceAfter >= balanceBefore + received, ""Balance mismatch"")",assert(true)
+71,RequireMutation,src/vault/Vault.sol,259:17,balanceAfter >= balanceBefore + received,true
+72,RequireMutation,src/vault/Vault.sol,259:17,balanceAfter >= balanceBefore + received,false
+73,SwapArgumentsOperatorMutation,src/vault/Vault.sol,259:17,balanceAfter >= balanceBefore + received,balanceBefore + received >= balanceAfter
+74,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,-
+75,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,*
+76,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,/
+77,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,%
+78,BinaryOpMutation,src/vault/Vault.sol,259:46, + ,**
+79,IfStatementMutation,src/vault/Vault.sol,263:13,sFlaxAmount > 0 && flaxPerSFlax > 0,true
+80,IfStatementMutation,src/vault/Vault.sol,263:13,sFlaxAmount > 0 && flaxPerSFlax > 0,false
+81,SwapArgumentsOperatorMutation,src/vault/Vault.sol,263:13,sFlaxAmount > 0,0 > sFlaxAmount
+82,SwapArgumentsOperatorMutation,src/vault/Vault.sol,263:32,flaxPerSFlax > 0,0 > flaxPerSFlax
+83,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,+
+84,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,-
+85,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,*
+86,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,%
+87,BinaryOpMutation,src/vault/Vault.sol,264:61, / ,**
+88,SwapArgumentsOperatorMutation,src/vault/Vault.sol,264:33,(sFlaxAmount * flaxPerSFlax) / 1e18,1e18 / (sFlaxAmount * flaxPerSFlax)
+89,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,+
+90,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,-
+91,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,/
+92,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,%
+93,BinaryOpMutation,src/vault/Vault.sol,264:45, * ,**
+94,DeleteExpressionMutation,src/vault/Vault.sol,265:13,"sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount)",assert(true)
+95,DeleteExpressionMutation,src/vault/Vault.sol,266:13,IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount),assert(true)
+96,DeleteExpressionMutation,src/vault/Vault.sol,267:13,totalFlax += flaxBoost,assert(true)
+97,AssignmentMutation,src/vault/Vault.sol,267:26,flaxBoost,0
+98,AssignmentMutation,src/vault/Vault.sol,267:26,flaxBoost,1
+99,IfStatementMutation,src/vault/Vault.sol,271:13,totalFlax > 0,true
+100,IfStatementMutation,src/vault/Vault.sol,271:13,totalFlax > 0,false
+101,SwapArgumentsOperatorMutation,src/vault/Vault.sol,271:13,totalFlax > 0,0 > totalFlax
+102,DeleteExpressionMutation,src/vault/Vault.sol,272:13,"flaxToken.safeTransfer(msg.sender, totalFlax)",assert(true)
+103,DeleteExpressionMutation,src/vault/Vault.sol,277:9,originalDeposits[msg.sender] -= rawAmountToWithdraw,assert(true)
+104,AssignmentMutation,src/vault/Vault.sol,277:41,rawAmountToWithdraw,0
+105,AssignmentMutation,src/vault/Vault.sol,277:41,rawAmountToWithdraw,1
+106,DeleteExpressionMutation,src/vault/Vault.sol,278:9,totalDeposits -= rawAmountToWithdraw,assert(true)
+107,AssignmentMutation,src/vault/Vault.sol,278:26,rawAmountToWithdraw,0
+108,AssignmentMutation,src/vault/Vault.sol,278:26,rawAmountToWithdraw,1
+109,IfStatementMutation,src/vault/Vault.sol,281:13,received > amount,true
+110,IfStatementMutation,src/vault/Vault.sol,281:13,received > amount,false
+111,SwapArgumentsOperatorMutation,src/vault/Vault.sol,281:13,received > amount,amount > received
+112,IfStatementMutation,src/vault/Vault.sol,285:20,received < amount,true
+113,IfStatementMutation,src/vault/Vault.sol,285:20,received < amount,false
+114,SwapArgumentsOperatorMutation,src/vault/Vault.sol,285:20,received < amount,amount < received
+115,DeleteExpressionMutation,src/vault/Vault.sol,298:13,"inputToken.safeTransfer(msg.sender, amount)",assert(true)
+116,DeleteExpressionMutation,src/vault/Vault.sol,299:13,actualWithdrawn = amount,assert(true)
+117,AssignmentMutation,src/vault/Vault.sol,299:31,amount,0
+118,AssignmentMutation,src/vault/Vault.sol,299:31,amount,1
+119,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,+
+120,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,*
+121,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,/
+122,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,%
+123,BinaryOpMutation,src/vault/Vault.sol,286:39, - ,**
+124,SwapArgumentsOperatorMutation,src/vault/Vault.sol,286:33,amount - received,received - amount
+125,IfStatementMutation,src/vault/Vault.sol,287:17,surplusInputToken >= shortfall,true
+126,IfStatementMutation,src/vault/Vault.sol,287:17,surplusInputToken >= shortfall,false
+127,SwapArgumentsOperatorMutation,src/vault/Vault.sol,287:17,surplusInputToken >= shortfall,shortfall >= surplusInputToken
+128,IfStatementMutation,src/vault/Vault.sol,291:24,protectLoss,true
+129,IfStatementMutation,src/vault/Vault.sol,291:24,protectLoss,false
+130,DeleteExpressionMutation,src/vault/Vault.sol,294:17,"inputToken.safeTransfer(msg.sender, received)",assert(true)
+131,DeleteExpressionMutation,src/vault/Vault.sol,295:17,actualWithdrawn = received,assert(true)
+132,AssignmentMutation,src/vault/Vault.sol,295:35,received,0
+133,AssignmentMutation,src/vault/Vault.sol,295:35,received,1
+134,DeleteExpressionMutation,src/vault/Vault.sol,292:17,"revert(""Shortfall exceeds surplus"")",assert(true)
+135,DeleteExpressionMutation,src/vault/Vault.sol,288:17,surplusInputToken -= shortfall,assert(true)
+136,AssignmentMutation,src/vault/Vault.sol,288:38,shortfall,0
+137,AssignmentMutation,src/vault/Vault.sol,288:38,shortfall,1
+138,DeleteExpressionMutation,src/vault/Vault.sol,289:17,"inputToken.safeTransfer(msg.sender, amount)",assert(true)
+139,DeleteExpressionMutation,src/vault/Vault.sol,290:17,actualWithdrawn = amount,assert(true)
+140,AssignmentMutation,src/vault/Vault.sol,290:35,amount,0
+141,AssignmentMutation,src/vault/Vault.sol,290:35,amount,1
+142,DeleteExpressionMutation,src/vault/Vault.sol,282:13,surplusInputToken += received - amount,assert(true)
+143,AssignmentMutation,src/vault/Vault.sol,282:34,received - amount,0
+144,AssignmentMutation,src/vault/Vault.sol,282:34,received - amount,1
+145,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,+
+146,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,*
+147,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,/
+148,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,%
+149,BinaryOpMutation,src/vault/Vault.sol,282:42, - ,**
+150,SwapArgumentsOperatorMutation,src/vault/Vault.sol,282:34,received - amount,amount - received
+151,DeleteExpressionMutation,src/vault/Vault.sol,283:13,"inputToken.safeTransfer(msg.sender, amount)",assert(true)
+152,DeleteExpressionMutation,src/vault/Vault.sol,284:13,actualWithdrawn = amount,assert(true)
+153,AssignmentMutation,src/vault/Vault.sol,284:31,amount,0
+154,AssignmentMutation,src/vault/Vault.sol,284:31,amount,1
+155,IfStatementMutation,src/vault/Vault.sol,314:13,sFlaxAmount > 0 && flaxPerSFlax > 0,true
+156,IfStatementMutation,src/vault/Vault.sol,314:13,sFlaxAmount > 0 && flaxPerSFlax > 0,false
+157,SwapArgumentsOperatorMutation,src/vault/Vault.sol,314:13,sFlaxAmount > 0,0 > sFlaxAmount
+158,SwapArgumentsOperatorMutation,src/vault/Vault.sol,314:32,flaxPerSFlax > 0,0 > flaxPerSFlax
+159,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,+
+160,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,-
+161,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,*
+162,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,%
+163,BinaryOpMutation,src/vault/Vault.sol,315:61, / ,**
+164,SwapArgumentsOperatorMutation,src/vault/Vault.sol,315:33,(sFlaxAmount * flaxPerSFlax) / 1e18,1e18 / (sFlaxAmount * flaxPerSFlax)
+165,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,+
+166,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,-
+167,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,/
+168,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,%
+169,BinaryOpMutation,src/vault/Vault.sol,315:45, * ,**
+170,DeleteExpressionMutation,src/vault/Vault.sol,316:13,"sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount)",assert(true)
+171,DeleteExpressionMutation,src/vault/Vault.sol,317:13,IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount),assert(true)
+172,DeleteExpressionMutation,src/vault/Vault.sol,318:13,totalFlax += flaxBoost,assert(true)
+173,AssignmentMutation,src/vault/Vault.sol,318:26,flaxBoost,0
+174,AssignmentMutation,src/vault/Vault.sol,318:26,flaxBoost,1
+175,IfStatementMutation,src/vault/Vault.sol,322:13,totalFlax > 0,true
+176,IfStatementMutation,src/vault/Vault.sol,322:13,totalFlax > 0,false
+177,SwapArgumentsOperatorMutation,src/vault/Vault.sol,322:13,totalFlax > 0,0 > totalFlax
+178,DeleteExpressionMutation,src/vault/Vault.sol,323:13,"flaxToken.safeTransfer(msg.sender, totalFlax)",assert(true)
+179,DeleteExpressionMutation,src/vault/Vault.sol,334:9,flaxPerSFlax = _flaxPerSFlax,assert(true)
+180,AssignmentMutation,src/vault/Vault.sol,334:24,_flaxPerSFlax,0
+181,AssignmentMutation,src/vault/Vault.sol,334:24,_flaxPerSFlax,1
+182,IfStatementMutation,src/vault/Vault.sol,349:13,inputTokenAmount > 0,true
+183,IfStatementMutation,src/vault/Vault.sol,349:13,inputTokenAmount > 0,false
+184,SwapArgumentsOperatorMutation,src/vault/Vault.sol,349:13,inputTokenAmount > 0,0 > inputTokenAmount
+185,DeleteExpressionMutation,src/vault/Vault.sol,350:13,surplusInputToken += inputTokenAmount,assert(true)
+186,AssignmentMutation,src/vault/Vault.sol,350:34,inputTokenAmount,0
+187,AssignmentMutation,src/vault/Vault.sol,350:34,inputTokenAmount,1
+188,IfStatementMutation,src/vault/Vault.sol,355:13,amount > 0,true
+189,IfStatementMutation,src/vault/Vault.sol,355:13,amount > 0,false
+190,SwapArgumentsOperatorMutation,src/vault/Vault.sol,355:13,amount > 0,0 > amount
+191,DeleteExpressionMutation,src/vault/Vault.sol,357:13,totalDeposits = 0,assert(true)
+192,AssignmentMutation,src/vault/Vault.sol,357:29,0,1
+193,DeleteExpressionMutation,src/vault/Vault.sol,358:13,surplusInputToken += received,assert(true)
+194,AssignmentMutation,src/vault/Vault.sol,358:34,received,0
+195,AssignmentMutation,src/vault/Vault.sol,358:34,received,1
+196,IfStatementMutation,src/vault/Vault.sol,362:13,surplusInputToken > 0,true
+197,IfStatementMutation,src/vault/Vault.sol,362:13,surplusInputToken > 0,false
+198,SwapArgumentsOperatorMutation,src/vault/Vault.sol,362:13,surplusInputToken > 0,0 > surplusInputToken
+199,DeleteExpressionMutation,src/vault/Vault.sol,363:13,"inputToken.approve(newYieldSource, surplusInputToken)",assert(true)
+200,DeleteExpressionMutation,src/vault/Vault.sol,365:13,IYieldsSource(newYieldSource).deposit(surplusInputToken),assert(true)
+201,DeleteExpressionMutation,src/vault/Vault.sol,366:13,totalDeposits = deposited,assert(true)
+202,AssignmentMutation,src/vault/Vault.sol,366:29,deposited,0
+203,AssignmentMutation,src/vault/Vault.sol,366:29,deposited,1
+204,DeleteExpressionMutation,src/vault/Vault.sol,367:13,surplusInputToken = 0,assert(true)
+205,AssignmentMutation,src/vault/Vault.sol,367:33,0,1
+206,DeleteExpressionMutation,src/vault/Vault.sol,370:9,yieldSource = newYieldSource,assert(true)
+207,DeleteExpressionMutation,src/vault/Vault.sol,389:9,emergencyState = state,assert(true)
+208,AssignmentMutation,src/vault/Vault.sol,389:26,state,true
+209,AssignmentMutation,src/vault/Vault.sol,389:26,state,false
+210,DeleteExpressionMutation,src/vault/Vault.sol,400:9,"require(token != address(0), ""Invalid token address"")",assert(true)
+211,RequireMutation,src/vault/Vault.sol,400:17,token != address(0),true
+212,RequireMutation,src/vault/Vault.sol,400:17,token != address(0),false
+213,IfStatementMutation,src/vault/Vault.sol,405:13,balance > 0,true
+214,IfStatementMutation,src/vault/Vault.sol,405:13,balance > 0,false
+215,SwapArgumentsOperatorMutation,src/vault/Vault.sol,405:13,balance > 0,0 > balance
+216,DeleteExpressionMutation,src/vault/Vault.sol,406:13,"tokenContract.safeTransfer(recipient, balance)",assert(true)
+217,IfStatementMutation,src/vault/Vault.sol,419:13,balance > 0,true
+218,IfStatementMutation,src/vault/Vault.sol,419:13,balance > 0,false
+219,SwapArgumentsOperatorMutation,src/vault/Vault.sol,419:13,balance > 0,0 > balance
+220,DeleteExpressionMutation,src/vault/Vault.sol,420:13,recipient.transfer(balance),assert(true)
+221,DeleteExpressionMutation,src/vault/Vault.sol,433:9,"require(emergencyState, ""Not in emergency state"")",assert(true)
+222,RequireMutation,src/vault/Vault.sol,433:17,emergencyState,true
+223,RequireMutation,src/vault/Vault.sol,433:17,emergencyState,false
+224,IfStatementMutation,src/vault/Vault.sol,436:13,token == address(inputToken) && totalDeposits > 0,true
+225,IfStatementMutation,src/vault/Vault.sol,436:13,token == address(inputToken) && totalDeposits > 0,false
+226,SwapArgumentsOperatorMutation,src/vault/Vault.sol,436:45,totalDeposits > 0,0 > totalDeposits
+227,DeleteExpressionMutation,src/vault/Vault.sol,441:13,rebaseMultiplier = 0,assert(true)
+228,AssignmentMutation,src/vault/Vault.sol,441:32,0,1
+229,DeleteExpressionMutation,src/vault/Vault.sol,443:13,surplusInputToken += received,assert(true)
+230,AssignmentMutation,src/vault/Vault.sol,443:34,received,0
+231,AssignmentMutation,src/vault/Vault.sol,443:34,received,1
+232,IfStatementMutation,src/vault/Vault.sol,453:13,balance > 0,true
+233,IfStatementMutation,src/vault/Vault.sol,453:13,balance > 0,false
+234,SwapArgumentsOperatorMutation,src/vault/Vault.sol,453:13,balance > 0,0 > balance
+235,DeleteExpressionMutation,src/vault/Vault.sol,454:13,"tokenContract.safeTransfer(recipient, balance)",assert(true)

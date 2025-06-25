@@ -651,4 +651,190 @@ contract VaultTest is Test {
         assertEq(vault.getEffectiveDeposit(user2), 150 * 1e18, "User2 effective deposit after partial withdrawal");
         assertEq(vault.getEffectiveTotalDeposits(), 550 * 1e18, "Total effective deposits after withdrawal");
     }
+
+    // ====== MUTATION TESTING - SURVIVING MUTANT KILLERS ======
+
+    function testConstructorAcceptsValidAddresses() public {
+        // This test verifies constructor works with valid addresses
+        // Mutations that change constructor logic would break this
+        Vault newVault = new Vault(
+            address(flaxToken),
+            address(sFlaxToken),
+            address(inputToken),
+            address(yieldSource),
+            priceTilter
+        );
+        
+        // Verify all addresses are set correctly
+        assertEq(address(newVault.flaxToken()), address(flaxToken), "FlaxToken should be set");
+        assertEq(address(newVault.sFlaxToken()), address(sFlaxToken), "sFlaxToken should be set");
+        assertEq(address(newVault.inputToken()), address(inputToken), "InputToken should be set");
+        assertEq(newVault.yieldSource(), address(yieldSource), "YieldSource should be set");
+        assertEq(newVault.priceTilter(), priceTilter, "PriceTilter should be set");
+        assertEq(newVault.rebaseMultiplier(), 1e18, "RebaseMultiplier should be 1e18");
+        assertFalse(newVault.emergencyState(), "EmergencyState should be false");
+    }
+
+    function testConstructorSetsOwnerCorrectly() public {
+        // This test kills Mutation #3: DeleteExpressionMutation on _transferOwnership
+        address expectedOwner = address(this);
+        
+        Vault newVault = new Vault(
+            address(flaxToken),
+            address(sFlaxToken),
+            address(inputToken),
+            address(yieldSource),
+            priceTilter
+        );
+        
+        assertEq(newVault.owner(), expectedOwner, "Owner should be set to deployer");
+        assertNotEq(newVault.owner(), address(0), "Owner should not be zero address");
+    }
+
+    function testOnlyOwnerCanSetFlaxPerSFlax() public {
+        // This test kills Mutation #4 & #5: DeleteExpressionMutation on _checkOwner and IfStatementMutation
+        uint256 newRate = 2e17; // 0.2 flax per sFlax
+        
+        // Non-owner should fail
+        vm.expectRevert();
+        vm.prank(user);
+        vault.setFlaxPerSFlax(newRate);
+        
+        // Owner should succeed
+        vm.prank(vault.owner());
+        vault.setFlaxPerSFlax(newRate);
+        
+        assertEq(vault.flaxPerSFlax(), newRate, "FlaxPerSFlax should be updated");
+    }
+
+    function testOnlyOwnerCanSetEmergencyState() public {
+        // This test kills access control mutations
+        // Non-owner should fail
+        vm.expectRevert();
+        vm.prank(user);
+        vault.setEmergencyState(true);
+        
+        // Owner should succeed
+        vm.prank(vault.owner());
+        vault.setEmergencyState(true);
+        
+        assertTrue(vault.emergencyState(), "Emergency state should be set");
+    }
+
+    function testOnlyOwnerCanCallEmergencyWithdraw() public {
+        // This test kills access control mutations on emergency functions
+        MockERC20 testToken = new MockERC20();
+        testToken.mint(address(vault), 100e18);
+        
+        // Non-owner should fail
+        vm.expectRevert();
+        vm.prank(user);
+        vault.emergencyWithdraw(address(testToken), user);
+        
+        // Owner should succeed
+        vm.prank(vault.owner());
+        vault.emergencyWithdraw(address(testToken), vault.owner());
+    }
+
+    function testOnlyOwnerCanCallEmergencyWithdrawETH() public {
+        // This test kills access control mutations on ETH emergency functions
+        deal(address(vault), 1 ether);
+        
+        // Non-owner should fail
+        vm.expectRevert();
+        vm.prank(user);
+        vault.emergencyWithdrawETH(payable(user));
+        
+        // Owner should succeed - send to user address which can receive ETH
+        vm.prank(vault.owner());
+        vault.emergencyWithdrawETH(payable(user));
+        
+        assertEq(user.balance, 1 ether, "User should have received ETH");
+        assertEq(address(vault).balance, 0, "Vault should have no ETH left");
+    }
+
+    function testOnlyOwnerCanMigrateYieldSource() public {
+        // This test kills access control mutations on migration
+        MockYieldSource newYieldSource = new MockYieldSource(address(inputToken));
+        
+        // Non-owner should fail
+        vm.expectRevert();
+        vm.prank(user);
+        vault.migrateYieldSource(address(newYieldSource));
+        
+        // Setup and owner should succeed
+        yieldSource.setReturnValues(0, 0);
+        vm.prank(vault.owner());
+        vault.migrateYieldSource(address(newYieldSource));
+    }
+
+    function testDepositRejectsZeroAmount() public {
+        // This test kills mutations that remove amount validation
+        vm.expectRevert("Deposit amount must be greater than 0");
+        vm.prank(user);
+        vault.deposit(0);
+    }
+
+    function testWithdrawRejectsInsufficientBalance() public {
+        // This test kills mutations that remove balance validation
+        vm.expectRevert("Insufficient effective deposit");
+        vm.prank(user);
+        vault.withdraw(100 * 1e18, false, 0); // User hasn't deposited anything
+    }
+
+    function testShortfallProtectionWorks() public {
+        // This test kills mutations that remove protectLoss validation
+        vm.prank(user);
+        vault.deposit(DEPOSIT_AMOUNT);
+        
+        // Configure shortfall scenario
+        uint256 shortfallAmount = DEPOSIT_AMOUNT - 10 * 1e18;
+        yieldSource.setReturnValues(shortfallAmount, 0);
+        inputToken.mint(address(yieldSource), shortfallAmount);
+        
+        // Should revert with protectLoss=true
+        vm.expectRevert("Shortfall exceeds surplus");
+        vm.prank(user);
+        vault.withdraw(DEPOSIT_AMOUNT, true, 0);
+    }
+
+    function testBoundaryConditions() public {
+        // Test edge cases that mutations might bypass
+        vm.startPrank(user);
+        
+        // Deposit exactly 1 wei
+        vault.deposit(1);
+        assertEq(vault.originalDeposits(user), 1, "Should handle 1 wei deposit");
+        
+        // Withdraw exactly what was deposited
+        yieldSource.setReturnValues(1, 0);
+        inputToken.mint(address(yieldSource), 1);
+        vault.withdraw(1, false, 0);
+        assertEq(vault.originalDeposits(user), 0, "Should handle 1 wei withdrawal");
+        
+        vm.stopPrank();
+    }
+
+    function testRequireStatementValidation() public {
+        // Test all require statements work correctly
+        vm.startPrank(user);
+        
+        // Test deposit with insufficient allowance
+        inputToken.approve(address(vault), 0);
+        vm.expectRevert();
+        vault.deposit(DEPOSIT_AMOUNT);
+        
+        // Fix allowance
+        inputToken.approve(address(vault), type(uint256).max);
+        
+        // Test withdraw without protectLoss
+        vault.deposit(DEPOSIT_AMOUNT);
+        yieldSource.setReturnValues(DEPOSIT_AMOUNT - 1, 0); // Shortfall
+        inputToken.mint(address(yieldSource), DEPOSIT_AMOUNT - 1);
+        
+        // Should succeed with protectLoss=false
+        vault.withdraw(DEPOSIT_AMOUNT, false, 0);
+        
+        vm.stopPrank();
+    }
 }

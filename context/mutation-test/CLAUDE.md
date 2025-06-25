@@ -2,6 +2,18 @@
 
 This document provides guidance for mutation testing using Gambit in the ReFlax codebase.
 
+## Phase 4 Active - Structured Completion
+
+**Current Phase**: Phase 4 - Smart filtering and efficient execution
+**Action Plan**: See `Phase4ActionPlan.md` for detailed execution steps
+**Status**: Organizing mutation testing evolution with focus on signal over noise
+
+### Quick Navigation for Fresh Agents
+1. **Start Here**: Read `Phase4ActionPlan.md` for current strategy
+2. **Understanding Progress**: Check `contracts/<Contract>/phase*/` directories
+3. **Current Work**: Phase 4 focuses on excluding low-value mutations (OpenZeppelin, getters)
+4. **Key Principle**: Test ReFlax-specific logic, not battle-tested library code
+
 ## Overview
 
 Mutation testing helps verify the quality of our test suite by introducing small changes (mutations) to the source code and checking if tests can detect these changes. A good test suite should "kill" most mutations.
@@ -174,3 +186,38 @@ gambit test --timeout 300
 - Review mutation configurations when adding new contracts
 - Archive old mutation reports for trend analysis
 - Update this guide based on team learnings
+
+## Mutation Testing Evolution Navigation
+
+### Directory Structure
+```
+contracts/
+├── Vault/
+│   ├── phase1-baseline/      # Initial mutation testing results
+│   ├── phase2-improvements/  # First round of test improvements
+│   ├── phase3-targeted/      # Targeted killer tests for survivors
+│   └── summary.md           # Evolution narrative for this contract
+├── YieldSource/
+├── PriceTilter/
+└── TWAPOracle/
+```
+
+### Understanding the Evolution
+1. Each contract has its own evolution tracked in phases
+2. Phase directories contain results, analysis, and improvements
+3. Summary files provide narrative continuity
+4. Final results will update ComprehensiveFormalVerificationReport.md
+
+### Smart Filtering Philosophy (Phase 4)
+- **Exclude**: OpenZeppelin code, view functions, simple getters
+- **Include**: ReFlax-specific business logic, DeFi integrations, financial calculations
+- **Goal**: ~500 meaningful mutations tested (vs 875 generated)
+- **Principle**: Signal over noise - test what matters
+
+### For Fresh Agents
+If picking up mutation testing work:
+1. Read `Phase4ActionPlan.md` first
+2. Check the latest phase directory for each contract
+3. Continue from where previous work stopped
+4. Follow the smart filtering criteria
+5. Document all decisions in appropriate phase directories

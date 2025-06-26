@@ -1,0 +1,203 @@
+# Gambit configuration for ReFlax Protocol
+version: 1.0
+
+# Contracts to mutate (in priority order)
+contracts:
+  # Critical contracts - highest priority
+  - path: src/vault/Vault.sol
+    operators: all
+    functions:
+      exclude:
+        - "receive"
+        - "constructor"
+  
+  - path: src/yieldSource/CVX_CRV_YieldSource.sol
+    operators: all
+    functions:
+      exclude:
+        - "constructor"
+  
+  - path: src/priceTilting/PriceTilterTWAP.sol
+    operators: all
+    functions:
+      exclude:
+        - "constructor"
+  
+  # High priority contracts
+  - path: src/priceTilting/TWAPOracle.sol
+    operators: all
+    functions:
+      exclude:
+        - "constructor"
+  
+  - path: src/yieldSource/AYieldSource.sol
+    operators: all
+    functions:
+      exclude:
+        - "constructor"
+
+# Mutation operators to apply
+operators:
+  arithmetic:
+    enabled: true
+    operators:
+      - "+" → "-"
+      - "-" → "+"
+      - "*" → "/"
+      - "/" → "*"
+      - "%" → "*"
+  
+  comparison:
+    enabled: true
+    operators:
+      - ">" → ">="
+      - ">=" → ">"
+      - "<" → "<="
+      - "<=" → "<"
+      - "==" → "!="
+      - "!=" → "=="
+  
+  assignment:
+    enabled: true
+    operators:
+      - "+=" → "-="
+      - "-=" → "+="
+      - "*=" → "/="
+      - "/=" → "*="
+  
+  logical:
+    enabled: true
+    operators:
+      - "&&" → "||"
+      - "||" → "&&"
+      - "!" → ""
+  
+  require_revert:
+    enabled: true
+    operators:
+      - "require" → "revert"
+      - remove "require"
+  
+  return_values:
+    enabled: true
+    operators:
+      - "true" → "false"
+      - "false" → "true"
+      - "0" → "1"
+      - increment numeric returns
+      - decrement numeric returns
+
+# Test execution configuration
+test:
+  command: "forge test"
+  timeout: 180  # seconds per test
+  working_directory: "."
+  
+  # Environment variables for tests
+  environment:
+    FOUNDRY_PROFILE: "default"
+  
+  # Continue testing even if some mutations cause compilation errors
+  continue_on_error: true
+
+# Performance settings
+performance:
+  parallel_threads: 4
+  max_test_runs: 1000  # Stop after this many test runs
+  
+  # Smart test selection - only run relevant tests for each mutation
+  smart_test_selection:
+    enabled: true
+    strategy: "function"  # Run tests that call the mutated function
+  
+  # Caching
+  cache:
+    enabled: true
+    directory: ".gambit_cache"
+
+# Reporting configuration
+reporting:
+  # Output formats
+  formats:
+    - html
+    - json
+    - markdown
+  
+  # Output directory
+  output_directory: "mutation-reports"
+  
+  # Include source code snippets in reports
+  include_source: true
+  
+  # Group results by
+  grouping: "contract"
+
+# Exclusions
+exclude:
+  # File patterns to exclude
+  files:
+    - "test/**"
+    - "script/**"
+    - "lib/**"
+    - "*.t.sol"
+  
+  # Function patterns to exclude
+  functions:
+    - "test_*"
+    - "_test*"
+    - "setUp"
+    - "receive"
+    - "fallback"
+    - "constructor"
+  
+  # Skip pure and view functions by default
+  skip_pure_functions: false  # We want to test these too
+  skip_view_functions: false  # Important for oracles
+
+# Contract-specific configurations
+contract_configs:
+  "Vault.sol":
+    # Extra attention to financial calculations
+    operators:
+      arithmetic:
+        priority: "high"
+    # Specific functions to focus on
+    focus_functions:
+      - "deposit"
+      - "withdraw"
+      - "claimRewards"
+      - "calculateEffectiveDeposit"
+  
+  "TWAPOracle.sol":
+    # Focus on time-based calculations
+    operators:
+      comparison:
+        priority: "high"
+    focus_functions:
+      - "getPrice"
+      - "updatePriceCumulative"
+      - "_calculateTWAP"
+  
+  "PriceTilterTWAP.sol":
+    # Critical for price manipulation
+    operators:
+      arithmetic:
+        priority: "high"
+    focus_functions:
+      - "calculateFlaxFromETH"
+      - "tiltFlaxTowardHigherPrice"
+
+# Mutation testing goals
+goals:
+  # Minimum mutation score targets
+  mutation_score:
+    overall: 80
+    critical_contracts: 90
+    high_priority_contracts: 85
+    medium_priority_contracts: 75
+  
+  # Maximum acceptable survived mutations
+  max_survived:
+    critical_functions: 0
+    financial_calculations: 0
+    access_control: 0

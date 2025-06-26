@@ -1,0 +1,121 @@
+1,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,72:9,"require(_factory != address(0), ""Invalid factory address"")",assert(true)
+2,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,72:17,_factory != address(0),true
+3,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,72:17,_factory != address(0),false
+4,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,73:9,"require(_router != address(0), ""Invalid router address"")",assert(true)
+5,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,73:17,_router != address(0),true
+6,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,73:17,_router != address(0),false
+7,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,74:9,"require(_flaxToken != address(0), ""Invalid Flax token address"")",assert(true)
+8,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,74:17,_flaxToken != address(0),true
+9,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,74:17,_flaxToken != address(0),false
+10,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,75:9,"require(_oracle != address(0), ""Invalid oracle address"")",assert(true)
+11,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,75:17,_oracle != address(0),true
+12,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,75:17,_oracle != address(0),false
+13,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,76:9,factory = IUniswapV2Factory(_factory),assert(true)
+14,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,77:9,router = IUniswapV2Router02(_router),assert(true)
+15,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,78:9,flaxToken = IERC20(_flaxToken),assert(true)
+16,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,79:9,oracle = IOracle(_oracle),assert(true)
+17,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,80:9,priceTiltRatio = 8000,assert(true)
+18,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,80:26,8000,0
+19,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,80:26,8000,1
+20,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,89:9,"require(newRatio <= 10000, ""Ratio exceeds 100%"")",assert(true)
+21,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,89:17,newRatio <= 10000,true
+22,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,89:17,newRatio <= 10000,false
+23,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,89:17,newRatio <= 10000,10000 <= newRatio
+24,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,90:9,priceTiltRatio = newRatio,assert(true)
+25,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,90:26,newRatio,0
+26,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,90:26,newRatio,1
+27,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,101:9,"require(tokenA != address(0) && tokenB != address(0), ""Invalid token address"")",assert(true)
+28,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,101:17,tokenA != address(0) && tokenB != address(0),true
+29,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,101:17,tokenA != address(0) && tokenB != address(0),false
+30,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,102:9,"require(tokenA != tokenB, ""Tokens must be different"")",assert(true)
+31,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,102:17,tokenA != tokenB,true
+32,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,102:17,tokenA != tokenB,false
+33,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,104:9,"require(pair != address(0), ""Pair does not exist"")",assert(true)
+34,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,104:17,pair != address(0),true
+35,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,104:17,pair != address(0),false
+36,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,105:9,"require(!isPairRegistered[pair], ""Pair already registered"")",assert(true)
+37,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,105:17,!isPairRegistered[pair],true
+38,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,105:17,!isPairRegistered[pair],false
+39,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,107:9,isPairRegistered[pair] = true,assert(true)
+40,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,107:34,true,false
+41,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,108:9,"oracle.update(tokenA, tokenB)",assert(true)
+42,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,122:9,"require(isPairRegistered[pair], ""Pair not registered"")",assert(true)
+43,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,122:17,isPairRegistered[pair],true
+44,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,122:17,isPairRegistered[pair],false
+45,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,124:9,"oracle.update(tokenA, tokenB)",assert(true)
+46,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,127:13,token0 == tokenA,true
+47,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,127:13,token0 == tokenA,false
+48,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,143:9,"require(token == address(flaxToken), ""Invalid token"")",assert(true)
+49,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,143:17,token == address(flaxToken),true
+50,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,143:17,token == address(flaxToken),false
+51,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,144:9,"require(msg.value == ethAmount, ""ETH amount mismatch"")",assert(true)
+52,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,144:17,msg.value == ethAmount,true
+53,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,144:17,msg.value == ethAmount,false
+54,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,145:9,"require(ethAmount > 0, ""Zero ETH amount"")",assert(true)
+55,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,145:17,ethAmount > 0,true
+56,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,145:17,ethAmount > 0,false
+57,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,145:17,ethAmount > 0,0 > ethAmount
+58,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,149:9,"require(isPairRegistered[pair], ""Flax-WETH pair not registered"")",assert(true)
+59,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,149:17,isPairRegistered[pair],true
+60,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,149:17,isPairRegistered[pair],false
+61,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,151:9,"oracle.update(address(flaxToken), weth)",assert(true)
+62,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,155:9,"require(ethPerFlax > 0, ""Invalid TWAP price"")",assert(true)
+63,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,155:17,ethPerFlax > 0,true
+64,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,155:17,ethPerFlax > 0,false
+65,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,155:17,ethPerFlax > 0,0 > ethPerFlax
+66,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:47, / ,+
+67,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:47, / ,-
+68,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:47, / ,*
+69,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:47, / ,%
+70,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:47, / ,**
+71,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,158:29,(ethAmount * 1e18) / ethPerFlax,ethPerFlax / (ethAmount * 1e18)
+72,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:39, * ,+
+73,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:39, * ,-
+74,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:39, * ,/
+75,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:39, * ,%
+76,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,158:39, * ,**
+77,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:58, / ,+
+78,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:58, / ,-
+79,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:58, / ,*
+80,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:58, / ,%
+81,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:58, / ,**
+82,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,161:30,(flaxValue * priceTiltRatio) / 10000,10000 / (flaxValue * priceTiltRatio)
+83,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:40, * ,+
+84,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:40, * ,-
+85,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:40, * ,/
+86,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:40, * ,%
+87,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,161:40, * ,**
+88,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,162:9,"require(flaxAmount > 0, ""Zero Flax amount"")",assert(true)
+89,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,162:17,flaxAmount > 0,true
+90,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,162:17,flaxAmount > 0,false
+91,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,162:17,flaxAmount > 0,0 > flaxAmount
+92,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,165:9,"require(flaxToken.balanceOf(address(this)) >= flaxAmount, ""Insufficient Flax balance"")",assert(true)
+93,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,165:17,flaxToken.balanceOf(address(this)) >= flaxAmount,true
+94,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,165:17,flaxToken.balanceOf(address(this)) >= flaxAmount,false
+95,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,165:17,flaxToken.balanceOf(address(this)) >= flaxAmount,flaxAmount >= flaxToken.balanceOf(address(this))
+96,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,168:9,"flaxToken.approve(address(router), flaxAmount)",assert(true)
+97,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,172:13,address(this).balance > ethAmount,true
+98,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,172:13,address(this).balance > ethAmount,false
+99,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,172:13,address(this).balance > ethAmount,ethAmount > address(this).balance
+100,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,173:13,totalEthAmount = address(this).balance,assert(true)
+101,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,173:30,address(this).balance,0
+102,AssignmentMutation,src/priceTilting/PriceTilterTWAP.sol,173:30,address(this).balance,1
+103,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,183:28, + ,-
+104,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,183:28, + ,*
+105,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,183:28, + ,/
+106,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,183:28, + ,%
+107,BinaryOpMutation,src/priceTilting/PriceTilterTWAP.sol,183:28, + ,**
+108,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,186:9,"require(liquidity > 0, ""Liquidity addition failed"")",assert(true)
+109,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,186:17,liquidity > 0,true
+110,RequireMutation,src/priceTilting/PriceTilterTWAP.sol,186:17,liquidity > 0,false
+111,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,186:17,liquidity > 0,0 > liquidity
+112,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,200:13,token == address(0),true
+113,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,200:13,token == address(0),false
+114,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,210:17,balance > 0,true
+115,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,210:17,balance > 0,false
+116,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,210:17,balance > 0,0 > balance
+117,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,211:17,"tokenToWithdraw.transfer(recipient, balance)",assert(true)
+118,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,203:17,balance > 0,true
+119,IfStatementMutation,src/priceTilting/PriceTilterTWAP.sol,203:17,balance > 0,false
+120,SwapArgumentsOperatorMutation,src/priceTilting/PriceTilterTWAP.sol,203:17,balance > 0,0 > balance
+121,DeleteExpressionMutation,src/priceTilting/PriceTilterTWAP.sol,204:17,payable(recipient).transfer(balance),assert(true)

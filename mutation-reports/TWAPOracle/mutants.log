@@ -1,0 +1,116 @@
+1,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,74:9,"require(pair != address(0), ""Invalid pair"")",assert(true)
+2,RequireMutation,src/priceTilting/TWAPOracle.sol,74:17,pair != address(0),true
+3,RequireMutation,src/priceTilting/TWAPOracle.sol,74:17,pair != address(0),false
+4,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,75:9,"require(pairMeasurements[pair].lastUpdateTimestamp != 0, ""Pair not initialized"")",assert(true)
+5,RequireMutation,src/priceTilting/TWAPOracle.sol,75:17,pairMeasurements[pair].lastUpdateTimestamp != 0,true
+6,RequireMutation,src/priceTilting/TWAPOracle.sol,75:17,pairMeasurements[pair].lastUpdateTimestamp != 0,false
+7,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,88:9,tokenA = tokenA == address(0) ? WETH : tokenA,assert(true)
+8,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,89:9,tokenB = tokenB == address(0) ? WETH : tokenB,assert(true)
+9,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,92:9,"require(pairAddress != address(0), ""TWAPOracle: INVALID_PAIR"")",assert(true)
+10,RequireMutation,src/priceTilting/TWAPOracle.sol,92:17,pairAddress != address(0),true
+11,RequireMutation,src/priceTilting/TWAPOracle.sol,92:17,pairAddress != address(0),false
+12,IfStatementMutation,src/priceTilting/TWAPOracle.sol,101:13,measurement.lastUpdateTimestamp == 0,true
+13,IfStatementMutation,src/priceTilting/TWAPOracle.sol,101:13,measurement.lastUpdateTimestamp == 0,false
+14,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,103:13,measurement.lastUpdateTimestamp = blockTimestampLastFromPair,assert(true)
+15,AssignmentMutation,src/priceTilting/TWAPOracle.sol,103:47,blockTimestampLastFromPair,0
+16,AssignmentMutation,src/priceTilting/TWAPOracle.sol,103:47,blockTimestampLastFromPair,1
+17,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,104:13,measurement.lastPrice0Cumulative = currentPrice0Cumulative,assert(true)
+18,AssignmentMutation,src/priceTilting/TWAPOracle.sol,104:48,currentPrice0Cumulative,0
+19,AssignmentMutation,src/priceTilting/TWAPOracle.sol,104:48,currentPrice0Cumulative,1
+20,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,105:13,measurement.lastPrice1Cumulative = currentPrice1Cumulative,assert(true)
+21,AssignmentMutation,src/priceTilting/TWAPOracle.sol,105:48,currentPrice1Cumulative,0
+22,AssignmentMutation,src/priceTilting/TWAPOracle.sol,105:48,currentPrice1Cumulative,1
+23,IfStatementMutation,src/priceTilting/TWAPOracle.sol,115:13,currentTimestamp < measurement.lastUpdateTimestamp,true
+24,IfStatementMutation,src/priceTilting/TWAPOracle.sol,115:13,currentTimestamp < measurement.lastUpdateTimestamp,false
+25,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,115:13,currentTimestamp < measurement.lastUpdateTimestamp,measurement.lastUpdateTimestamp < currentTimestamp
+26,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,121:14,currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp),assert(true)
+27,AssignmentMutation,src/priceTilting/TWAPOracle.sol,121:33,uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp),0
+28,AssignmentMutation,src/priceTilting/TWAPOracle.sol,121:33,uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp),1
+29,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,121:40,block.timestamp > measurement.lastUpdateTimestamp,measurement.lastUpdateTimestamp > block.timestamp
+30,IfStatementMutation,src/priceTilting/TWAPOracle.sol,122:18,currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative),true
+31,IfStatementMutation,src/priceTilting/TWAPOracle.sol,122:18,currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative),false
+32,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,129:47, - ,+
+33,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,129:47, - ,*
+34,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,129:47, - ,/
+35,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,129:47, - ,%
+36,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,129:47, - ,**
+37,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,129:31,currentTimestamp - measurement.lastUpdateTimestamp,measurement.lastUpdateTimestamp - currentTimestamp
+38,IfStatementMutation,src/priceTilting/TWAPOracle.sol,131:13,timeElapsed >= PERIOD,true
+39,IfStatementMutation,src/priceTilting/TWAPOracle.sol,131:13,timeElapsed >= PERIOD,false
+40,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,131:13,timeElapsed >= PERIOD,PERIOD >= timeElapsed
+41,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,132:13,"require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, ""TWAPOracle: CUMULATIVE_PRICE_0_DECREASED"")",assert(true)
+42,RequireMutation,src/priceTilting/TWAPOracle.sol,132:21,currentPrice0Cumulative >= measurement.lastPrice0Cumulative,true
+43,RequireMutation,src/priceTilting/TWAPOracle.sol,132:21,currentPrice0Cumulative >= measurement.lastPrice0Cumulative,false
+44,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,132:21,currentPrice0Cumulative >= measurement.lastPrice0Cumulative,measurement.lastPrice0Cumulative >= currentPrice0Cumulative
+45,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,133:13,"require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, ""TWAPOracle: CUMULATIVE_PRICE_1_DECREASED"")",assert(true)
+46,RequireMutation,src/priceTilting/TWAPOracle.sol,133:21,currentPrice1Cumulative >= measurement.lastPrice1Cumulative,true
+47,RequireMutation,src/priceTilting/TWAPOracle.sol,133:21,currentPrice1Cumulative >= measurement.lastPrice1Cumulative,false
+48,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,133:21,currentPrice1Cumulative >= measurement.lastPrice1Cumulative,measurement.lastPrice1Cumulative >= currentPrice1Cumulative
+49,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:85, / ,+
+50,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:85, / ,-
+51,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:85, / ,*
+52,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:85, / ,%
+53,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:85, / ,**
+54,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,136:25,(currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed,timeElapsed / (currentPrice0Cumulative - measurement.lastPrice0Cumulative)
+55,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:49, - ,+
+56,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:49, - ,*
+57,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:49, - ,/
+58,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:49, - ,%
+59,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,136:49, - ,**
+60,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,136:26,currentPrice0Cumulative - measurement.lastPrice0Cumulative,measurement.lastPrice0Cumulative - currentPrice0Cumulative
+61,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:85, / ,+
+62,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:85, / ,-
+63,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:85, / ,*
+64,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:85, / ,%
+65,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:85, / ,**
+66,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,139:25,(currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed,timeElapsed / (currentPrice1Cumulative - measurement.lastPrice1Cumulative)
+67,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:49, - ,+
+68,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:49, - ,*
+69,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:49, - ,/
+70,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:49, - ,%
+71,BinaryOpMutation,src/priceTilting/TWAPOracle.sol,139:49, - ,**
+72,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,139:26,currentPrice1Cumulative - measurement.lastPrice1Cumulative,measurement.lastPrice1Cumulative - currentPrice1Cumulative
+73,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,142:13,measurement.lastUpdateTimestamp = currentTimestamp,assert(true)
+74,AssignmentMutation,src/priceTilting/TWAPOracle.sol,142:47,currentTimestamp,0
+75,AssignmentMutation,src/priceTilting/TWAPOracle.sol,142:47,currentTimestamp,1
+76,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,143:13,measurement.lastPrice0Cumulative = currentPrice0Cumulative,assert(true)
+77,AssignmentMutation,src/priceTilting/TWAPOracle.sol,143:48,currentPrice0Cumulative,0
+78,AssignmentMutation,src/priceTilting/TWAPOracle.sol,143:48,currentPrice0Cumulative,1
+79,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,144:13,measurement.lastPrice1Cumulative = currentPrice1Cumulative,assert(true)
+80,AssignmentMutation,src/priceTilting/TWAPOracle.sol,144:48,currentPrice1Cumulative,0
+81,AssignmentMutation,src/priceTilting/TWAPOracle.sol,144:48,currentPrice1Cumulative,1
+82,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,165:9,tokenOut = tokenOut == address(0) ? WETH : tokenOut,assert(true)
+83,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,168:9,"require(pairAddress != address(0), ""TWAPOracle: INVALID_PAIR"")",assert(true)
+84,RequireMutation,src/priceTilting/TWAPOracle.sol,168:17,pairAddress != address(0),true
+85,RequireMutation,src/priceTilting/TWAPOracle.sol,168:17,pairAddress != address(0),false
+86,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,174:9,"require(measurement.lastUpdateTimestamp != 0, ""TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP"")",assert(true)
+87,RequireMutation,src/priceTilting/TWAPOracle.sol,174:17,measurement.lastUpdateTimestamp != 0,true
+88,RequireMutation,src/priceTilting/TWAPOracle.sol,174:17,measurement.lastUpdateTimestamp != 0,false
+89,IfStatementMutation,src/priceTilting/TWAPOracle.sol,182:13,tokenIn == pairContract.token0(),true
+90,IfStatementMutation,src/priceTilting/TWAPOracle.sol,182:13,tokenIn == pairContract.token0(),false
+91,IfStatementMutation,src/priceTilting/TWAPOracle.sol,188:17,originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH,true
+92,IfStatementMutation,src/priceTilting/TWAPOracle.sol,188:17,originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH,false
+93,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,199:17,"require(tokenIn == token1, ""TWAPOracle: INVALID_TOKEN_IN_PAIR"")",assert(true)
+94,RequireMutation,src/priceTilting/TWAPOracle.sol,199:25,tokenIn == token1,true
+95,RequireMutation,src/priceTilting/TWAPOracle.sol,199:25,tokenIn == token1,false
+96,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,200:17,amountOut = (measurement.price1Average.mul(amountIn)).decode144(),assert(true)
+97,AssignmentMutation,src/priceTilting/TWAPOracle.sol,200:29,(measurement.price1Average.mul(amountIn)).decode144(),0
+98,AssignmentMutation,src/priceTilting/TWAPOracle.sol,200:29,(measurement.price1Average.mul(amountIn)).decode144(),1
+99,IfStatementMutation,src/priceTilting/TWAPOracle.sol,192:22,WETH == token1,true
+100,IfStatementMutation,src/priceTilting/TWAPOracle.sol,192:22,WETH == token1,false
+101,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,195:21,"require(WETH == pairContract.token0(), ""TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0"")",assert(true)
+102,RequireMutation,src/priceTilting/TWAPOracle.sol,195:29,WETH == pairContract.token0(),true
+103,RequireMutation,src/priceTilting/TWAPOracle.sol,195:29,WETH == pairContract.token0(),false
+104,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,196:21,amountOut = (measurement.price0Average.mul(amountIn)).decode144(),assert(true)
+105,AssignmentMutation,src/priceTilting/TWAPOracle.sol,196:33,(measurement.price0Average.mul(amountIn)).decode144(),0
+106,AssignmentMutation,src/priceTilting/TWAPOracle.sol,196:33,(measurement.price0Average.mul(amountIn)).decode144(),1
+107,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,193:21,amountOut = (measurement.price1Average.mul(amountIn)).decode144(),assert(true)
+108,AssignmentMutation,src/priceTilting/TWAPOracle.sol,193:33,(measurement.price1Average.mul(amountIn)).decode144(),0
+109,AssignmentMutation,src/priceTilting/TWAPOracle.sol,193:33,(measurement.price1Average.mul(amountIn)).decode144(),1
+110,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,183:13,amountOut = (measurement.price0Average.mul(amountIn)).decode144(),assert(true)
+111,AssignmentMutation,src/priceTilting/TWAPOracle.sol,183:25,(measurement.price0Average.mul(amountIn)).decode144(),0
+112,AssignmentMutation,src/priceTilting/TWAPOracle.sol,183:25,(measurement.price0Average.mul(amountIn)).decode144(),1
+113,DeleteExpressionMutation,src/priceTilting/TWAPOracle.sol,204:9,"require(amountOut > 0, ""TWAPOracle: ZERO_OUTPUT_AMOUNT"")",assert(true)
+114,RequireMutation,src/priceTilting/TWAPOracle.sol,204:17,amountOut > 0,true
+115,RequireMutation,src/priceTilting/TWAPOracle.sol,204:17,amountOut > 0,false
+116,SwapArgumentsOperatorMutation,src/priceTilting/TWAPOracle.sol,204:17,amountOut > 0,0 > amountOut

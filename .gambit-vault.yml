@@ -1,0 +1,36 @@
+# Gambit configuration for Vault.sol only
+version: 1.0
+
+# Basic settings
+mutate:
+  # Use forge for compilation instead of raw solc
+  use_forge: true
+  sources:
+    - "src/vault/Vault.sol"
+  
+  # Mutation operators
+  operators:
+    - "arithmetic"
+    - "require"
+    - "comparison"
+    - "assignment"
+    - "logical"
+    - "return"
+
+# Test configuration
+test:
+  # Use forge test with specific matching
+  command: "forge test --match-contract VaultTest"
+  timeout: 180
+  
+# Performance settings
+performance:
+  threads: 4
+  continue_on_error: true
+
+# Reporting
+reporting:
+  output_dir: "mutation-reports"
+  formats:
+    - "json"
+    - "markdown"

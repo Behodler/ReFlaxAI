@@ -81,6 +81,11 @@ contract DepositFlowTest is BaseIntegration {
             initialVaultDeposits + 5_000e6,
             "Vault totalDeposits should increase by deposit amount"
         );
+        assertEq(
+            vault.getEffectiveTotalDeposits(),
+            initialVaultDeposits + 5_000e6,
+            "Vault effective total deposits should increase by deposit amount"
+        );
         assertUserDeposit(alice, 5_000e6, "Alice's deposit should be tracked");
         
         // 3. Tokens transferred through the system
@@ -109,11 +114,11 @@ contract DepositFlowTest is BaseIntegration {
         
         // 6. Verify LP token amount is reasonable (accounting for slippage)
         uint256 lpBalance = convexBooster.balanceOf(address(yieldSource));
-        // Since USDC has 6 decimals and we deposited 5000e6, the LP amount should be similar
-        // The mock adds USDC + USDT amounts, so ~5000e6 + ~5000e6 = ~10000e6
+        // Input: 5000e6 USDC -> Half swapped: 2500e6 USDC -> 3750e6 USDT (1.5x rate)
+        // Add liquidity: 2500e6 USDC + 3750e6 USDT = 6250e6 LP tokens
         assertEq(
             lpBalance,
-            5_000_000_000, // Expected amount based on how MockCurvePool calculates (sum of inputs)
+            6_250_000_000, // Expected amount: 2500e6 + 3750e6 = 6250e6 = 6.25e9
             "LP token amount should match expected amount"
         );
     }
@@ -152,13 +157,14 @@ contract DepositFlowTest is BaseIntegration {
         assertUserDeposit(bob, 10_000e6, "Bob deposit tracked");
         assertUserDeposit(charlie, 7_500e6, "Charlie deposit tracked");
         
-        // Verify total LP tokens in Convex (should be sum of all deposits)
-        // MockCurvePool returns LP tokens with same scale as input tokens (USDC has 6 decimals)
+        // Verify total LP tokens in Convex (accounts for 1.5x USDC->USDT rate)
+        // Alice: 5000e6 -> 6250e6 LP, Bob: 10000e6 -> 12500e6 LP, Charlie: 7500e6 -> 9375e6 LP
+        // Total expected: 6250e6 + 12500e6 + 9375e6 = 28125e6 LP
         uint256 totalLP = convexBooster.balanceOf(address(yieldSource));
         assertApproxEq(
             totalLP,
-            22_500e6, // Expected LP tokens (matches total deposits in USDC scale)
-            1_125e6,  // 5% tolerance
+            28_125e6, // Expected LP tokens (accounting for 1.5x swap rate)
+            1_406e6,  // 5% tolerance (28125 * 0.05 = 1406.25)
             "Total LP tokens should match total deposits"
         );
     }
@@ -166,9 +172,10 @@ contract DepositFlowTest is BaseIntegration {
     /// @notice Test deposit with maximum tolerable slippage
     function testDepositWithMaxSlippage() public {
         // Setup: Configure slippage in Uniswap near the tolerance limit
+        // Oracle expects 2.5e9 USDC -> 3.75e9 USDT (1.5x rate)
         // Set specific return amounts to simulate 0.4% slippage (within 0.5% tolerance)
         uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken1), 2500e6, 2490e6); // 0.4% loss
-        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 2500e6, 2490e6); // 0.4% loss
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 2500e6, 3735e6); // 3750e6 - 0.4% = 3735e6
         setupUser(alice, 10_000e6);
         
         // Execute: Deposit should still succeed within tolerance
@@ -178,11 +185,11 @@ contract DepositFlowTest is BaseIntegration {
         // Assert: Deposit succeeded despite slippage
         assertUserDeposit(alice, 5_000e6, "Deposit tracked correctly");
         
-        // Verify LP tokens received (should be less due to slippage)
-        // MockCurvePool returns LP tokens with same scale as input tokens (USDC has 6 decimals)
+        // Verify LP tokens received (accounting for 1.5x rate and 0.4% slippage)
+        // Expected: 2500e6 USDC + 3735e6 USDT = 6235e6 LP tokens (vs 6250e6 without slippage)
         uint256 lpBalance = convexBooster.balanceOf(address(yieldSource));
-        assertLt(lpBalance, 5_000e6, "LP tokens should be less due to slippage");
-        assertGt(lpBalance, 4_800e6, "LP tokens should be within tolerance");
+        assertLt(lpBalance, 6_250e6, "LP tokens should be less due to slippage");
+        assertGt(lpBalance, 6_200e6, "LP tokens should be within tolerance");
     }
     
     /// @notice Test deposit when vault is in emergency state

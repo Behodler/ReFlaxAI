@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.13;
 
 import {IERC20} from "@oz_reflax/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@oz_reflax/token/ERC20/utils/SafeERC20.sol";
@@ -91,6 +91,10 @@ contract Vault is Ownable, ReentrancyGuard {
     
     /// @notice Emergency state flag that prevents deposits, claims, and migrations
     bool public emergencyState;
+    
+    /// @notice Rebase multiplier for handling emergency withdrawals (18 decimals, 1e18 = 1.0)
+    /// @dev When set to 0, all user deposits become effectively 0 and vault is disabled
+    uint256 public rebaseMultiplier;
 
     /**
      * @notice Emitted when a user deposits tokens
@@ -147,6 +151,18 @@ contract Vault is Ownable, ReentrancyGuard {
      * @param amount The amount withdrawn
      */
     event EmergencyWithdrawal(address indexed token, address indexed recipient, uint256 amount);
+    
+    /**
+     * @notice Emitted when rebase multiplier changes
+     * @param oldMultiplier The previous rebase multiplier
+     * @param newMultiplier The new rebase multiplier
+     */
+    event RebaseMultiplierUpdated(uint256 oldMultiplier, uint256 newMultiplier);
+    
+    /**
+     * @notice Emitted when vault is permanently disabled
+     */
+    event VaultPermanentlyDisabled();
 
     /**
      * @notice Initializes the vault with token addresses and yield source
@@ -169,6 +185,7 @@ contract Vault is Ownable, ReentrancyGuard {
         yieldSource = _yieldSource;
         priceTilter = _priceTilter;
         emergencyState = false;
+        rebaseMultiplier = 1e18; // Initialize to 1.0 (normal operation)
     }
 
     /**
@@ -178,13 +195,38 @@ contract Vault is Ownable, ReentrancyGuard {
         require(!emergencyState, "Contract is in emergency state");
         _;
     }
+    
+    /**
+     * @notice Modifier to prevent operations when vault is permanently disabled (rebase = 0)
+     */
+    modifier notPermanentlyDisabled() {
+        require(rebaseMultiplier > 0, "Vault permanently disabled");
+        _;
+    }
+    
+    /**
+     * @notice Get a user's effective deposit amount after applying rebase multiplier
+     * @param user The user address
+     * @return The effective deposit amount
+     */
+    function getEffectiveDeposit(address user) public view returns (uint256) {
+        return (originalDeposits[user] * rebaseMultiplier) / 1e18;
+    }
+    
+    /**
+     * @notice Get the effective total deposits after applying rebase multiplier
+     * @return The effective total deposits
+     */
+    function getEffectiveTotalDeposits() public view returns (uint256) {
+        return (totalDeposits * rebaseMultiplier) / 1e18;
+    }
 
     /**
      * @notice Deposits input tokens into the yield source
      * @param amount The amount of input tokens to deposit
      * @dev Tokens are immediately forwarded to the yield source
      */
-    function deposit(uint256 amount) external nonReentrant notInEmergencyState {
+    function deposit(uint256 amount) external nonReentrant notInEmergencyState notPermanentlyDisabled {
         require(amount > 0, "Deposit amount must be greater than 0");
         inputToken.safeTransferFrom(msg.sender, address(this), amount);
         inputToken.approve(yieldSource, amount);
@@ -201,12 +243,18 @@ contract Vault is Ownable, ReentrancyGuard {
      * @param sFlaxAmount Amount of sFlax to burn for bonus rewards
      * @dev Uses surplus to cover shortfalls from impermanent loss or fees
      */
-    function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external nonReentrant {
+    function withdraw(uint256 amount, bool protectLoss, uint256 sFlaxAmount) external nonReentrant notPermanentlyDisabled {
         require(canWithdraw(), "Withdrawal not allowed");
-        require(originalDeposits[msg.sender] >= amount, "Insufficient deposit");
+        require(getEffectiveDeposit(msg.sender) >= amount, "Insufficient effective deposit");
+
+        // Calculate the raw amount to withdraw from yield source
+        // If rebase multiplier is 1e18, this equals amount
+        // If rebase multiplier is different, we need to adjust
+        uint256 rawAmountToWithdraw = (amount * 1e18) / rebaseMultiplier;
+        require(originalDeposits[msg.sender] >= rawAmountToWithdraw, "Insufficient raw deposit");
 
         uint256 balanceBefore = inputToken.balanceOf(address(this));
-        (uint256 received, uint256 flaxValue) = IYieldsSource(yieldSource).withdraw(amount);
+        (uint256 received, uint256 flaxValue) = IYieldsSource(yieldSource).withdraw(rawAmountToWithdraw);
         uint256 balanceAfter = inputToken.balanceOf(address(this));
         require(balanceAfter >= balanceBefore + received, "Balance mismatch");
 
@@ -225,29 +273,33 @@ contract Vault is Ownable, ReentrancyGuard {
             emit RewardsClaimed(msg.sender, totalFlax);
         }
 
-        originalDeposits[msg.sender] -= amount;
-        totalDeposits -= amount;
+        // Update raw deposits
+        originalDeposits[msg.sender] -= rawAmountToWithdraw;
+        totalDeposits -= rawAmountToWithdraw;
 
+        uint256 actualWithdrawn;
         if (received > amount) {
             surplusInputToken += received - amount;
             inputToken.safeTransfer(msg.sender, amount);
+            actualWithdrawn = amount;
         } else if (received < amount) {
             uint256 shortfall = amount - received;
             if (surplusInputToken >= shortfall) {
                 surplusInputToken -= shortfall;
                 inputToken.safeTransfer(msg.sender, amount);
+                actualWithdrawn = amount;
             } else if (protectLoss) {
                 revert("Shortfall exceeds surplus");
             } else {
                 inputToken.safeTransfer(msg.sender, received);
-                emit Withdrawn(msg.sender, received);
-                return;
+                actualWithdrawn = received;
             }
         } else {
             inputToken.safeTransfer(msg.sender, amount);
+            actualWithdrawn = amount;
         }
 
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn(msg.sender, actualWithdrawn);
     }
 
     /**
@@ -255,7 +307,7 @@ contract Vault is Ownable, ReentrancyGuard {
      * @param sFlaxAmount Amount of sFlax to burn for bonus rewards
      * @dev Rewards are calculated by the yield source and distributed as Flax
      */
-    function claimRewards(uint256 sFlaxAmount) external nonReentrant notInEmergencyState {
+    function claimRewards(uint256 sFlaxAmount) external nonReentrant notInEmergencyState notPermanentlyDisabled {
         uint256 flaxValue = IYieldsSource(yieldSource).claimRewards();
         uint256 totalFlax = flaxValue;
 
@@ -289,7 +341,7 @@ contract Vault is Ownable, ReentrancyGuard {
      * @dev Claims rewards, withdraws all funds, and redeposits into new source
      * @dev Any losses during migration are absorbed by the surplus
      */
-    function migrateYieldSource(address newYieldSource) external onlyOwner nonReentrant notInEmergencyState {
+    function migrateYieldSource(address newYieldSource) external onlyOwner nonReentrant notInEmergencyState notPermanentlyDisabled {
         address oldYieldSource = yieldSource;
 
         // Claim and sell rewards for inputToken
@@ -383,8 +435,15 @@ contract Vault is Ownable, ReentrancyGuard {
         // First withdraw all funds from yield source if it's the input token
         if (token == address(inputToken) && totalDeposits > 0) {
             (uint256 received, ) = IYieldsSource(yieldSource).withdraw(totalDeposits);
-            totalDeposits = 0;
+            
+            // Set rebase multiplier to 0 - this makes all user deposits effectively 0
+            uint256 oldMultiplier = rebaseMultiplier;
+            rebaseMultiplier = 0;
+            
             surplusInputToken += received;
+            
+            emit RebaseMultiplierUpdated(oldMultiplier, 0);
+            emit VaultPermanentlyDisabled();
         }
         
         // Now withdraw the token from this contract

@@ -1,0 +1,930 @@
+[
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -71,7 +71,8 @@\n      */\n     modifier validPair(address tokenIn, address tokenOut) {\n         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n-        require(pair != address(0), \"Invalid pair\");\n+        /// DeleteExpressionMutation(`require(pair != address(0), \"Invalid pair\")` |==> `assert(true)`) of: `require(pair != address(0), \"Invalid pair\");`\n+        assert(true);\n         require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");\n         _;\n     }\n",
+    "id": "1",
+    "name": "mutants/1/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -71,7 +71,8 @@\n      */\n     modifier validPair(address tokenIn, address tokenOut) {\n         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n-        require(pair != address(0), \"Invalid pair\");\n+        /// RequireMutation(`pair != address(0)` |==> `true`) of: `require(pair != address(0), \"Invalid pair\");`\n+        require(true, \"Invalid pair\");\n         require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");\n         _;\n     }\n",
+    "id": "2",
+    "name": "mutants/2/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -71,7 +71,8 @@\n      */\n     modifier validPair(address tokenIn, address tokenOut) {\n         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n-        require(pair != address(0), \"Invalid pair\");\n+        /// RequireMutation(`pair != address(0)` |==> `false`) of: `require(pair != address(0), \"Invalid pair\");`\n+        require(false, \"Invalid pair\");\n         require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");\n         _;\n     }\n",
+    "id": "3",
+    "name": "mutants/3/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -72,7 +72,8 @@\n     modifier validPair(address tokenIn, address tokenOut) {\n         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         require(pair != address(0), \"Invalid pair\");\n-        require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");\n+        /// DeleteExpressionMutation(`require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\")` |==> `assert(true)`) of: `require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");`\n+        assert(true);\n         _;\n     }\n \n",
+    "id": "4",
+    "name": "mutants/4/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -72,7 +72,8 @@\n     modifier validPair(address tokenIn, address tokenOut) {\n         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         require(pair != address(0), \"Invalid pair\");\n-        require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");\n+        /// RequireMutation(`pairMeasurements[pair].lastUpdateTimestamp != 0` |==> `true`) of: `require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");`\n+        require(true, \"Pair not initialized\");\n         _;\n     }\n \n",
+    "id": "5",
+    "name": "mutants/5/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -72,7 +72,8 @@\n     modifier validPair(address tokenIn, address tokenOut) {\n         address pair = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         require(pair != address(0), \"Invalid pair\");\n-        require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");\n+        /// RequireMutation(`pairMeasurements[pair].lastUpdateTimestamp != 0` |==> `false`) of: `require(pairMeasurements[pair].lastUpdateTimestamp != 0, \"Pair not initialized\");`\n+        require(false, \"Pair not initialized\");\n         _;\n     }\n \n",
+    "id": "6",
+    "name": "mutants/6/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -85,7 +85,8 @@\n      */\n     function update(address tokenA, address tokenB) external {\n         // Convert address(0) to WETH for consistency\n-        tokenA = tokenA == address(0) ? WETH : tokenA;\n+        /// DeleteExpressionMutation(`tokenA = tokenA == address(0) ? WETH : tokenA` |==> `assert(true)`) of: `tokenA = tokenA == address(0) ? WETH : tokenA;`\n+        assert(true);\n         tokenB = tokenB == address(0) ? WETH : tokenB;\n         \n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);\n",
+    "id": "7",
+    "name": "mutants/7/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -86,7 +86,8 @@\n     function update(address tokenA, address tokenB) external {\n         // Convert address(0) to WETH for consistency\n         tokenA = tokenA == address(0) ? WETH : tokenA;\n-        tokenB = tokenB == address(0) ? WETH : tokenB;\n+        /// DeleteExpressionMutation(`tokenB = tokenB == address(0) ? WETH : tokenB` |==> `assert(true)`) of: `tokenB = tokenB == address(0) ? WETH : tokenB;`\n+        assert(true);\n         \n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);\n         require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n",
+    "id": "8",
+    "name": "mutants/8/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -89,7 +89,8 @@\n         tokenB = tokenB == address(0) ? WETH : tokenB;\n         \n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);\n-        require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n+        /// DeleteExpressionMutation(`require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\")` |==> `assert(true)`) of: `require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");`\n+        assert(true);\n \n         PairMeasurement storage measurement = pairMeasurements[pairAddress];\n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n",
+    "id": "9",
+    "name": "mutants/9/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -89,7 +89,8 @@\n         tokenB = tokenB == address(0) ? WETH : tokenB;\n         \n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);\n-        require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n+        /// RequireMutation(`pairAddress != address(0)` |==> `true`) of: `require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");`\n+        require(true, \"TWAPOracle: INVALID_PAIR\");\n \n         PairMeasurement storage measurement = pairMeasurements[pairAddress];\n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n",
+    "id": "10",
+    "name": "mutants/10/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -89,7 +89,8 @@\n         tokenB = tokenB == address(0) ? WETH : tokenB;\n         \n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenA, tokenB);\n-        require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n+        /// RequireMutation(`pairAddress != address(0)` |==> `false`) of: `require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");`\n+        require(false, \"TWAPOracle: INVALID_PAIR\");\n \n         PairMeasurement storage measurement = pairMeasurements[pairAddress];\n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n",
+    "id": "11",
+    "name": "mutants/11/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -98,7 +98,8 @@\n         uint256 currentPrice0Cumulative = pairContract.price0CumulativeLast();\n         uint256 currentPrice1Cumulative = pairContract.price1CumulativeLast();\n \n-        if (measurement.lastUpdateTimestamp == 0) {\n+        /// IfStatementMutation(`measurement.lastUpdateTimestamp == 0` |==> `true`) of: `if (measurement.lastUpdateTimestamp == 0) {`\n+        if (true) {\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n",
+    "id": "12",
+    "name": "mutants/12/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -98,7 +98,8 @@\n         uint256 currentPrice0Cumulative = pairContract.price0CumulativeLast();\n         uint256 currentPrice1Cumulative = pairContract.price1CumulativeLast();\n \n-        if (measurement.lastUpdateTimestamp == 0) {\n+        /// IfStatementMutation(`measurement.lastUpdateTimestamp == 0` |==> `false`) of: `if (measurement.lastUpdateTimestamp == 0) {`\n+        if (false) {\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n",
+    "id": "13",
+    "name": "mutants/13/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -100,7 +100,8 @@\n \n         if (measurement.lastUpdateTimestamp == 0) {\n             // First update for this pair, just record current state\n-            measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n+            /// DeleteExpressionMutation(`measurement.lastUpdateTimestamp = blockTimestampLastFromPair` |==> `assert(true)`) of: `measurement.lastUpdateTimestamp = blockTimestampLastFromPair;`\n+            assert(true);\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n",
+    "id": "14",
+    "name": "mutants/14/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -100,7 +100,8 @@\n \n         if (measurement.lastUpdateTimestamp == 0) {\n             // First update for this pair, just record current state\n-            measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n+            /// AssignmentMutation(`blockTimestampLastFromPair` |==> `0`) of: `measurement.lastUpdateTimestamp = blockTimestampLastFromPair;`\n+            measurement.lastUpdateTimestamp = 0;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n",
+    "id": "15",
+    "name": "mutants/15/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -100,7 +100,8 @@\n \n         if (measurement.lastUpdateTimestamp == 0) {\n             // First update for this pair, just record current state\n-            measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n+            /// AssignmentMutation(`blockTimestampLastFromPair` |==> `1`) of: `measurement.lastUpdateTimestamp = blockTimestampLastFromPair;`\n+            measurement.lastUpdateTimestamp = 1;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n",
+    "id": "16",
+    "name": "mutants/16/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -101,7 +101,8 @@\n         if (measurement.lastUpdateTimestamp == 0) {\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n-            measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n+            /// DeleteExpressionMutation(`measurement.lastPrice0Cumulative = currentPrice0Cumulative` |==> `assert(true)`) of: `measurement.lastPrice0Cumulative = currentPrice0Cumulative;`\n+            assert(true);\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n             return;\n",
+    "id": "17",
+    "name": "mutants/17/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -101,7 +101,8 @@\n         if (measurement.lastUpdateTimestamp == 0) {\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n-            measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n+            /// AssignmentMutation(`currentPrice0Cumulative` |==> `0`) of: `measurement.lastPrice0Cumulative = currentPrice0Cumulative;`\n+            measurement.lastPrice0Cumulative = 0;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n             return;\n",
+    "id": "18",
+    "name": "mutants/18/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -101,7 +101,8 @@\n         if (measurement.lastUpdateTimestamp == 0) {\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n-            measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n+            /// AssignmentMutation(`currentPrice0Cumulative` |==> `1`) of: `measurement.lastPrice0Cumulative = currentPrice0Cumulative;`\n+            measurement.lastPrice0Cumulative = 1;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n             return;\n",
+    "id": "19",
+    "name": "mutants/19/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -102,7 +102,8 @@\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n-            measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n+            /// DeleteExpressionMutation(`measurement.lastPrice1Cumulative = currentPrice1Cumulative` |==> `assert(true)`) of: `measurement.lastPrice1Cumulative = currentPrice1Cumulative;`\n+            assert(true);\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n             return;\n         }\n",
+    "id": "20",
+    "name": "mutants/20/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -102,7 +102,8 @@\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n-            measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n+            /// AssignmentMutation(`currentPrice1Cumulative` |==> `0`) of: `measurement.lastPrice1Cumulative = currentPrice1Cumulative;`\n+            measurement.lastPrice1Cumulative = 0;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n             return;\n         }\n",
+    "id": "21",
+    "name": "mutants/21/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -102,7 +102,8 @@\n             // First update for this pair, just record current state\n             measurement.lastUpdateTimestamp = blockTimestampLastFromPair;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n-            measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n+            /// AssignmentMutation(`currentPrice1Cumulative` |==> `1`) of: `measurement.lastPrice1Cumulative = currentPrice1Cumulative;`\n+            measurement.lastPrice1Cumulative = 1;\n             // price0Average and price1Average remain 0, consult will fail or return 0 if not checked\n             return;\n         }\n",
+    "id": "22",
+    "name": "mutants/22/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -112,7 +112,8 @@\n         // However, cumulative prices should still advance or stay same.\n         // We primarily rely on cumulative prices changing.\n         uint32 currentTimestamp = blockTimestampLastFromPair;\n-        if (currentTimestamp < measurement.lastUpdateTimestamp) {\n+        /// IfStatementMutation(`currentTimestamp < measurement.lastUpdateTimestamp` |==> `true`) of: `if (currentTimestamp < measurement.lastUpdateTimestamp) {`\n+        if (true) {\n              // This case should ideally not happen with a real pair if it's active.\n              // If it does, it means no new trades to update the pair's timestamp.\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n",
+    "id": "23",
+    "name": "mutants/23/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -112,7 +112,8 @@\n         // However, cumulative prices should still advance or stay same.\n         // We primarily rely on cumulative prices changing.\n         uint32 currentTimestamp = blockTimestampLastFromPair;\n-        if (currentTimestamp < measurement.lastUpdateTimestamp) {\n+        /// IfStatementMutation(`currentTimestamp < measurement.lastUpdateTimestamp` |==> `false`) of: `if (currentTimestamp < measurement.lastUpdateTimestamp) {`\n+        if (false) {\n              // This case should ideally not happen with a real pair if it's active.\n              // If it does, it means no new trades to update the pair's timestamp.\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n",
+    "id": "24",
+    "name": "mutants/24/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -112,7 +112,8 @@\n         // However, cumulative prices should still advance or stay same.\n         // We primarily rely on cumulative prices changing.\n         uint32 currentTimestamp = blockTimestampLastFromPair;\n-        if (currentTimestamp < measurement.lastUpdateTimestamp) {\n+        /// SwapArgumentsOperatorMutation(`currentTimestamp < measurement.lastUpdateTimestamp` |==> `measurement.lastUpdateTimestamp < currentTimestamp`) of: `if (currentTimestamp < measurement.lastUpdateTimestamp) {`\n+        if (measurement.lastUpdateTimestamp < currentTimestamp) {\n              // This case should ideally not happen with a real pair if it's active.\n              // If it does, it means no new trades to update the pair's timestamp.\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n",
+    "id": "25",
+    "name": "mutants/25/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -118,7 +118,8 @@\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n              // However, if cumulative prices HAVE advanced, we should use the current block.timestamp if it's greater.\n              // For simplicity with current Foundry testing which might not perfectly sync block.timestamp and pair's last update time:\n-             currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n+             /// DeleteExpressionMutation(`currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp)` |==> `assert(true)`) of: `currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);`\n+             assert(true);\n              if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {\n                  // If block.timestamp also hasn't advanced meaningfully relative to lastUpdateTimestamp and no change in cumulatives, nothing to do.\n                  return;\n",
+    "id": "26",
+    "name": "mutants/26/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -118,7 +118,8 @@\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n              // However, if cumulative prices HAVE advanced, we should use the current block.timestamp if it's greater.\n              // For simplicity with current Foundry testing which might not perfectly sync block.timestamp and pair's last update time:\n-             currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n+             /// AssignmentMutation(`uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp)` |==> `0`) of: `currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);`\n+             currentTimestamp = 0;\n              if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {\n                  // If block.timestamp also hasn't advanced meaningfully relative to lastUpdateTimestamp and no change in cumulatives, nothing to do.\n                  return;\n",
+    "id": "27",
+    "name": "mutants/27/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -118,7 +118,8 @@\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n              // However, if cumulative prices HAVE advanced, we should use the current block.timestamp if it's greater.\n              // For simplicity with current Foundry testing which might not perfectly sync block.timestamp and pair's last update time:\n-             currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n+             /// AssignmentMutation(`uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp)` |==> `1`) of: `currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);`\n+             currentTimestamp = 1;\n              if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {\n                  // If block.timestamp also hasn't advanced meaningfully relative to lastUpdateTimestamp and no change in cumulatives, nothing to do.\n                  return;\n",
+    "id": "28",
+    "name": "mutants/28/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -118,7 +118,8 @@\n              // We cannot calculate a new TWAP if time appears to go backwards or not advance from pair's perspective.\n              // However, if cumulative prices HAVE advanced, we should use the current block.timestamp if it's greater.\n              // For simplicity with current Foundry testing which might not perfectly sync block.timestamp and pair's last update time:\n-             currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n+             /// SwapArgumentsOperatorMutation(`block.timestamp > measurement.lastUpdateTimestamp` |==> `measurement.lastUpdateTimestamp > block.timestamp`) of: `currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);`\n+             currentTimestamp = uint32(measurement.lastUpdateTimestamp > block.timestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n              if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {\n                  // If block.timestamp also hasn't advanced meaningfully relative to lastUpdateTimestamp and no change in cumulatives, nothing to do.\n                  return;\n",
+    "id": "29",
+    "name": "mutants/29/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -119,7 +119,8 @@\n              // However, if cumulative prices HAVE advanced, we should use the current block.timestamp if it's greater.\n              // For simplicity with current Foundry testing which might not perfectly sync block.timestamp and pair's last update time:\n              currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n-             if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {\n+             /// IfStatementMutation(`currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)` |==> `true`) of: `if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {`\n+             if (true) {\n                  // If block.timestamp also hasn't advanced meaningfully relative to lastUpdateTimestamp and no change in cumulatives, nothing to do.\n                  return;\n              }\n",
+    "id": "30",
+    "name": "mutants/30/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -119,7 +119,8 @@\n              // However, if cumulative prices HAVE advanced, we should use the current block.timestamp if it's greater.\n              // For simplicity with current Foundry testing which might not perfectly sync block.timestamp and pair's last update time:\n              currentTimestamp = uint32(block.timestamp > measurement.lastUpdateTimestamp ? block.timestamp : measurement.lastUpdateTimestamp);\n-             if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {\n+             /// IfStatementMutation(`currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)` |==> `false`) of: `if (currentTimestamp == measurement.lastUpdateTimestamp && (currentPrice0Cumulative == measurement.lastPrice0Cumulative && currentPrice1Cumulative == measurement.lastPrice1Cumulative)) {`\n+             if (false) {\n                  // If block.timestamp also hasn't advanced meaningfully relative to lastUpdateTimestamp and no change in cumulatives, nothing to do.\n                  return;\n              }\n",
+    "id": "31",
+    "name": "mutants/31/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -126,7 +126,8 @@\n         }\n \n \n-        uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n+        /// BinaryOpMutation(`-` |==> `+`) of: `uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;`\n+        uint256 timeElapsed = currentTimestamp+measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n",
+    "id": "32",
+    "name": "mutants/32/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -126,7 +126,8 @@\n         }\n \n \n-        uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n+        /// BinaryOpMutation(`-` |==> `*`) of: `uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;`\n+        uint256 timeElapsed = currentTimestamp*measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n",
+    "id": "33",
+    "name": "mutants/33/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -126,7 +126,8 @@\n         }\n \n \n-        uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n+        /// BinaryOpMutation(`-` |==> `/`) of: `uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;`\n+        uint256 timeElapsed = currentTimestamp/measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n",
+    "id": "34",
+    "name": "mutants/34/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -126,7 +126,8 @@\n         }\n \n \n-        uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n+        /// BinaryOpMutation(`-` |==> `%`) of: `uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;`\n+        uint256 timeElapsed = currentTimestamp%measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n",
+    "id": "35",
+    "name": "mutants/35/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -126,7 +126,8 @@\n         }\n \n \n-        uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n+        /// BinaryOpMutation(`-` |==> `**`) of: `uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;`\n+        uint256 timeElapsed = currentTimestamp**measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n",
+    "id": "36",
+    "name": "mutants/36/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -126,7 +126,8 @@\n         }\n \n \n-        uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n+        /// SwapArgumentsOperatorMutation(`currentTimestamp - measurement.lastUpdateTimestamp` |==> `measurement.lastUpdateTimestamp - currentTimestamp`) of: `uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;`\n+        uint256 timeElapsed = measurement.lastUpdateTimestamp - currentTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n",
+    "id": "37",
+    "name": "mutants/37/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -128,7 +128,8 @@\n \n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n-        if (timeElapsed >= PERIOD) {\n+        /// IfStatementMutation(`timeElapsed >= PERIOD` |==> `true`) of: `if (timeElapsed >= PERIOD) {`\n+        if (true) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n",
+    "id": "38",
+    "name": "mutants/38/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -128,7 +128,8 @@\n \n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n-        if (timeElapsed >= PERIOD) {\n+        /// IfStatementMutation(`timeElapsed >= PERIOD` |==> `false`) of: `if (timeElapsed >= PERIOD) {`\n+        if (false) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n",
+    "id": "39",
+    "name": "mutants/39/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -128,7 +128,8 @@\n \n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n-        if (timeElapsed >= PERIOD) {\n+        /// SwapArgumentsOperatorMutation(`timeElapsed >= PERIOD` |==> `PERIOD >= timeElapsed`) of: `if (timeElapsed >= PERIOD) {`\n+        if (PERIOD >= timeElapsed) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n",
+    "id": "40",
+    "name": "mutants/40/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -129,7 +129,8 @@\n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n-            require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n+            /// DeleteExpressionMutation(`require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\")` |==> `assert(true)`) of: `require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");`\n+            assert(true);\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n",
+    "id": "41",
+    "name": "mutants/41/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -129,7 +129,8 @@\n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n-            require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n+            /// RequireMutation(`currentPrice0Cumulative >= measurement.lastPrice0Cumulative` |==> `true`) of: `require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");`\n+            require(true, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n",
+    "id": "42",
+    "name": "mutants/42/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -129,7 +129,8 @@\n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n-            require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n+            /// RequireMutation(`currentPrice0Cumulative >= measurement.lastPrice0Cumulative` |==> `false`) of: `require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");`\n+            require(false, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n",
+    "id": "43",
+    "name": "mutants/43/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -129,7 +129,8 @@\n         uint256 timeElapsed = currentTimestamp - measurement.lastUpdateTimestamp;\n \n         if (timeElapsed >= PERIOD) {\n-            require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n+            /// SwapArgumentsOperatorMutation(`currentPrice0Cumulative >= measurement.lastPrice0Cumulative` |==> `measurement.lastPrice0Cumulative >= currentPrice0Cumulative`) of: `require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");`\n+            require(measurement.lastPrice0Cumulative >= currentPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n",
+    "id": "44",
+    "name": "mutants/44/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -130,7 +130,8 @@\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n-            require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n+            /// DeleteExpressionMutation(`require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\")` |==> `assert(true)`) of: `require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");`\n+            assert(true);\n \n             measurement.price0Average = FixedPoint.uq112x112(\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n",
+    "id": "45",
+    "name": "mutants/45/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -130,7 +130,8 @@\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n-            require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n+            /// RequireMutation(`currentPrice1Cumulative >= measurement.lastPrice1Cumulative` |==> `true`) of: `require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");`\n+            require(true, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n",
+    "id": "46",
+    "name": "mutants/46/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -130,7 +130,8 @@\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n-            require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n+            /// RequireMutation(`currentPrice1Cumulative >= measurement.lastPrice1Cumulative` |==> `false`) of: `require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");`\n+            require(false, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n",
+    "id": "47",
+    "name": "mutants/47/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -130,7 +130,8 @@\n \n         if (timeElapsed >= PERIOD) {\n             require(currentPrice0Cumulative >= measurement.lastPrice0Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_0_DECREASED\");\n-            require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n+            /// SwapArgumentsOperatorMutation(`currentPrice1Cumulative >= measurement.lastPrice1Cumulative` |==> `measurement.lastPrice1Cumulative >= currentPrice1Cumulative`) of: `require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");`\n+            require(measurement.lastPrice1Cumulative >= currentPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n",
+    "id": "48",
+    "name": "mutants/48/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `+`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative)+timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "49",
+    "name": "mutants/49/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `-`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative)-timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "50",
+    "name": "mutants/50/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `*`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative)*timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "51",
+    "name": "mutants/51/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `%`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative)%timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "52",
+    "name": "mutants/52/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `**`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative)**timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "53",
+    "name": "mutants/53/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// SwapArgumentsOperatorMutation(`(currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed` |==> `timeElapsed / (currentPrice0Cumulative - measurement.lastPrice0Cumulative)`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224(timeElapsed / (currentPrice0Cumulative - measurement.lastPrice0Cumulative))\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "54",
+    "name": "mutants/54/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `+`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative+measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "55",
+    "name": "mutants/55/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `*`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative*measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "56",
+    "name": "mutants/56/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `/`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative/measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "57",
+    "name": "mutants/57/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `%`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative%measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "58",
+    "name": "mutants/58/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `**`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((currentPrice0Cumulative**measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "59",
+    "name": "mutants/59/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -133,7 +133,8 @@\n             require(currentPrice1Cumulative >= measurement.lastPrice1Cumulative, \"TWAPOracle: CUMULATIVE_PRICE_1_DECREASED\");\n \n             measurement.price0Average = FixedPoint.uq112x112(\n-                uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n+                /// SwapArgumentsOperatorMutation(`currentPrice0Cumulative - measurement.lastPrice0Cumulative` |==> `measurement.lastPrice0Cumulative - currentPrice0Cumulative`) of: `uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)`\n+                uint224((measurement.lastPrice0Cumulative - currentPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n",
+    "id": "60",
+    "name": "mutants/60/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `+`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative)+timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "61",
+    "name": "mutants/61/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `-`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative)-timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "62",
+    "name": "mutants/62/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `*`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative)*timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "63",
+    "name": "mutants/63/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `%`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative)%timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "64",
+    "name": "mutants/64/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`/` |==> `**`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative)**timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "65",
+    "name": "mutants/65/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// SwapArgumentsOperatorMutation(`(currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed` |==> `timeElapsed / (currentPrice1Cumulative - measurement.lastPrice1Cumulative)`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224(timeElapsed / (currentPrice1Cumulative - measurement.lastPrice1Cumulative))\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "66",
+    "name": "mutants/66/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `+`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative+measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "67",
+    "name": "mutants/67/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `*`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative*measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "68",
+    "name": "mutants/68/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `/`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative/measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "69",
+    "name": "mutants/69/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `%`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative%measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "70",
+    "name": "mutants/70/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "BinaryOpMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// BinaryOpMutation(`-` |==> `**`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((currentPrice1Cumulative**measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "71",
+    "name": "mutants/71/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -136,7 +136,8 @@\n                 uint224((currentPrice0Cumulative - measurement.lastPrice0Cumulative) / timeElapsed)\n             );\n             measurement.price1Average = FixedPoint.uq112x112(\n-                uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n+                /// SwapArgumentsOperatorMutation(`currentPrice1Cumulative - measurement.lastPrice1Cumulative` |==> `measurement.lastPrice1Cumulative - currentPrice1Cumulative`) of: `uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)`\n+                uint224((measurement.lastPrice1Cumulative - currentPrice1Cumulative) / timeElapsed)\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n",
+    "id": "72",
+    "name": "mutants/72/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -139,7 +139,8 @@\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n-            measurement.lastUpdateTimestamp = currentTimestamp;\n+            /// DeleteExpressionMutation(`measurement.lastUpdateTimestamp = currentTimestamp` |==> `assert(true)`) of: `measurement.lastUpdateTimestamp = currentTimestamp;`\n+            assert(true);\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n \n",
+    "id": "73",
+    "name": "mutants/73/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -139,7 +139,8 @@\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n-            measurement.lastUpdateTimestamp = currentTimestamp;\n+            /// AssignmentMutation(`currentTimestamp` |==> `0`) of: `measurement.lastUpdateTimestamp = currentTimestamp;`\n+            measurement.lastUpdateTimestamp = 0;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n \n",
+    "id": "74",
+    "name": "mutants/74/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -139,7 +139,8 @@\n                 uint224((currentPrice1Cumulative - measurement.lastPrice1Cumulative) / timeElapsed)\n             );\n             \n-            measurement.lastUpdateTimestamp = currentTimestamp;\n+            /// AssignmentMutation(`currentTimestamp` |==> `1`) of: `measurement.lastUpdateTimestamp = currentTimestamp;`\n+            measurement.lastUpdateTimestamp = 1;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n \n",
+    "id": "75",
+    "name": "mutants/75/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -140,7 +140,8 @@\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n-            measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n+            /// DeleteExpressionMutation(`measurement.lastPrice0Cumulative = currentPrice0Cumulative` |==> `assert(true)`) of: `measurement.lastPrice0Cumulative = currentPrice0Cumulative;`\n+            assert(true);\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n \n             emit PairUpdated(pairAddress, measurement.price0Average._x, measurement.price1Average._x);\n",
+    "id": "76",
+    "name": "mutants/76/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -140,7 +140,8 @@\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n-            measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n+            /// AssignmentMutation(`currentPrice0Cumulative` |==> `0`) of: `measurement.lastPrice0Cumulative = currentPrice0Cumulative;`\n+            measurement.lastPrice0Cumulative = 0;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n \n             emit PairUpdated(pairAddress, measurement.price0Average._x, measurement.price1Average._x);\n",
+    "id": "77",
+    "name": "mutants/77/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -140,7 +140,8 @@\n             );\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n-            measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n+            /// AssignmentMutation(`currentPrice0Cumulative` |==> `1`) of: `measurement.lastPrice0Cumulative = currentPrice0Cumulative;`\n+            measurement.lastPrice0Cumulative = 1;\n             measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n \n             emit PairUpdated(pairAddress, measurement.price0Average._x, measurement.price1Average._x);\n",
+    "id": "78",
+    "name": "mutants/78/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -141,7 +141,8 @@\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n-            measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n+            /// DeleteExpressionMutation(`measurement.lastPrice1Cumulative = currentPrice1Cumulative` |==> `assert(true)`) of: `measurement.lastPrice1Cumulative = currentPrice1Cumulative;`\n+            assert(true);\n \n             emit PairUpdated(pairAddress, measurement.price0Average._x, measurement.price1Average._x);\n         }\n",
+    "id": "79",
+    "name": "mutants/79/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -141,7 +141,8 @@\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n-            measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n+            /// AssignmentMutation(`currentPrice1Cumulative` |==> `0`) of: `measurement.lastPrice1Cumulative = currentPrice1Cumulative;`\n+            measurement.lastPrice1Cumulative = 0;\n \n             emit PairUpdated(pairAddress, measurement.price0Average._x, measurement.price1Average._x);\n         }\n",
+    "id": "80",
+    "name": "mutants/80/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -141,7 +141,8 @@\n             \n             measurement.lastUpdateTimestamp = currentTimestamp;\n             measurement.lastPrice0Cumulative = currentPrice0Cumulative;\n-            measurement.lastPrice1Cumulative = currentPrice1Cumulative;\n+            /// AssignmentMutation(`currentPrice1Cumulative` |==> `1`) of: `measurement.lastPrice1Cumulative = currentPrice1Cumulative;`\n+            measurement.lastPrice1Cumulative = 1;\n \n             emit PairUpdated(pairAddress, measurement.price0Average._x, measurement.price1Average._x);\n         }\n",
+    "id": "81",
+    "name": "mutants/81/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -162,7 +162,8 @@\n         returns (uint256 amountOut)\n     {\n         address originalTokenOut = tokenOut;\n-        tokenOut = tokenOut == address(0) ? WETH : tokenOut;\n+        /// DeleteExpressionMutation(`tokenOut = tokenOut == address(0) ? WETH : tokenOut` |==> `assert(true)`) of: `tokenOut = tokenOut == address(0) ? WETH : tokenOut;`\n+        assert(true);\n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         \n         require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n",
+    "id": "82",
+    "name": "mutants/82/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -165,7 +165,8 @@\n         tokenOut = tokenOut == address(0) ? WETH : tokenOut;\n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         \n-        require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n+        /// DeleteExpressionMutation(`require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\")` |==> `assert(true)`) of: `require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");`\n+        assert(true);\n         PairMeasurement memory measurement = pairMeasurements[pairAddress];\n         \n         // A pair is initialized if lastUpdateTimestamp is set AND price averages have been calculated.\n",
+    "id": "83",
+    "name": "mutants/83/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -165,7 +165,8 @@\n         tokenOut = tokenOut == address(0) ? WETH : tokenOut;\n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         \n-        require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n+        /// RequireMutation(`pairAddress != address(0)` |==> `true`) of: `require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");`\n+        require(true, \"TWAPOracle: INVALID_PAIR\");\n         PairMeasurement memory measurement = pairMeasurements[pairAddress];\n         \n         // A pair is initialized if lastUpdateTimestamp is set AND price averages have been calculated.\n",
+    "id": "84",
+    "name": "mutants/84/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -165,7 +165,8 @@\n         tokenOut = tokenOut == address(0) ? WETH : tokenOut;\n         address pairAddress = IUniswapV2Factory(factory).getPair(tokenIn, tokenOut);\n         \n-        require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");\n+        /// RequireMutation(`pairAddress != address(0)` |==> `false`) of: `require(pairAddress != address(0), \"TWAPOracle: INVALID_PAIR\");`\n+        require(false, \"TWAPOracle: INVALID_PAIR\");\n         PairMeasurement memory measurement = pairMeasurements[pairAddress];\n         \n         // A pair is initialized if lastUpdateTimestamp is set AND price averages have been calculated.\n",
+    "id": "85",
+    "name": "mutants/85/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -171,7 +171,8 @@\n         // A pair is initialized if lastUpdateTimestamp is set AND price averages have been calculated.\n         // price0Average._x or price1Average._x will be non-zero if an update successfully ran through the averaging logic.\n         // If lastUpdateTimestamp is set but averages are zero, it means it was only the first update.\n-        require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");\n+        /// DeleteExpressionMutation(`require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\")` |==> `assert(true)`) of: `require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");`\n+        assert(true);\n         // Check if price averages are calculated (they won't be after only the first update)\n         // A successful TWAP calculation would make at least one of these potentially non-zero (unless price was actually zero).\n         // A stricter check might be needed if legitimate zero prices are possible and need differentiation from \"not yet computed\".\n",
+    "id": "86",
+    "name": "mutants/86/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -171,7 +171,8 @@\n         // A pair is initialized if lastUpdateTimestamp is set AND price averages have been calculated.\n         // price0Average._x or price1Average._x will be non-zero if an update successfully ran through the averaging logic.\n         // If lastUpdateTimestamp is set but averages are zero, it means it was only the first update.\n-        require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");\n+        /// RequireMutation(`measurement.lastUpdateTimestamp != 0` |==> `true`) of: `require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");`\n+        require(true, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");\n         // Check if price averages are calculated (they won't be after only the first update)\n         // A successful TWAP calculation would make at least one of these potentially non-zero (unless price was actually zero).\n         // A stricter check might be needed if legitimate zero prices are possible and need differentiation from \"not yet computed\".\n",
+    "id": "87",
+    "name": "mutants/87/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -171,7 +171,8 @@\n         // A pair is initialized if lastUpdateTimestamp is set AND price averages have been calculated.\n         // price0Average._x or price1Average._x will be non-zero if an update successfully ran through the averaging logic.\n         // If lastUpdateTimestamp is set but averages are zero, it means it was only the first update.\n-        require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");\n+        /// RequireMutation(`measurement.lastUpdateTimestamp != 0` |==> `false`) of: `require(measurement.lastUpdateTimestamp != 0, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");`\n+        require(false, \"TWAPOracle: PAIR_NOT_INITIALIZED_TIMESTAMP\");\n         // Check if price averages are calculated (they won't be after only the first update)\n         // A successful TWAP calculation would make at least one of these potentially non-zero (unless price was actually zero).\n         // A stricter check might be needed if legitimate zero prices are possible and need differentiation from \"not yet computed\".\n",
+    "id": "88",
+    "name": "mutants/88/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -179,7 +179,8 @@\n \n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n \n-        if (tokenIn == pairContract.token0()) {\n+        /// IfStatementMutation(`tokenIn == pairContract.token0()` |==> `true`) of: `if (tokenIn == pairContract.token0()) {`\n+        if (true) {\n             amountOut = (measurement.price0Average.mul(amountIn)).decode144();\n         } else {\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n",
+    "id": "89",
+    "name": "mutants/89/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -179,7 +179,8 @@\n \n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n \n-        if (tokenIn == pairContract.token0()) {\n+        /// IfStatementMutation(`tokenIn == pairContract.token0()` |==> `false`) of: `if (tokenIn == pairContract.token0()) {`\n+        if (false) {\n             amountOut = (measurement.price0Average.mul(amountIn)).decode144();\n         } else {\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n",
+    "id": "90",
+    "name": "mutants/90/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -185,7 +185,8 @@\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n              // To handle WETH mapping where tokenOut was address(0)\n             address token1 = pairContract.token1();\n-            if (originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH) { \n+            /// IfStatementMutation(`originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH` |==> `true`) of: `if (originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH) {`\n+            if (true) { \n                 // This case means tokenIn is WETH, tokenOut was address(0) (mapped to WETH)\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n",
+    "id": "91",
+    "name": "mutants/91/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -185,7 +185,8 @@\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n              // To handle WETH mapping where tokenOut was address(0)\n             address token1 = pairContract.token1();\n-            if (originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH) { \n+            /// IfStatementMutation(`originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH` |==> `false`) of: `if (originalTokenOut == address(0) && tokenIn == WETH && tokenOut == WETH) {`\n+            if (false) { \n                 // This case means tokenIn is WETH, tokenOut was address(0) (mapped to WETH)\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n",
+    "id": "92",
+    "name": "mutants/92/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -196,7 +196,8 @@\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n-                require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n+                /// DeleteExpressionMutation(`require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\")` |==> `assert(true)`) of: `require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");`\n+                assert(true);\n                 amountOut = (measurement.price1Average.mul(amountIn)).decode144();\n             }\n         }\n",
+    "id": "93",
+    "name": "mutants/93/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -196,7 +196,8 @@\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n-                require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n+                /// RequireMutation(`tokenIn == token1` |==> `true`) of: `require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");`\n+                require(true, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n                 amountOut = (measurement.price1Average.mul(amountIn)).decode144();\n             }\n         }\n",
+    "id": "94",
+    "name": "mutants/94/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -196,7 +196,8 @@\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n-                require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n+                /// RequireMutation(`tokenIn == token1` |==> `false`) of: `require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");`\n+                require(false, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n                 amountOut = (measurement.price1Average.mul(amountIn)).decode144();\n             }\n         }\n",
+    "id": "95",
+    "name": "mutants/95/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -197,7 +197,8 @@\n                  }\n             } else {\n                 require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n-                amountOut = (measurement.price1Average.mul(amountIn)).decode144();\n+                /// DeleteExpressionMutation(`amountOut = (measurement.price1Average.mul(amountIn)).decode144()` |==> `assert(true)`) of: `amountOut = (measurement.price1Average.mul(amountIn)).decode144();`\n+                assert(true);\n             }\n         }\n \n",
+    "id": "96",
+    "name": "mutants/96/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -197,7 +197,8 @@\n                  }\n             } else {\n                 require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n-                amountOut = (measurement.price1Average.mul(amountIn)).decode144();\n+                /// AssignmentMutation(`(measurement.price1Average.mul(amountIn)).decode144()` |==> `0`) of: `amountOut = (measurement.price1Average.mul(amountIn)).decode144();`\n+                amountOut = 0;\n             }\n         }\n \n",
+    "id": "97",
+    "name": "mutants/97/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -197,7 +197,8 @@\n                  }\n             } else {\n                 require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n-                amountOut = (measurement.price1Average.mul(amountIn)).decode144();\n+                /// AssignmentMutation(`(measurement.price1Average.mul(amountIn)).decode144()` |==> `1`) of: `amountOut = (measurement.price1Average.mul(amountIn)).decode144();`\n+                amountOut = 1;\n             }\n         }\n \n",
+    "id": "98",
+    "name": "mutants/98/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -189,7 +189,8 @@\n                 // This case means tokenIn is WETH, tokenOut was address(0) (mapped to WETH)\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n-                 if (WETH == token1) { // WETH is token1\n+                 /// IfStatementMutation(`WETH == token1` |==> `true`) of: `if (WETH == token1) { // WETH is token1`\n+                 if (true) { // WETH is token1\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n",
+    "id": "99",
+    "name": "mutants/99/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "IfStatementMutation",
+    "diff": "--- original\n+++ mutant\n@@ -189,7 +189,8 @@\n                 // This case means tokenIn is WETH, tokenOut was address(0) (mapped to WETH)\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n-                 if (WETH == token1) { // WETH is token1\n+                 /// IfStatementMutation(`WETH == token1` |==> `false`) of: `if (WETH == token1) { // WETH is token1`\n+                 if (false) { // WETH is token1\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n",
+    "id": "100",
+    "name": "mutants/100/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -192,7 +192,8 @@\n                  if (WETH == token1) { // WETH is token1\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n-                    require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n+                    /// DeleteExpressionMutation(`require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\")` |==> `assert(true)`) of: `require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");`\n+                    assert(true);\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n",
+    "id": "101",
+    "name": "mutants/101/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -192,7 +192,8 @@\n                  if (WETH == token1) { // WETH is token1\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n-                    require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n+                    /// RequireMutation(`WETH == pairContract.token0()` |==> `true`) of: `require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");`\n+                    require(true, \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n",
+    "id": "102",
+    "name": "mutants/102/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -192,7 +192,8 @@\n                  if (WETH == token1) { // WETH is token1\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n-                    require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n+                    /// RequireMutation(`WETH == pairContract.token0()` |==> `false`) of: `require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");`\n+                    require(false, \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n",
+    "id": "103",
+    "name": "mutants/103/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -193,7 +193,8 @@\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n-                    amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n+                    /// DeleteExpressionMutation(`amountOut = (measurement.price0Average.mul(amountIn)).decode144()` |==> `assert(true)`) of: `amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)`\n+                    assert(true); // Price of token1 per token0 (WETH)\n                  }\n             } else {\n                 require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n",
+    "id": "104",
+    "name": "mutants/104/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -193,7 +193,8 @@\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n-                    amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n+                    /// AssignmentMutation(`(measurement.price0Average.mul(amountIn)).decode144()` |==> `0`) of: `amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)`\n+                    amountOut = 0; // Price of token1 per token0 (WETH)\n                  }\n             } else {\n                 require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n",
+    "id": "105",
+    "name": "mutants/105/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -193,7 +193,8 @@\n                     amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n-                    amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n+                    /// AssignmentMutation(`(measurement.price0Average.mul(amountIn)).decode144()` |==> `1`) of: `amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)`\n+                    amountOut = 1; // Price of token1 per token0 (WETH)\n                  }\n             } else {\n                 require(tokenIn == token1, \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n",
+    "id": "106",
+    "name": "mutants/106/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -190,7 +190,8 @@\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n                  if (WETH == token1) { // WETH is token1\n-                    amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n+                    /// DeleteExpressionMutation(`amountOut = (measurement.price1Average.mul(amountIn)).decode144()` |==> `assert(true)`) of: `amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)`\n+                    assert(true); // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n",
+    "id": "107",
+    "name": "mutants/107/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -190,7 +190,8 @@\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n                  if (WETH == token1) { // WETH is token1\n-                    amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n+                    /// AssignmentMutation(`(measurement.price1Average.mul(amountIn)).decode144()` |==> `0`) of: `amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)`\n+                    amountOut = 0; // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n",
+    "id": "108",
+    "name": "mutants/108/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -190,7 +190,8 @@\n                 // We need to consult WETH vs token0 or token1. Pair is (token0, token1).\n                 // If tokenIn (WETH) is token1 of the pair.\n                  if (WETH == token1) { // WETH is token1\n-                    amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)\n+                    /// AssignmentMutation(`(measurement.price1Average.mul(amountIn)).decode144()` |==> `1`) of: `amountOut = (measurement.price1Average.mul(amountIn)).decode144(); // Price of token0 per token1 (WETH)`\n+                    amountOut = 1; // Price of token0 per token1 (WETH)\n                  } else { // WETH must be token0\n                     require(WETH == pairContract.token0(), \"TWAPOracle: WETH_NOT_IN_PAIR_AS_TOKEN0\");\n                     amountOut = (measurement.price0Average.mul(amountIn)).decode144(); // Price of token1 per token0 (WETH)\n",
+    "id": "109",
+    "name": "mutants/109/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n \n         if (tokenIn == pairContract.token0()) {\n-            amountOut = (measurement.price0Average.mul(amountIn)).decode144();\n+            /// DeleteExpressionMutation(`amountOut = (measurement.price0Average.mul(amountIn)).decode144()` |==> `assert(true)`) of: `amountOut = (measurement.price0Average.mul(amountIn)).decode144();`\n+            assert(true);\n         } else {\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n              // To handle WETH mapping where tokenOut was address(0)\n",
+    "id": "110",
+    "name": "mutants/110/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n \n         if (tokenIn == pairContract.token0()) {\n-            amountOut = (measurement.price0Average.mul(amountIn)).decode144();\n+            /// AssignmentMutation(`(measurement.price0Average.mul(amountIn)).decode144()` |==> `0`) of: `amountOut = (measurement.price0Average.mul(amountIn)).decode144();`\n+            amountOut = 0;\n         } else {\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n              // To handle WETH mapping where tokenOut was address(0)\n",
+    "id": "111",
+    "name": "mutants/111/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "AssignmentMutation",
+    "diff": "--- original\n+++ mutant\n@@ -180,7 +180,8 @@\n         IUniswapV2Pair pairContract = IUniswapV2Pair(pairAddress);\n \n         if (tokenIn == pairContract.token0()) {\n-            amountOut = (measurement.price0Average.mul(amountIn)).decode144();\n+            /// AssignmentMutation(`(measurement.price0Average.mul(amountIn)).decode144()` |==> `1`) of: `amountOut = (measurement.price0Average.mul(amountIn)).decode144();`\n+            amountOut = 1;\n         } else {\n             // require(tokenIn == pairContract.token1(), \"TWAPOracle: INVALID_TOKEN_IN_PAIR\");\n              // To handle WETH mapping where tokenOut was address(0)\n",
+    "id": "112",
+    "name": "mutants/112/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "DeleteExpressionMutation",
+    "diff": "--- original\n+++ mutant\n@@ -201,6 +201,7 @@\n             }\n         }\n \n-        require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n+        /// DeleteExpressionMutation(`require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\")` |==> `assert(true)`) of: `require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");`\n+        assert(true);\n     }\n }\n\\ No newline at end of file\n",
+    "id": "113",
+    "name": "mutants/113/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -201,6 +201,7 @@\n             }\n         }\n \n-        require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n+        /// RequireMutation(`amountOut > 0` |==> `true`) of: `require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");`\n+        require(true, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n     }\n }\n\\ No newline at end of file\n",
+    "id": "114",
+    "name": "mutants/114/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "RequireMutation",
+    "diff": "--- original\n+++ mutant\n@@ -201,6 +201,7 @@\n             }\n         }\n \n-        require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n+        /// RequireMutation(`amountOut > 0` |==> `false`) of: `require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");`\n+        require(false, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n     }\n }\n\\ No newline at end of file\n",
+    "id": "115",
+    "name": "mutants/115/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  },
+  {
+    "description": "SwapArgumentsOperatorMutation",
+    "diff": "--- original\n+++ mutant\n@@ -201,6 +201,7 @@\n             }\n         }\n \n-        require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n+        /// SwapArgumentsOperatorMutation(`amountOut > 0` |==> `0 > amountOut`) of: `require(amountOut > 0, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");`\n+        require(0 > amountOut, \"TWAPOracle: ZERO_OUTPUT_AMOUNT\");\n     }\n }\n\\ No newline at end of file\n",
+    "id": "116",
+    "name": "mutants/116/src/priceTilting/TWAPOracle.sol",
+    "original": "src/priceTilting/TWAPOracle.sol",
+    "sourceroot": "/home/justin/code/BehodlerReborn/Grok/reflax"
+  }
+]

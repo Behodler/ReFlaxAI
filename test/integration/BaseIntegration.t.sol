@@ -230,6 +230,30 @@ abstract contract BaseIntegration is Test {
         oracle.update(address(cvxToken), weth);
         oracle.update(address(inputToken), address(poolToken2)); // USDC/USDT pair
         
+        // Advance time and block to allow TWAP calculation
+        vm.warp(block.timestamp + 3600); // 1 hour
+        vm.roll(block.number + 1);
+        
+        // Update cumulative prices in pairs to simulate price movements over time
+        // The cumulative price increases should be proportional to the time elapsed
+        // For a 1:1 exchange rate over 1 hour (3600 seconds), cumulative price increases by 3600 * 2^112
+        uint256 cumulativeIncrease = 3600 * 2**112;
+        
+        MockUniswapV2Pair(flaxEthPair).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(inputToken), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(poolToken2), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(crvToken), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(cvxToken), weth)).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        MockUniswapV2Pair(uniswapV2Factory.getPair(address(inputToken), address(poolToken2))).setPriceCumulativeLast(cumulativeIncrease, cumulativeIncrease);
+        
+        // Update pairs again to establish TWAP
+        oracle.update(address(flaxToken), weth);
+        oracle.update(address(inputToken), weth);
+        oracle.update(address(poolToken2), weth);
+        oracle.update(address(crvToken), weth);
+        oracle.update(address(cvxToken), weth);
+        oracle.update(address(inputToken), address(poolToken2));
+        
         // Register Flax/ETH pair in price tilter
         // Note: PriceTilter doesn't have registerPair, pairs are registered via oracle
         
@@ -243,8 +267,14 @@ abstract contract BaseIntegration is Test {
         yieldSource.setUnderlyingWeights(address(curvePool), weights);
         
         // Configure Uniswap V3 router prices using specific return amounts
+        // Based on oracle rates: USDC -> USDT should use 1.5:1 ratio (oracle returns 3750000000 for 2500000000 input)
         uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken1), 1e6, 1e6); // 1:1
-        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 1e6, 1e6); // 1:1
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 1e6, 1.5e6); // 1:1.5 (USDC to USDT)
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 5e5, 7.5e5); // 500k USDC -> 750k USDT
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 2.5e9, 3.75e9); // Larger amounts: 2.5B USDC -> 3.75B USDT
+        // Add more common amounts used in tests
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 5e9, 7.5e9); // 5B USDC -> 7.5B USDT (multiple users test)
+        uniswapV3Router.setSpecificReturnAmount(address(inputToken), address(poolToken2), 3.75e9, 5.625e9); // 3.75B USDC -> 5.625B USDT
         uniswapV3Router.setSpecificReturnAmount(address(crvToken), address(0), 1e18, 0.0005 ether); // 1 CRV = 0.0005 ETH
         uniswapV3Router.setSpecificReturnAmount(address(cvxToken), address(0), 1e18, 0.0003 ether); // 1 CVX = 0.0003 ETH
     }
@@ -339,6 +369,7 @@ abstract contract BaseIntegration is Test {
     
     function assertUserDeposit(address user, uint256 expected, string memory message) public {
         assertEq(vault.originalDeposits(user), expected, message);
+        assertEq(vault.getEffectiveDeposit(user), expected, string.concat(message, " (effective)"));
     }
     
     function assertApproxEq(uint256 actual, uint256 expected, uint256 tolerance, string memory message) public {

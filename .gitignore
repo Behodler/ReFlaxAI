@@ -18,6 +18,24 @@ metascripts/
 
 TODO.md
 testResults
-
+.envrc
+.certora_internal/
+certora/.venv
+certora/certora-env
+certora/reports
 
 src_flat*
+certora/temp_*.sol
+
+# Mutation testing artifacts - selective ignore
+.gambit/
+.gambit_cache/
+# Ignore bulky mutation artifacts but keep key results
+mutation-reports/*/mutants/
+mutation-reports/*/input_json/
+# Always track important mutation metadata (override above ignores)
+!mutation-reports/*/gambit_results.json
+!mutation-reports/*/mutants.log
+# Ignore baseline test output files  
+mutation-test-baseline-*.txt
+mutation-test-post-downgrade-*.txt

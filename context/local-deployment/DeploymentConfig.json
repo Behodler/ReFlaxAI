@@ -1,0 +1,260 @@
+{
+  "deployment": {
+    "name": "ReFlax Local Development Environment",
+    "description": "Anvil-based local deployment for UI development and testing",
+    "version": "1.0.0",
+    "chainId": 31337,
+    "blockTime": 1
+  },
+  
+  "tokenPrices": {
+    "description": "Token prices in USD with 6 decimal precision",
+    "usdc": 1000000,
+    "usdt": 1000000,
+    "eth": 2000000000,
+    "flax": 500000,
+    "crv": 300000,
+    "cvx": 2500000,
+    "weth": 2000000000
+  },
+  
+  "liquidityConfig": {
+    "description": "Initial liquidity amounts for pools and pairs",
+    "curvePool": {
+      "usdc": "100000000000",
+      "usdt": "100000000000",
+      "description": "$100K equivalent in each stablecoin"
+    },
+    "flaxEthPair": {
+      "eth": "10000000000000000000",
+      "flax": "40000000000000000000000",
+      "description": "10 ETH and 40K Flax (maintaining $0.50 Flax price)"
+    },
+    "uniswapV3Pools": {
+      "usdcUsdt": {
+        "liquidity": "200000000000",
+        "baseSlippageBps": 10,
+        "description": "$200K total liquidity, 0.1% base slippage"
+      },
+      "crvEth": {
+        "liquidityEth": "50000000000000000000",
+        "baseSlippageBps": 50,
+        "description": "50 ETH liquidity, 0.5% base slippage"
+      },
+      "cvxEth": {
+        "liquidityEth": "20000000000000000000",
+        "baseSlippageBps": 30,
+        "description": "20 ETH liquidity, 0.3% base slippage"
+      }
+    }
+  },
+  
+  "yieldConfig": {
+    "description": "Yield farming parameters and APY rates",
+    "curveLP": {
+      "baseApyBps": 700,
+      "feeRate": 4,
+      "description": "7% base APY, 0.04% swap fees"
+    },
+    "convexBoost": {
+      "additionalApyBps": 400,
+      "rewardFrequencyHours": 24,
+      "description": "4% additional APY from Convex, rewards distributed daily"
+    },
+    "totalExpectedApy": {
+      "minBps": 800,
+      "maxBps": 1300,
+      "description": "8-13% total expected APY"
+    }
+  },
+  
+  "testAccounts": {
+    "description": "Pre-configured test accounts with different portfolio sizes",
+    "accounts": [
+      {
+        "name": "Large Depositor",
+        "privateKey": "0x0000000000000000000000000000000000000000000000000000000000000001",
+        "funding": {
+          "usdcAmount": "10000000000",
+          "usdtAmount": "5000000000",
+          "ethAmount": "5000000000000000000",
+          "flaxAmount": "100000000000000000000000",
+          "sFlaxAmount": "1000000000000000000000",
+          "description": "$10K USDC, $5K USDT, 5 ETH, 100K Flax, 1K sFlax"
+        }
+      },
+      {
+        "name": "Medium Depositor",
+        "privateKey": "0x0000000000000000000000000000000000000000000000000000000000000002",
+        "funding": {
+          "usdcAmount": "1000000000",
+          "usdtAmount": "500000000",
+          "ethAmount": "500000000000000000",
+          "flaxAmount": "10000000000000000000000",
+          "sFlaxAmount": "100000000000000000000",
+          "description": "$1K USDC, $500 USDT, 0.5 ETH, 10K Flax, 100 sFlax"
+        }
+      },
+      {
+        "name": "Small Depositor",
+        "privateKey": "0x0000000000000000000000000000000000000000000000000000000000000003",
+        "funding": {
+          "usdcAmount": "100000000",
+          "usdtAmount": "50000000",
+          "ethAmount": "50000000000000000",
+          "flaxAmount": "1000000000000000000000",
+          "sFlaxAmount": "10000000000000000000",
+          "description": "$100 USDC, $50 USDT, 0.05 ETH, 1K Flax, 10 sFlax"
+        }
+      },
+      {
+        "name": "New User",
+        "privateKey": "0x0000000000000000000000000000000000000000000000000000000000000004",
+        "funding": {
+          "usdcAmount": "0",
+          "usdtAmount": "0",
+          "ethAmount": "100000000000000000",
+          "flaxAmount": "0",
+          "sFlaxAmount": "0",
+          "description": "Only 0.1 ETH for gas, no other tokens"
+        }
+      }
+    ]
+  },
+  
+  "scenarios": {
+    "description": "Predefined deployment scenarios for different testing needs",
+    "fresh": {
+      "name": "Fresh Deployment",
+      "description": "Clean slate with minimal activity",
+      "preFundPools": true,
+      "generateHistory": false,
+      "activeUsers": 0
+    },
+    "active": {
+      "name": "Active Protocol",
+      "description": "Protocol with ongoing activity and history",
+      "preFundPools": true,
+      "generateHistory": true,
+      "activeUsers": 3,
+      "simulatedDeposits": [
+        {
+          "account": 0,
+          "amount": "5000000000",
+          "daysAgo": 30
+        },
+        {
+          "account": 1,
+          "amount": "500000000",
+          "daysAgo": 15
+        },
+        {
+          "account": 2,
+          "amount": "50000000",
+          "daysAgo": 7
+        }
+      ]
+    },
+    "stressed": {
+      "name": "Stressed Conditions",
+      "description": "High slippage and volatile market conditions",
+      "preFundPools": true,
+      "generateHistory": true,
+      "activeUsers": 2,
+      "modifiedSlippage": {
+        "globalMultiplier": 3,
+        "description": "3x normal slippage to simulate stressed conditions"
+      },
+      "reducedLiquidity": {
+        "reductionFactor": 0.3,
+        "description": "Reduce all pool liquidity to 30% of normal"
+      }
+    },
+    "migration": {
+      "name": "Migration Ready",
+      "description": "Old YieldSource with deposits ready for migration",
+      "preFundPools": true,
+      "generateHistory": true,
+      "activeUsers": 3,
+      "deployOldYieldSource": true,
+      "migrationIncentives": {
+        "earlyWithdrawalBonus": 500,
+        "description": "5% bonus for early withdrawal before migration"
+      }
+    }
+  },
+  
+  "contractConfig": {
+    "description": "Configuration parameters for deployed contracts",
+    "vault": {
+      "flaxPerSFlax": "2000000000000000000",
+      "emergencyDelay": 86400,
+      "description": "2:1 Flax per sFlax ratio, 24h emergency delay"
+    },
+    "priceTilter": {
+      "priceTiltRatio": "950000000000000000",
+      "maxSlippageBps": 500,
+      "description": "5% price tilt (95% of oracle price), 5% max slippage"
+    },
+    "twapOracle": {
+      "periodSeconds": 3600,
+      "updateThresholdBps": 100,
+      "description": "1-hour TWAP period, 1% update threshold"
+    },
+    "yieldSource": {
+      "slippageToleranceBps": 200,
+      "minOutputBps": 9800,
+      "description": "2% slippage tolerance, 98% minimum output"
+    }
+  },
+  
+  "developmentUtils": {
+    "description": "Development and testing utilities",
+    "autoMining": true,
+    "fastForwardBlocks": 100,
+    "snapshotInterval": 1000,
+    "healthCheckInterval": 300,
+    "eventLogging": {
+      "enabled": true,
+      "verbosity": "high",
+      "logFile": "deployment.log"
+    },
+    "performance": {
+      "expectedDeploymentTime": 30,
+      "maxGasPerTransaction": "30000000",
+      "description": "Deploy in under 30s, max 30M gas per tx"
+    }
+  },
+  
+  "frontend": {
+    "description": "Configuration for frontend integration",
+    "rpcUrl": "http://localhost:8545",
+    "chainId": 31337,
+    "blockExplorer": null,
+    "recommendedGasPrice": "1000000000",
+    "contractABIPath": "./out",
+    "networkName": "Anvil Local",
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    }
+  },
+  
+  "monitoring": {
+    "description": "Monitoring and alerting configuration",
+    "healthChecks": [
+      "contractDeployment",
+      "tokenBalances",
+      "poolLiquidity",
+      "priceOracles",
+      "yieldGeneration"
+    ],
+    "alerts": {
+      "lowLiquidity": "10000000000",
+      "highSlippage": 1000,
+      "priceDeviation": 500,
+      "description": "Alert if liquidity < $10K, slippage > 10%, price deviation > 5%"
+    }
+  }
+}

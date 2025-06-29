@@ -12,6 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - For formal verification workflow rules, see `context/formal-verification/WorkflowRules.md`
 - For formal verification backlog and TODOs, see `context/formal-verification/FormalVerificationBacklog.md`
 - For mutation testing guidelines, see `context/mutation-test/CLAUDE.md`
+- **For local deployment on Anvil for UI development, see `context/local-deployment/`** - comprehensive plan for mock-based local testing environment
 - **For comprehensive project TODOs, see `context/GLOBAL_TODOS.md`** - contains detailed tasks with context for fresh agents
 - When implementing new features or making significant architectural changes, proactively update relevant sections of this CLAUDE.md file
 
@@ -213,6 +214,42 @@ See `context/mutation-test/CLAUDE.md` for complete workflow details.
 - ✅ Comprehensive documentation complete
 
 See `context/ComprehensiveTestingReport.md` for detailed security assessment.
+
+### Local Deployment for UI Development
+
+**PURPOSE**: Anvil-based local deployment using realistic mock contracts instead of Arbitrum fork for UI development.
+
+**DEPLOYMENT COMMAND**:
+```bash
+# Deploy full ReFlax protocol with mocks to local Anvil
+forge script scripts/deployLocal.js --rpc-url http://localhost:8545 --broadcast
+```
+
+**KEY FEATURES**:
+- **No RPC Dependencies**: Uses sophisticated mocks instead of forking Arbitrum
+- **Realistic Data**: Pre-configured token prices, yield rates, and user balances
+- **Fast Development**: Sub-30 second deployment with consistent state
+- **Multiple Scenarios**: Fresh deployment, active protocol, stressed conditions, migration scenarios
+- **Configurable Parameters**: Adjustable prices, APY rates, user portfolios via JSON config
+
+**MOCK ARCHITECTURE**:
+- **MockUniswapV3Router**: Realistic slippage and price impact simulation
+- **MockCurvePool**: Balanced pool mechanics with configurable fees
+- **MockConvexBooster/Rewards**: Time-based reward accumulation with realistic APY
+- **MockERC20 Tokens**: USDC, USDT, CRV, CVX, WETH, Flax, sFlax with realistic prices
+
+**CONFIGURATION**:
+- Token Prices: USDC/USDT ($1.00), ETH ($2000), Flax ($0.50), CRV ($0.30), CVX ($2.50)
+- Yield Rates: Curve LP (5-8%), Convex Boost (3-5%), Total Expected (8-13%)
+- Test Accounts: Pre-funded with $10K, $1K, $100, and $0 for different user scenarios
+
+**DEVELOPMENT UTILITIES**:
+- One-command setup and reset
+- State snapshots and restoration
+- Event logging and health checks
+- Time acceleration for testing
+
+**DOCUMENTATION**: Complete plan and specifications in `context/local-deployment/LocalDeploymentPlan.md`
 
 ## Git Commit Policy
 **NEVER commit changes unless the user explicitly asks you to commit**. This means:

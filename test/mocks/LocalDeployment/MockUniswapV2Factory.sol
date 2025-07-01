@@ -2,11 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IERC20} from "@oz_reflax/token/ERC20/IERC20.sol";
-
-interface IMockERC20 {
-    function mint(address to, uint256 amount) external;
-    function burn(uint256 amount) external;
-}
+import "./IMockERC20.sol";
 
 contract MockUniswapV2Factory {
     mapping(address => mapping(address => address)) public getPair;

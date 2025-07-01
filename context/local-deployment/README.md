@@ -16,9 +16,20 @@ A comprehensive Anvil-based local deployment system providing realistic mock env
 # Start Anvil (in separate terminal)
 anvil --host 0.0.0.0 --port 8545
 
-# Deploy ReFlax protocol
-forge script scripts/deployLocal.js --rpc-url http://localhost:8545 --broadcast
+# Install dependencies (first time only)
+npm install
+
+# Deploy ReFlax protocol and start address server
+./scripts/deployWithServer.sh
 ```
+
+This will:
+1. Deploy all contracts to local Anvil
+2. Save addresses to `scripts/deployedAddresses.json`
+3. Start Express server on port 3011
+4. Serve addresses at `http://localhost:3011/api/contract-addresses`
+
+**Note**: Keep the terminal open to maintain the server (press Ctrl+C to stop)
 
 ### Using Deployment Utilities
 
@@ -188,36 +199,74 @@ Create custom scenarios by extending the configuration:
 ```bash
 # Set environment variable for custom config
 export CUSTOM_SCENARIO=high_yield
-forge script scripts/deployLocal.js --rpc-url http://localhost:8545 --broadcast
+forge script scripts/DeployLocal.s.sol:LocalDeploymentScript --rpc-url http://localhost:8545 --broadcast
 ```
 
 ## Frontend Integration
 
-### Contract Addresses
+### Address Server API
 
-After deployment, contract addresses are logged and can be saved for frontend use:
+The deployment includes an Express server that provides contract addresses via HTTP:
 
-```typescript
-// Example frontend configuration
-const contracts = {
-  vault: "0x...",
-  yieldSource: "0x...", 
-  priceTilter: "0x...",
-  twapOracle: "0x...",
-  tokens: {
-    usdc: "0x...",
-    usdt: "0x...",
-    flax: "0x...",
-    sFlax: "0x..."
+```javascript
+// In your UI application
+async function getContractAddresses() {
+  if (chainId === 31337) { // Anvil chain ID
+    const response = await fetch('http://localhost:3011/api/contract-addresses');
+    const addresses = await response.json();
+    
+    return {
+      vault: addresses.reflaxContracts.vault,
+      yieldSource: addresses.reflaxContracts.yieldSource,
+      usdc: addresses.tokens.usdc,
+      flax: addresses.tokens.flax,
+      // ... other addresses
+    };
   }
-};
-
-const network = {
-  name: "Anvil Local",
-  chainId: 31337,
-  rpcUrl: "http://localhost:8545"
-};
+}
 ```
+
+### API Response Format
+
+```json
+{
+  "chainId": 31337,
+  "timestamp": "1234567890",
+  "blockNumber": "123",
+  "tokens": {
+    "usdc": "0x...",
+    "usdt": "0x...",
+    "weth": "0x...",
+    "crv": "0x...",
+    "cvx": "0x...",
+    "flax": "0x...",
+    "sFlax": "0x...",
+    "curveLP": "0x..."
+  },
+  "externalContracts": {
+    "uniswapV3Router": "0x...",
+    "curvePool": "0x...",
+    "convexBooster": "0x...",
+    "flaxEthPair": "0x..."
+  },
+  "reflaxContracts": {
+    "vault": "0x...",
+    "yieldSource": "0x...",
+    "priceTilter": "0x...",
+    "twapOracle": "0x..."
+  },
+  "testAccounts": ["0x...", "0x...", "0x...", "0x..."]
+}
+```
+
+### CORS Configuration
+
+The server is configured to allow requests from common frontend ports:
+- `http://localhost:3000` (React)
+- `http://localhost:3001` (Alternative React)
+- `http://localhost:5173` (Vite)
+
+To add more origins, modify `scripts/addressServer.js`.
 
 ### Test Accounts
 

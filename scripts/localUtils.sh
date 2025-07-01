@@ -64,7 +64,8 @@ deploy_fresh() {
     check_anvil
     
     export SCENARIO="fresh"
-    if forge script scripts/deployLocal.js --rpc-url "$RPC_URL" --broadcast > "$LOGS_DIR/deploy_$(get_timestamp).log" 2>&1; then
+    export PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"  # Anvil account 0
+    if forge script scripts/DeployLocal.s.sol:LocalDeploymentScript --rpc-url "$RPC_URL" --broadcast --ffi > "$LOGS_DIR/deploy_$(get_timestamp).log" 2>&1; then
         log_success "Fresh deployment completed"
         create_snapshot "fresh_$(get_timestamp)"
     else
@@ -85,7 +86,8 @@ deploy_scenario() {
     check_anvil
     
     export SCENARIO="$scenario"
-    if forge script scripts/deployLocal.js --rpc-url "$RPC_URL" --broadcast > "$LOGS_DIR/deploy_${scenario}_$(get_timestamp).log" 2>&1; then
+    export PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"  # Anvil account 0
+    if forge script scripts/DeployLocal.s.sol:LocalDeploymentScript --rpc-url "$RPC_URL" --broadcast --ffi > "$LOGS_DIR/deploy_${scenario}_$(get_timestamp).log" 2>&1; then
         log_success "$scenario deployment completed"
         create_snapshot "${scenario}_$(get_timestamp)"
     else

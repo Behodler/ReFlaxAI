@@ -136,17 +136,15 @@ contract LocalDeploymentScript is Script {
         internal 
         returns (DeployedContracts memory) 
     {
-        TokenDeployer tokenDeployer = new TokenDeployer();
-        TokenDeployer.DeployedTokens memory tokens = tokenDeployer.deployAllTokens();
-        
-        deployed.usdc = tokens.usdc;
-        deployed.usdt = tokens.usdt;
-        deployed.weth = tokens.weth;
-        deployed.crv = tokens.crv;
-        deployed.cvx = tokens.cvx;
-        deployed.flax = tokens.flax;
-        deployed.sFlax = tokens.sFlax;
-        deployed.curveLP = tokens.curveLP;
+        // Deploy tokens directly to avoid contract size limits
+        deployed.usdc = address(new MockUSDC());
+        deployed.usdt = address(new MockUSDT());
+        deployed.weth = address(new MockWETH());
+        deployed.crv = address(new MockCRV());
+        deployed.cvx = address(new MockCVX());
+        deployed.flax = address(new MockFlax());
+        deployed.sFlax = address(new MockSFlax());
+        deployed.curveLP = address(new MockCurveLP("Curve USDC/USDT LP", "crvUSDCUSDT"));
         
         console.log("  USDC:", deployed.usdc);
         console.log("  USDT:", deployed.usdt);
@@ -200,28 +198,47 @@ contract LocalDeploymentScript is Script {
         // Deploy TWAP Oracle
         deployed.twapOracle = address(new TWAPOracle(
             deployed.uniswapV2Factory,
-            deployed.flax,
             deployed.weth
         ));
         console.log("  TWAPOracle:", deployed.twapOracle);
         
         // Deploy PriceTilter
         deployed.priceTilter = address(new PriceTilterTWAP(
-            deployed.flax,
+            deployed.uniswapV2Factory,
             deployed.uniswapV2Router,
+            deployed.flax,
             deployed.twapOracle
         ));
         console.log("  PriceTilter:", deployed.priceTilter);
         
         // Deploy YieldSource
+        address[] memory poolTokens = new address[](2);
+        poolTokens[0] = deployed.usdc;
+        poolTokens[1] = deployed.usdt;
+        
+        string[] memory poolTokenSymbols = new string[](2);
+        poolTokenSymbols[0] = "USDC";
+        poolTokenSymbols[1] = "USDT";
+        
+        address[] memory rewardTokens = new address[](2);
+        rewardTokens[0] = deployed.crv;
+        rewardTokens[1] = deployed.cvx;
+        
         deployed.yieldSource = address(new CVX_CRV_YieldSource(
             deployed.usdc,
-            deployed.uniswapV3Router,
-            deployed.curvePool,
-            deployed.convexBooster,
-            0, // pool ID
+            deployed.flax,
             deployed.priceTilter,
-            deployed.twapOracle
+            deployed.twapOracle,
+            "USDC/USDT LP",
+            deployed.curvePool,
+            deployed.curveLP,
+            deployed.convexBooster,
+            address(0), // convex reward pool - use zero for mock
+            0, // pool ID
+            deployed.uniswapV3Router,
+            poolTokens,
+            poolTokenSymbols,
+            rewardTokens
         ));
         console.log("  YieldSource:", deployed.yieldSource);
         
@@ -262,7 +279,7 @@ contract LocalDeploymentScript is Script {
         console.log("Configuring contracts...");
         
         // Configure Uniswap V3 Router with realistic prices and slippage
-        MockUniswapV3Router v3Router = MockUniswapV3Router(deployed.uniswapV3Router);
+        MockUniswapV3Router v3Router = MockUniswapV3Router(payable(deployed.uniswapV3Router));
         
         // Set token prices
         v3Router.setTokenPrice(deployed.usdc, config.usdcPrice);
@@ -308,9 +325,9 @@ contract LocalDeploymentScript is Script {
         MockConvexBooster booster = MockConvexBooster(deployed.convexBooster);
         booster.addPool(deployed.curveLP, address(0), 0);
         
-        // Configure TWAP Oracle with initial price data
-        TWAPOracle oracle = TWAPOracle(deployed.twapOracle);
-        oracle.registerPair(deployed.flaxEthPair);
+        // Configure PriceTilter with registered pair
+        PriceTilterTWAP priceTilter = PriceTilterTWAP(payable(deployed.priceTilter));
+        priceTilter.registerPair(deployed.flax, deployed.weth);
         
         // Set up initial Flax/ETH pair reserves for realistic pricing
         MockUniswapV2Pair flaxEthPair = MockUniswapV2Pair(deployed.flaxEthPair);
@@ -379,12 +396,12 @@ contract LocalDeploymentScript is Script {
                 MockERC20(deployed.flax).mint(account, amount * 10); // 10x in Flax
                 MockERC20(deployed.sFlax).mint(account, amount / 10); // Small sFlax balance
                 
-                console.log("  Funded account", i + 1, ":", account, "with $", amount / 1e6);
+                console.log("  Funded account", i + 1, "with amount", amount);
             }
         }
     }
 
-    function _logDeploymentSummary(DeployedContracts memory deployed) internal view {
+    function _logDeploymentSummary(DeployedContracts memory deployed) internal {
         console.log("");
         console.log("=== DEPLOYMENT SUMMARY ===");
         console.log("");
@@ -419,6 +436,54 @@ contract LocalDeploymentScript is Script {
         console.log("  Use the deployed contract addresses above");
         console.log("  Test accounts are pre-funded and ready to use");
         console.log("");
+        
+        // Save addresses to JSON file
+        _saveAddresses(deployed);
+    }
+    
+    function _saveAddresses(DeployedContracts memory deployed) internal {
+        // Create JSON string manually (Solidity doesn't have JSON libraries)
+        string memory json = '{\n';
+        json = string(abi.encodePacked(json, '  "timestamp": "', vm.toString(block.timestamp), '",\n'));
+        json = string(abi.encodePacked(json, '  "blockNumber": "', vm.toString(block.number), '",\n'));
+        json = string(abi.encodePacked(json, '  "tokens": {\n'));
+        json = string(abi.encodePacked(json, '    "usdc": "', vm.toString(deployed.usdc), '",\n'));
+        json = string(abi.encodePacked(json, '    "usdt": "', vm.toString(deployed.usdt), '",\n'));
+        json = string(abi.encodePacked(json, '    "weth": "', vm.toString(deployed.weth), '",\n'));
+        json = string(abi.encodePacked(json, '    "crv": "', vm.toString(deployed.crv), '",\n'));
+        json = string(abi.encodePacked(json, '    "cvx": "', vm.toString(deployed.cvx), '",\n'));
+        json = string(abi.encodePacked(json, '    "flax": "', vm.toString(deployed.flax), '",\n'));
+        json = string(abi.encodePacked(json, '    "sFlax": "', vm.toString(deployed.sFlax), '",\n'));
+        json = string(abi.encodePacked(json, '    "curveLP": "', vm.toString(deployed.curveLP), '"\n'));
+        json = string(abi.encodePacked(json, '  },\n'));
+        json = string(abi.encodePacked(json, '  "externalContracts": {\n'));
+        json = string(abi.encodePacked(json, '    "uniswapV3Router": "', vm.toString(deployed.uniswapV3Router), '",\n'));
+        json = string(abi.encodePacked(json, '    "uniswapV2Factory": "', vm.toString(deployed.uniswapV2Factory), '",\n'));
+        json = string(abi.encodePacked(json, '    "uniswapV2Router": "', vm.toString(deployed.uniswapV2Router), '",\n'));
+        json = string(abi.encodePacked(json, '    "curvePool": "', vm.toString(deployed.curvePool), '",\n'));
+        json = string(abi.encodePacked(json, '    "convexBooster": "', vm.toString(deployed.convexBooster), '",\n'));
+        json = string(abi.encodePacked(json, '    "flaxEthPair": "', vm.toString(deployed.flaxEthPair), '"\n'));
+        json = string(abi.encodePacked(json, '  },\n'));
+        json = string(abi.encodePacked(json, '  "reflaxContracts": {\n'));
+        json = string(abi.encodePacked(json, '    "vault": "', vm.toString(deployed.vault), '",\n'));
+        json = string(abi.encodePacked(json, '    "yieldSource": "', vm.toString(deployed.yieldSource), '",\n'));
+        json = string(abi.encodePacked(json, '    "priceTilter": "', vm.toString(deployed.priceTilter), '",\n'));
+        json = string(abi.encodePacked(json, '    "twapOracle": "', vm.toString(deployed.twapOracle), '"\n'));
+        json = string(abi.encodePacked(json, '  },\n'));
+        json = string(abi.encodePacked(json, '  "testAccounts": [\n'));
+        for (uint256 i = 0; i < 4; i++) {
+            json = string(abi.encodePacked(json, '    "', vm.toString(deployed.testAccounts[i]), '"'));
+            if (i < 3) {
+                json = string(abi.encodePacked(json, ','));
+            }
+            json = string(abi.encodePacked(json, '\n'));
+        }
+        json = string(abi.encodePacked(json, '  ]\n'));
+        json = string(abi.encodePacked(json, '}\n'));
+        
+        // Write to file
+        vm.writeFile("scripts/deployedAddresses.json", json);
+        console.log("Saved addresses to scripts/deployedAddresses.json");
     }
 }
 
@@ -429,9 +494,9 @@ contract TestVault is Vault {
         address _yieldSource,
         address _flaxToken,
         address _sFlaxToken
-    ) Vault(_inputToken, _yieldSource, _flaxToken, _sFlaxToken) {}
+    ) Vault(_flaxToken, _sFlaxToken, _inputToken, _yieldSource, address(0)) {}
     
-    function canWithdraw(address) external pure override returns (bool) {
+    function canWithdraw(address) external pure returns (bool) {
         return true; // Always allow withdrawals in local deployment
     }
 }

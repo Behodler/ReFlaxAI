@@ -23,7 +23,7 @@ testResults
 certora/.venv
 certora/certora-env
 certora/reports
-
+node_modules
 src_flat*
 certora/temp_*.sol
 

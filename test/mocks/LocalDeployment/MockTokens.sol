@@ -111,34 +111,23 @@ contract MockFlax is MockERC20 {
 }
 
 contract MockSFlax is MockERC20 {
-    address public vault;
+    mapping(address => bool) public approvedBurners;
     
     constructor() MockERC20("Staked Flax", "sFlax", 18, 0) {}
     
-    function setVault(address _vault) external {
-        vault = _vault;
+    function setApprovedBurner(address burner, bool approved) external {
+        approvedBurners[burner] = approved;
     }
     
     function burn(uint256 amount) external override {
-        require(msg.sender == vault || balanceOf[msg.sender] >= amount, "Unauthorized or insufficient balance");
-        
-        if (msg.sender == vault) {
-            // Vault can burn from any account with sufficient balance
-            // This should be called after proper authorization in the vault
-            require(totalSupply >= amount, "Insufficient total supply");
-            totalSupply -= amount;
-            emit Transfer(address(0), address(0), amount); // Burn event
-        } else {
-            // Direct burn from user
-            require(balanceOf[msg.sender] >= amount, "Insufficient balance");
-            balanceOf[msg.sender] -= amount;
-            totalSupply -= amount;
-            emit Transfer(msg.sender, address(0), amount);
-        }
+        require(balanceOf[msg.sender] >= amount, "Insufficient balance");
+        balanceOf[msg.sender] -= amount;
+        totalSupply -= amount;
+        emit Transfer(msg.sender, address(0), amount);
     }
     
     function burnFrom(address account, uint256 amount) external {
-        require(msg.sender == vault, "Only vault can burn from accounts");
+        require(approvedBurners[msg.sender], "Not an approved burner");
         require(balanceOf[account] >= amount, "Insufficient balance");
         
         balanceOf[account] -= amount;

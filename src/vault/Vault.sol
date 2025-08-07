@@ -50,7 +50,23 @@ interface IBurnableERC20 is IERC20 {
      * @param amount The amount of tokens to burn
      */
     function burn(uint256 amount) external;
+    
+    /**
+     * @notice Burns tokens from a specific account (requires approval or special permission)
+     * @param account The account to burn tokens from
+     * @param amount The amount of tokens to burn
+     */
+    function burnFrom(address account, uint256 amount) external;
 }
+
+// Custom errors for enhanced error handling
+error InsufficientBalance(address account, uint256 requested, uint256 available);
+error InvalidBurnAmount(uint256 amount, string reason);
+error BoostCalculationFailed(uint256 sFlaxAmount, string reason);
+error EmergencyStateActive();
+error VaultDisabled();
+error InvalidExchangeRate(uint256 rate);
+error GasEstimationFailed(string operation);
 
 /**
  * @title Vault
@@ -95,6 +111,15 @@ contract Vault is Ownable, ReentrancyGuard {
     /// @notice Rebase multiplier for handling emergency withdrawals (18 decimals, 1e18 = 1.0)
     /// @dev When set to 0, all user deposits become effectively 0 and vault is disabled
     uint256 public rebaseMultiplier;
+    
+    /// @notice Maximum boost percentage that can be applied (in basis points, e.g., 5000 = 50%)
+    uint256 public maxBoostPercentage;
+    
+    /// @notice Base boost rate per sFlax token (in basis points per token, e.g., 100 = 1% per sFlax)
+    uint256 public boostRatePerSFlax;
+    
+    /// @notice Mapping to track if an address is approved to burn sFlax tokens
+    mapping(address => bool) public approvedBurners;
 
     /**
      * @notice Emitted when a user deposits tokens
@@ -163,6 +188,29 @@ contract Vault is Ownable, ReentrancyGuard {
      * @notice Emitted when vault is permanently disabled
      */
     event VaultPermanentlyDisabled();
+    
+    /**
+     * @notice Emitted when boost calculation parameters are updated
+     * @param maxBoostPercentage The new maximum boost percentage
+     * @param boostRatePerSFlax The new boost rate per sFlax token
+     */
+    event BoostParametersUpdated(uint256 maxBoostPercentage, uint256 boostRatePerSFlax);
+    
+    /**
+     * @notice Emitted when boost is calculated for a user
+     * @param user The address receiving the boost
+     * @param sFlaxAmount The amount of sFlax burned
+     * @param boostPercentage The calculated boost percentage
+     * @param additionalFlax The additional Flax received from boost
+     */
+    event BoostCalculated(address indexed user, uint256 sFlaxAmount, uint256 boostPercentage, uint256 additionalFlax);
+    
+    /**
+     * @notice Emitted when an approved burner status is changed
+     * @param burner The address whose status changed
+     * @param approved Whether the address is now approved
+     */
+    event ApprovedBurnerUpdated(address indexed burner, bool approved);
 
     /**
      * @notice Initializes the vault with token addresses and yield source
@@ -186,6 +234,15 @@ contract Vault is Ownable, ReentrancyGuard {
         priceTilter = _priceTilter;
         emergencyState = false;
         rebaseMultiplier = 1e18; // Initialize to 1.0 (normal operation)
+        
+        // Initialize boost parameters with reasonable defaults
+        maxBoostPercentage = 5000; // 50% max boost
+        boostRatePerSFlax = 100;   // 1% per sFlax token (100 basis points)
+        flaxPerSFlax = 11 * 1e17;  // Initialize to 1.1 Flax per sFlax (not fallback 1)
+        
+        // Set this vault as an approved burner for sFlax tokens
+        approvedBurners[address(this)] = true;
+        emit ApprovedBurnerUpdated(address(this), true);
     }
 
     /**
@@ -261,11 +318,20 @@ contract Vault is Ownable, ReentrancyGuard {
         uint256 totalFlax = flaxValue;
 
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
-            uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
+            // Calculate boost using the new boost calculation system
+            uint256 boostPercentage = calculateBoostPercentage(sFlaxAmount);
+            uint256 boostMultiplier = (10000 + boostPercentage); // 10000 = 100% in basis points
+            uint256 boostedFlaxValue = (flaxValue * boostMultiplier) / 10000;
+            uint256 additionalFlaxFromBoost = boostedFlaxValue - flaxValue;
+            
+            // Transfer and burn sFlax tokens
             sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount);
             IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount);
-            totalFlax += flaxBoost;
-            emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
+            
+            totalFlax = boostedFlaxValue;
+            
+            emit SFlaxBurned(msg.sender, sFlaxAmount, additionalFlaxFromBoost);
+            emit BoostCalculated(msg.sender, sFlaxAmount, boostPercentage, additionalFlaxFromBoost);
         }
 
         if (totalFlax > 0) {
@@ -312,11 +378,20 @@ contract Vault is Ownable, ReentrancyGuard {
         uint256 totalFlax = flaxValue;
 
         if (sFlaxAmount > 0 && flaxPerSFlax > 0) {
-            uint256 flaxBoost = (sFlaxAmount * flaxPerSFlax) / 1e18;
+            // Calculate boost using the new boost calculation system
+            uint256 boostPercentage = calculateBoostPercentage(sFlaxAmount);
+            uint256 boostMultiplier = (10000 + boostPercentage); // 10000 = 100% in basis points
+            uint256 boostedFlaxValue = (flaxValue * boostMultiplier) / 10000;
+            uint256 additionalFlaxFromBoost = boostedFlaxValue - flaxValue;
+            
+            // Transfer and burn sFlax tokens
             sFlaxToken.safeTransferFrom(msg.sender, address(this), sFlaxAmount);
             IBurnableERC20(address(sFlaxToken)).burn(sFlaxAmount);
-            totalFlax += flaxBoost;
-            emit SFlaxBurned(msg.sender, sFlaxAmount, flaxBoost);
+            
+            totalFlax = boostedFlaxValue;
+            
+            emit SFlaxBurned(msg.sender, sFlaxAmount, additionalFlaxFromBoost);
+            emit BoostCalculated(msg.sender, sFlaxAmount, boostPercentage, additionalFlaxFromBoost);
         }
 
         if (totalFlax > 0) {
@@ -331,8 +406,110 @@ contract Vault is Ownable, ReentrancyGuard {
      * @dev Only callable by owner
      */
     function setFlaxPerSFlax(uint256 _flaxPerSFlax) external onlyOwner {
+        if (_flaxPerSFlax == 0) revert InvalidExchangeRate(_flaxPerSFlax);
         flaxPerSFlax = _flaxPerSFlax;
         emit FlaxPerSFlaxUpdated(_flaxPerSFlax);
+    }
+    
+    /**
+     * @notice Calculates boost percentage based on sFlax burn amount
+     * @param sFlaxBurnAmount The amount of sFlax to burn for boost
+     * @return The boost percentage in basis points (e.g., 500 = 5%)
+     * @dev Implements diminishing returns and caps at maxBoostPercentage
+     */
+    function calculateBoostPercentage(uint256 sFlaxBurnAmount) public view returns (uint256) {
+        if (sFlaxBurnAmount == 0) return 0;
+        
+        // Basic calculation: boostRatePerSFlax * sFlaxBurnAmount (in basis points)
+        uint256 baseBoost = (sFlaxBurnAmount * boostRatePerSFlax) / 1e18;
+        
+        // Apply diminishing returns for large amounts (square root scaling)
+        if (baseBoost > 1000) { // Over 10% starts diminishing returns
+            // Calculate square root approximation for amounts over 10%
+            uint256 excess = baseBoost - 1000;
+            uint256 diminishedExcess = _sqrt(excess * 1e18) / 1e9; // Scale down the excess
+            baseBoost = 1000 + diminishedExcess;
+        }
+        
+        // Cap at maximum boost percentage
+        if (baseBoost > maxBoostPercentage) {
+            baseBoost = maxBoostPercentage;
+        }
+        
+        return baseBoost;
+    }
+    
+    /**
+     * @notice Calculates optimal sFlax burn amount for a given base reward
+     * @param baseRewards The base reward amount in Flax tokens
+     * @return The optimal sFlax amount to burn for maximum efficiency
+     * @dev Returns amount that gives best reward/cost ratio
+     */
+    function getOptimalBurnAmount(uint256 baseRewards) public view returns (uint256) {
+        if (baseRewards == 0 || flaxPerSFlax == 0) return 0;
+        
+        // For optimal efficiency, target around 10% boost (1000 basis points)
+        // This avoids diminishing returns while providing meaningful boost
+        uint256 targetBoostBps = 1000;
+        
+        // Calculate sFlax needed for target boost
+        uint256 targetSFlaxAmount = (targetBoostBps * 1e18) / boostRatePerSFlax;
+        
+        // Limit to what would give at most 25% of base rewards as boost
+        uint256 maxReasonableSFlax = (baseRewards * 25 * 1e18) / (100 * flaxPerSFlax);
+        
+        // Return the smaller of the two
+        return targetSFlaxAmount < maxReasonableSFlax ? targetSFlaxAmount : maxReasonableSFlax;
+    }
+    
+    /**
+     * @notice Returns the maximum boost percentage allowed
+     * @return The maximum boost percentage in basis points
+     */
+    function getMaxBoostPercentage() public view returns (uint256) {
+        return maxBoostPercentage;
+    }
+    
+    /**
+     * @notice Updates boost calculation parameters
+     * @param _maxBoostPercentage Maximum boost percentage in basis points
+     * @param _boostRatePerSFlax Boost rate per sFlax token in basis points per token
+     * @dev Only callable by owner
+     */
+    function setBoostParameters(uint256 _maxBoostPercentage, uint256 _boostRatePerSFlax) external onlyOwner {
+        maxBoostPercentage = _maxBoostPercentage;
+        boostRatePerSFlax = _boostRatePerSFlax;
+        emit BoostParametersUpdated(_maxBoostPercentage, _boostRatePerSFlax);
+    }
+    
+    /**
+     * @notice Sets approved burner status for an address
+     * @param burner The address to update
+     * @param approved Whether the address should be approved to burn sFlax
+     * @dev Only callable by owner
+     */
+    function setApprovedBurner(address burner, bool approved) external onlyOwner {
+        approvedBurners[burner] = approved;
+        emit ApprovedBurnerUpdated(burner, approved);
+    }
+    
+    /**
+     * @notice Estimates gas cost for boost-related operations
+     * @param operation The operation to estimate ("calculateBoost", "claimWithBoost", "withdrawWithBoost")
+     * @param sFlaxAmount Amount of sFlax involved in the operation
+     * @return Estimated gas cost in wei
+     */
+    function estimateGasCost(string memory operation, uint256 sFlaxAmount) external view returns (uint256) {
+        // Base gas costs for different operations
+        if (_compareStrings(operation, "calculateBoost")) {
+            return 50000; // Base cost for boost calculation
+        } else if (_compareStrings(operation, "claimWithBoost")) {
+            return sFlaxAmount > 0 ? 120000 : 80000; // Higher if burning sFlax
+        } else if (_compareStrings(operation, "withdrawWithBoost")) {
+            return sFlaxAmount > 0 ? 180000 : 140000; // Highest for withdrawal with boost
+        } else {
+            revert GasEstimationFailed("Unknown operation");
+        }
     }
 
     /**
@@ -460,4 +637,34 @@ contract Vault is Ownable, ReentrancyGuard {
      * @notice Allows the contract to receive ETH
      */
     receive() external payable {}
+    
+    // Private helper functions
+    
+    /**
+     * @notice Calculates integer square root using Newton's method
+     * @param y The number to find the square root of
+     * @return z The square root
+     */
+    function _sqrt(uint256 y) private pure returns (uint256 z) {
+        if (y > 3) {
+            z = y;
+            uint256 x = y / 2 + 1;
+            while (x < z) {
+                z = x;
+                x = (y / x + x) / 2;
+            }
+        } else if (y != 0) {
+            z = 1;
+        }
+    }
+    
+    /**
+     * @notice Compares two strings for equality
+     * @param a First string
+     * @param b Second string
+     * @return Whether the strings are equal
+     */
+    function _compareStrings(string memory a, string memory b) private pure returns (bool) {
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
+    }
 }
